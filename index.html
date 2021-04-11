@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>touchtypie: touch-type training with custom text</title>
+  <title>t o u c h t y p i e: touch-type training with custom text</title>
   <meta name="description" content="touchtypie: touch-type training with custom text">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -24,20 +24,27 @@
 </head>
 
 <body>
-  <header>
-    <banner>
-    <span>Hello world. Let's practice touch typing.</span>
-    </banner>
-  </header>
-  <main>
-    <speech>
-      <content>This is our text.</content>
-      <!-- <highlight>This is our text.</highlight> -->
-    </speech>
-    <response>
-      <textarea></textarea>
-    </response>
-  </main>
+  <wrapper>
+    <header>
+      <banner>
+      <span>t o u c h t y p i e</span><br />
+      <!-- <span>Hello world. Let's practice touch typing.</span> -->
+      </banner>
+    </header>
+    <main>
+      <speech>
+        <content>This is our text. This is our text. This is our text. This is our text.</content>
+      </speech>
+      <response>
+        <textarea></textarea>
+      </response>
+      <counters>
+        <charactercounter><label>Typed:</label><span>0/0</span></charactercounter>
+        <incorrectcharactercounter><label>Errors:</label><span>0</span></incorrectcharactercounter>
+        <homeworkcounter><label>Homework done:</label><span>0</span></homeworkcounter>
+      </counters>
+    </main>
+  </wrapper>
   <script src="app.js"></script>
 </body>
 
