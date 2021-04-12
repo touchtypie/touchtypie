@@ -68,7 +68,7 @@ main {
     display: block;
 }
 
-text {
+truth {
     /* display: none; */
 }
 
@@ -84,15 +84,29 @@ speech value {
     font-family: monospace;
     font-size: 1.5vw;
     text-align: center;
+    border-bottom: 1px solid transparent;
     /* border: none; */
     /* border-bottom: 1px solid #000; */
 }
-speech value .invalid {
-    background: #ff0000;
+speech value span {
+    margin-left: 5px;
+}
+speech value span.cursor {
     color: #fff;
+    font-family: monospace;
+    font-size: 1.5vw;
+    text-align: center;
+    border-bottom: 1px solid #fff;
+}
+speech value span.invalid {
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.5vw;
+    text-align: center;
+    border-bottom: 1px solid #ff0000;
 }
 
-speech value .valid {
+speech value span.valid {
     background: #00ff00;
     color: #fff;
 }

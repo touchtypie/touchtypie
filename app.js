@@ -20,29 +20,28 @@ var Helpers = function () {
 
 // Simple data binding with some modifications
 // Props to https://www.wintellect.com/data-binding-pure-javascript/
-function Binding(b) {
-    console.log('[Binding][begin] State.text.value: ' + State.text);
-    console.log('[Binding][begin] State.text.value: ' + State.text.value);
-    console.log('[Binding][begin] State.speech.value: ' + State.speech);
-    console.log('[Binding][begin] State.speech.value: ' + State.speech.value);
-    var _this = this
-    console.log('[Binding][1] State.text.value: ' + State.text);
-    console.log('[Binding][1] State.text.value: ' + State.text.value);
-    console.log('[Binding][1] State.speech.value: ' + State.speech);
-    console.log('[Binding][1] State.speech.value: ' + State.speech.value)
-    this.elementBindings = []
-    this.value = b.object[b.property]
-    this.valueGetter = function(){
-        return _this.value;
+var Binding = function(b) {
+    if (State.debug) {
+        console.log('[Binding][in] State.truth.value: ' + State.truth);
+        console.log('[Binding][in] State.truth.value: ' + State.truth.value);
+        console.log('[Binding][in] State.speech.value: ' + State.speech);
+        console.log('[Binding][in] State.speech.value: ' + State.speech.value);
     }
-    this.valueSetter = function(val){
-        _this.value = val
-        for (var i = 0; i < _this.elementBindings.length; i++) {
-            var binding=_this.elementBindings[i]
-            binding.element[binding.attribute] = val
+
+    var elementBindings = [];
+    var value = b.object[b.property];
+    var valueGetter = function(){
+        return value;
+    };
+    var valueSetter = function(val){
+        value = val;
+        for (var i = 0; i < elementBindings.length; i++) {
+            var binding = elementBindings[i];
+            binding.element[binding.attribute] = val;
         }
-    }
-    this.addBinding = function(element, attribute, event, callback){
+    };
+    var addBinding = function(element, attribute, event, callback){
+        var _this = this;
         var binding = {
             element: element,
             attribute: attribute,
@@ -57,35 +56,57 @@ function Binding(b) {
                 });
             }else {
                 ele.addEventListener(event, function(event){
-                    _this.valueSetter(element[attribute]);
+                    valueSetter(element[attribute]);
                 });
             }
-            binding.event = event
+            binding.event = event;
         }
-        this.elementBindings.push(binding)
-        element[attribute] = _this.value
-        return _this
+        elementBindings.push(binding)
+        element[attribute] = value;
+        if (State.debug) {
+            console.log('[addBinding] State.truth.value: ' + State.truth);
+            console.log('[addBinding] State.truth.value: ' + State.truth.value);
+            console.log('[addBinding] State.speech.value: ' + State.speech);
+            console.log('[addBinding] State.speech.value: ' + State.speech.value);
+        }
+        return _this;
+    };
+
+    if (State.debug) {
+        console.log('[Binding][1] State.truth.value: ' + State.truth);
+        console.log('[Binding][1] State.truth.value: ' + State.truth.value);
+        console.log('[Binding][1] State.speech.value: ' + State.speech);
+        console.log('[Binding][1] State.speech.value: ' + State.speech.value);
     }
 
-    console.log('[Binding][1] State.text.value: ' + State.text);
-    console.log('[Binding][1] State.text.value: ' + State.text.value);
-    console.log('[Binding][1] State.speech.value: ' + State.speech);
-    console.log('[Binding][1] State.speech.value: ' + State.speech.value);
-
     Object.defineProperty(b.object, b.property, {
-        get: this.valueGetter,
-        set: this.valueSetter
+        get: valueGetter,
+        set: valueSetter
     });
 
-    console.log('[Binding][2] State.text.value: ' + State.text);
-    console.log('[Binding][2] State.text.value: ' + State.text.value);
-    console.log('[Binding][2] State.speech.value: ' + State.speech);
-    console.log('[Binding][2] State.speech.value: ' + State.speech.value);
+    if (State.debug) {
+        console.log('[Binding][2] State.truth.value: ' + State.truth);
+        console.log('[Binding][2] State.truth.value: ' + State.truth.value);
+        console.log('[Binding][2] State.speech.value: ' + State.speech);
+        console.log('[Binding][2] State.speech.value: ' + State.speech.value);
+    }
 
+    b.object[b.property] = value;
 
-    b.object[b.property] = this.value;
-    var a = b.object[b.property]
-    console.log('done.');
+    if (State.debug) {
+        console.log('[Binding][out] State.truth.value: ' + State.truth);
+        console.log('[Binding][out] State.truth.value: ' + State.truth.value);
+        console.log('[Binding][out] State.speech.value: ' + State.speech);
+        console.log('[Binding][out] State.speech.value: ' + State.speech.value);
+    }
+
+    return {
+        elementBindings: elementBindings,
+        value: value,
+        valueGetter: valueGetter,
+        valueSetter: valueSetter,
+        addBinding: addBinding,
+    };
 }
 
 
@@ -98,33 +119,93 @@ var Counter = function() {
 var Bubble = function(value) {
     return {
         value: value !== undefined ? value : '',
-        value1: value !== undefined ? value : '',
         characters: [],
-        charactersCounter: Counter()
+        charactersCounter: Counter(),
+        validate: function(truth) {
+            var response = this;
+            // If valid, returns original truth string if valid. Else returns a modified truth string with incorrect characters in elements e.g. <span class="invalid">X</span>
+            var result = {
+                success: false,
+                completed: false,
+                result: {
+                    error_indices: [],
+                    num_errors: 0,
+                    value: truth.value,
+                }
+            };
+            // if (response.value.length == 0) {
+            //     // Incomplete
+            // }
+            if (response.value.length <= truth.value.length) {
+                for (var i = 0; i < response.value.length; i++) {
+                    if (response.value[i] !== truth.value[i]) {
+                        // Invalid
+                        result.result.error_indices.push(i);
+                        // markInvalidBubble(truth.element, i);
+                    } else {
+                        // Valid
+                        // markValidBubble(truth.element, i);
+                    }
+                }
+                for (var i = response.value.length; i < truth.value.length; i++) {
+                    // Valid
+                    // markNormalBubble(truth.element, i);
+                }
+
+                // Populate result
+                result.success = result.result.error_indices.length == 0 ? true : false;
+                result.result.num_errors = result.result.error_indices.length;
+
+                if (response.characters.length >= 0) {
+                    var characters = result.result.value.split('');
+                    for (var i = 0; i < characters.length; i++) {
+                        if (i === response.value.length) {
+                            characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                        }else if (result.result.error_indices.includes(i)) {
+                            characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                        }else {
+                            characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                        }
+                    }
+                    result.result.value = characters.join('')
+                }
+            }
+
+            if (result.success && response.value.length == truth.value.length) {
+                result.completed = true;
+            }
+
+            console.log('[validateBubble] result.success: ' + result.success);
+            console.log('[validateBubble] result.completed: ' + result.completed);
+            console.log('[validateBubble] result.result.error_indices: ' + result.result.error_indices);
+            console.log('[validateBubble] result.result.num_errors: ' + result.result.num_errors);
+            console.log('[validateBubble] result.result.value: ' + result.result.value);
+            return result;
+        }
     };
 };
 
 // Controllers
 var BubbleController = function () {
-    var _controller = this
-    var _text = State.text
-    var _speech = State.speech
-    var _response = State.response
+    var _controller = this;
+    var _truth = State.truth;
+    var _speech = State.speech;
+    var _response = State.response;
 
-    // Data binding - Component: text
-    var a = new Binding({
-        object: _text,
-        property: "value",
+    // Data binding - Component: truth
+    Binding({
+        object: _truth,
+        property: "value"
     })
     .addBinding(
-        document.getElementsByTagName('text')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('truth')[0].getElementsByTagName('value')[0],
         'innerHTML'
-    )
+    );
 
     // Data binding - Component: speech
-    var b = new Binding({
+    Binding({
         object: _speech,
-        property: "value",
+        property: "value"
     })
     .addBinding(
         document.getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
@@ -135,10 +216,9 @@ var BubbleController = function () {
         'innerHTML',
         "DOMContentLoaded",
         function(event, _this, binding) {
-            console.log('onready');
+            console.log('[DOMContentLoaded]');
             // Set speech value
-            _this.valueSetter(_text.value);
-            // binding.element[binding.attribute] = _text.value
+            _speech.value = _truth.value;
 
             // Set speech characters
             _speech.characters = _speech.value.split('');
@@ -146,106 +226,70 @@ var BubbleController = function () {
             // Set speech counter
             _speech.charactersCounter.value = _speech.value.length;
 
-            console.log('_speech.value: ' + _speech.value);
+            // Validate response
+            var result = _response.validate(_truth);
+            // Set speech value
+            _speech.value = result.result.value;
+
+            console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
+            console.log('[DOMContentLoaded] _speech.characters: ' + _speech.characters);
+            console.log('[DOMContentLoaded] _speech.charactersCounter.value: ' + _speech.charactersCounter.value);
         }
     );
 
     var a = 1;
 
     // Data binding - Component: response
-    // new Binding({
-    //     object: _response,
-    //     property: "value"
-    // }).addBinding(
-    //     document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
-    //     'value',    // textarea
-    //     "keyup",
-    //     function(event, _this, binding) {
-    //         // Set value
-    //         _this.valueSetter(binding.element[binding.attribute]);
+    new Binding({
+        object: _response,
+        property: "value"
+    }).addBinding(
+        document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        'value',    // textarea
+        "keyup",
+        function(event, _this, binding) {
+            // Set value
+            _this.valueSetter(binding.element[binding.attribute]);
 
-    //         // Set response characters
-    //         _response.characters = binding.element[binding.attribute].split('');
+            // Set response characters
+            _response.characters = _response.value.split('');
 
-    //         // Set response counter
-    //         // _response.charactersCounter.value = binding.element[binding.attribute].length;
+            // Set response counter
+            _response.charactersCounter.value = _response.value.length;
 
-    //         // Validate response
-    //         var result = _controller.validateBubble(_speech, _response);
-    //         // Set speech value
-    //         _speech.value = result.result.value;
+            // Validate response
+            var result = _response.validate(_truth);
+            // Set speech value
+            _speech.value = result.result.value;
 
-    //         console.log('_response.value: ' + _response.value);
-    //     }
-    // )
-    // new Binding({
-    //     object: _response.charactersCounter,
-    //     property: "value"
-    // }).addBinding(
-    //     document.getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
-    //     'innerHTML'
-    // );
+            console.log('[keyup] _truth.value: ' + _truth.value);
+            console.log('[keyup] _truth.characters: ' + _truth.characters);
+            console.log('[keyup] _truth.charactersCounter.value: ' + _truth.charactersCounter.value);
+            console.log('[keyup] _speech.value: ' + _speech.value);
+            console.log('[keyup] _speech.characters: ' + _speech.characters);
+            console.log('[keyup] _speech.charactersCounter.value: ' + _speech.charactersCounter.value);
+            console.log('[keyup] _response.value: ' + _response.value);
+            console.log('[keyup] _response.characters: ' + _response.characters);
+            console.log('[keyup] _response.charactersCounter.value: ' + _response.charactersCounter.value);
+        }
+    )
+    new Binding({
+        object: _response.charactersCounter,
+        property: "value"
+    }).addBinding(
+        document.getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
 
     // Data binding - Component: counters
-    // var _counters = State.counters
-    // new Binding({
-    //     object: _counters.incorrectCharactersCounter,
-    //     property: "value"
-    // }).addBinding(
-    //     document.getElementsByTagName('incorrectcharacterscounter')[0].getElementsByTagName('value')[0],
-    //     'innerHTML'
-    // );
-
-    // If valid, returns original speech string if valid. Else returns modified speech string with incorrect characters in elements e.g. <span class="invalid">X</span>
-    this.validateBubble = function(speech, response) {
-        var result = {
-            success: false,
-            completed: false,
-            result: {
-                error_indices: [],
-                num_errors: 0,
-                value: speech.value,
-            }
-        };
-        if (response.characters.length == 0) {
-            result.success = true;
-        }
-        if (response.characters.length > 0 && response.characters.length <= speech.characters.length) {
-            for (var i = 0; i < response.characters.length; i++) {
-                if (response.characters[i] !== speech.characters[i]) {
-                    // Invalid
-                    result.result.error_indices.push(i);
-                    // markInvalidBubble(speech.element, i);
-                } else {
-                    // Valid
-                    // markValidBubble(speech.element, i);
-                }
-            }
-            for (var i = response.characters.length; i < speech.characters.length; i++) {
-                // Valid
-                // markNormalBubble(speech.element, i);
-            }
-
-            // Populate result
-            result.success = result.result.error_indices.length == 0 ? true : false;
-            if (!result.success) {
-                result.success = false
-                var split = result.result.value.split('')
-                for (var i = 0; i < error_indices.length; i++) {
-                    split[error_indices[i]] = split[error_indices[i]].replace(/(.*)/, '<span class="invalid">$1</span>');
-                }
-                result.result.value = split.join()
-
-                result.result.num_errors = result.result.error_indices.length;
-            }
-        }
-
-        if (result.success && response.characters.length == speech.characters.length) {
-            result.completed = true;
-        }
-
-        return result;
-    }
+    var _counters = State.counters
+    new Binding({
+        object: _counters.incorrectCharactersCounter,
+        property: "value"
+    }).addBinding(
+        document.getElementsByTagName('incorrectcharacterscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
 
     // Private
     // var characterizeBubble = function (bubble) {
@@ -263,9 +307,11 @@ var BubbleController = function () {
 // App state
 var State = function() {
     return {
-        text: Bubble('Select some text.'),
+        debug: true,
+        truth: Bubble('Get some truth to type.'),
         speech: Bubble(''),
         response: Bubble(''),
+        result: null,
         counters: {
             incorrectCharactersCounter: Counter(),
             homeworkCounter: Counter(),
