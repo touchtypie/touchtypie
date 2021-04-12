@@ -84,16 +84,16 @@ var BubbleVirtue = function() {
     };
 
     var newleaf = function() {
-        success = false,
-        completed = false,
-        result.errors_indices = [],
-        result.errors_num = 0,
-        result.errors_num_new = 0,
-        result.value = '';
+        this.success = false,
+        this.completed = false,
+        this.result.errors_indices = [],
+        this.result.errors_num = 0,
+        this.result.errors_num_new = 0,
+        this.result.value = '';
     };
     var newlife = function() {
         newleaf();
-        result.errors_num_total = 0;
+        this.result.errors_num_total = 0;
     }
 
     return {
