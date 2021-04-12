@@ -1,15 +1,3 @@
-https://codetonics.com/javascript/detect-document-ready/
-function ready(callbackFunction){
-    if(document.readyState != 'loading')
-      callbackFunction(event)
-    else
-      document.addEventListener("DOMContentLoaded", callbackFunction)
-  }
-  ready(event => {
-    console.log('DOM is ready.')
-  })
-
-
 var Helpers = function () {
     return {
         htmlEntities: function htmlEntities(str) {
