@@ -74,7 +74,7 @@ truth {
 
 speech {
     display: block;
-    height: 5vw;
+    margin: 1vw;
 }
 speech value {
     display: inline-block;
