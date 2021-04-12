@@ -111,6 +111,19 @@ speech value span.valid {
     color: #fff;
 }
 
+progressbar {
+    display: block;
+}
+progressbar characterscounter {
+    display: block;
+    border-radius: 1vw;
+    margin: 1vw;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+
 response {
     margin-top: 1vw;
     display: block;
@@ -132,15 +145,6 @@ response textarea {
     letter-spacing: 0.25vw;
 }
 
-homeworkcounters characterscounter {
-    display: inline-block;
-    border-radius: 1vw;
-    padding: 1vw;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
 homeworkcounters errorscounter {
     display: inline-block;
     border-radius: 1vw;
