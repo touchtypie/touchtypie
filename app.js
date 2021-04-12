@@ -135,9 +135,6 @@ var Bubble = function(default_value) {
 
             // Populate result
             virtue.success = virtue.result.errors_indices.length == 0 ? true : false;
-            virtue.result.value_length = bubble.value.length;
-            virtue.result.errors_num = virtue.result.errors_indices.length;
-            virtue.result.errors_num_total += virtue.result.errors_num_new;
             if (bubble.value.length >= 0) {
                 var characters = truth.value.split('');
                 for (var i = 0; i < characters.length; i++) {
@@ -151,6 +148,9 @@ var Bubble = function(default_value) {
                 }
                 virtue.result.value = characters.join('')
             }
+            virtue.result.value_length = bubble.value.length;
+            virtue.result.errors_num = virtue.result.errors_indices.length;
+            virtue.result.errors_num_total += virtue.result.errors_num_new;
         }
 
         if (virtue.success && bubble.value.length == truth.value.length) {
