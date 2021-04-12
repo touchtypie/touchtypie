@@ -116,7 +116,7 @@ progressbar {
 progressbar characterscounter {
     display: block;
     border-radius: 1vw;
-    margin: 1vw;
+    padding: 1.5vw;
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
@@ -124,7 +124,6 @@ progressbar characterscounter {
 }
 
 response {
-    margin-top: 1vw;
     display: block;
 }
 
@@ -144,19 +143,23 @@ response textarea {
     letter-spacing: 0.25vw;
 }
 
+homeworkcounters {
+}
 homeworkcounters errorscounter {
     display: inline-block;
     border-radius: 1vw;
-    padding: 1vw;
+    padding: 1.5vw;
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
     text-align: center;
 }
+globalcounters {
+}
 globalcounters totalerrorscounter {
     display: inline-block;
     border-radius: 1vw;
-    padding: 1vw;
+    padding: 1.5vw;
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
@@ -165,7 +168,7 @@ globalcounters totalerrorscounter {
 globalcounters totalhomeworkcounter {
     display: inline-block;
     border-radius: 1vw;
-    padding: 1vw;
+    padding: 1.5vw;
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
