@@ -21,7 +21,15 @@ var Helpers = function () {
 // Simple data binding with some modifications
 // Props to https://www.wintellect.com/data-binding-pure-javascript/
 function Binding(b) {
-    _this = this
+    console.log('[Binding][begin] State.text.value: ' + State.text);
+    console.log('[Binding][begin] State.text.value: ' + State.text.value);
+    console.log('[Binding][begin] State.speech.value: ' + State.speech);
+    console.log('[Binding][begin] State.speech.value: ' + State.speech.value);
+    var _this = this
+    console.log('[Binding][1] State.text.value: ' + State.text);
+    console.log('[Binding][1] State.text.value: ' + State.text.value);
+    console.log('[Binding][1] State.speech.value: ' + State.speech);
+    console.log('[Binding][1] State.speech.value: ' + State.speech.value)
     this.elementBindings = []
     this.value = b.object[b.property]
     this.valueGetter = function(){
@@ -59,10 +67,21 @@ function Binding(b) {
         return _this
     }
 
+    console.log('[Binding][1] State.text.value: ' + State.text);
+    console.log('[Binding][1] State.text.value: ' + State.text.value);
+    console.log('[Binding][1] State.speech.value: ' + State.speech);
+    console.log('[Binding][1] State.speech.value: ' + State.speech.value);
+
     Object.defineProperty(b.object, b.property, {
         get: this.valueGetter,
         set: this.valueSetter
     });
+
+    console.log('[Binding][2] State.text.value: ' + State.text);
+    console.log('[Binding][2] State.text.value: ' + State.text.value);
+    console.log('[Binding][2] State.speech.value: ' + State.speech);
+    console.log('[Binding][2] State.speech.value: ' + State.speech.value);
+
 
     b.object[b.property] = this.value;
     var a = b.object[b.property]
