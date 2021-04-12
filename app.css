@@ -129,6 +129,7 @@ response textarea {
     font-size: 1.5vw;
     text-align: center;
     /* border: none; */
+    letter-spacing: 0.25vw;
 }
 
 homeworkcounters characterscounter {
