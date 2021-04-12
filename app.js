@@ -21,13 +21,6 @@ var Helpers = function () {
 // Simple data binding with some modifications
 // Props to https://www.wintellect.com/data-binding-pure-javascript/
 var Binding = function(b) {
-    if (State.debug) {
-        console.log('[Binding][in] State.truth.value: ' + State.truth);
-        console.log('[Binding][in] State.truth.value: ' + State.truth.value);
-        console.log('[Binding][in] State.speech.value: ' + State.speech);
-        console.log('[Binding][in] State.speech.value: ' + State.speech.value);
-    }
-
     var elementBindings = [];
     var value = b.object[b.property];
     var valueGetter = function(){
@@ -63,33 +56,12 @@ var Binding = function(b) {
         }
         elementBindings.push(binding)
         element[attribute] = value;
-        if (State.debug) {
-            console.log('[addBinding] State.truth.value: ' + State.truth);
-            console.log('[addBinding] State.truth.value: ' + State.truth.value);
-            console.log('[addBinding] State.speech.value: ' + State.speech);
-            console.log('[addBinding] State.speech.value: ' + State.speech.value);
-        }
         return _this;
     };
-
-    if (State.debug) {
-        console.log('[Binding][1] State.truth.value: ' + State.truth);
-        console.log('[Binding][1] State.truth.value: ' + State.truth.value);
-        console.log('[Binding][1] State.speech.value: ' + State.speech);
-        console.log('[Binding][1] State.speech.value: ' + State.speech.value);
-    }
-
     Object.defineProperty(b.object, b.property, {
         get: valueGetter,
         set: valueSetter
     });
-
-    if (State.debug) {
-        console.log('[Binding][2] State.truth.value: ' + State.truth);
-        console.log('[Binding][2] State.truth.value: ' + State.truth.value);
-        console.log('[Binding][2] State.speech.value: ' + State.speech);
-        console.log('[Binding][2] State.speech.value: ' + State.speech.value);
-    }
 
     b.object[b.property] = value;
 
@@ -199,12 +171,14 @@ var Bubble = function(default_value) {
             virtue.completed = true;
         }
 
-        console.log('[measureVirtue] result.success: ' + virtue.success);
-        console.log('[measureVirtue] result.completed: ' + virtue.completed);
-        console.log('[measureVirtue] virtue.result.errors_indices: ' + virtue.result.errors_indices);
-        console.log('[measureVirtue] virtue.result.errors_num: ' + virtue.result.errors_num);
-        console.log('[measureVirtue] virtue.result.errors_num_total: ' + virtue.result.errors_num_total);
-        console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
+        if (State.debug) {
+            console.log('[measureVirtue] result.success: ' + virtue.success);
+            console.log('[measureVirtue] result.completed: ' + virtue.completed);
+            console.log('[measureVirtue] virtue.result.errors_indices: ' + virtue.result.errors_indices);
+            console.log('[measureVirtue] virtue.result.errors_num: ' + virtue.result.errors_num);
+            console.log('[measureVirtue] virtue.result.errors_num_total: ' + virtue.result.errors_num_total);
+            console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
+        }
         return virtue;
     };
 
@@ -275,9 +249,11 @@ var BubbleController = function () {
                 _truth.next();
             }
 
-            console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
-            console.log('[DOMContentLoaded] _speech.characters: ' + _speech.characters);
-            console.log('[DOMContentLoaded] _speech.charactersCounter: ' + _speech.charactersCounter);
+            if (State.debug) {
+                console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
+                console.log('[DOMContentLoaded] _speech.characters: ' + _speech.characters);
+                console.log('[DOMContentLoaded] _speech.charactersCounter: ' + _speech.charactersCounter);
+            }
         }
     );
 
@@ -306,15 +282,17 @@ var BubbleController = function () {
             // Set speech value
             _speech.value = virtue.result.value;
 
-            console.log('[keyup] _truth.value: ' + _truth.value);
-            console.log('[keyup] _truth.characters: ' + _truth.characters);
-            console.log('[keyup] _truth.charactersCounter: ' + _truth.charactersCounter);
-            console.log('[keyup] _speech.value: ' + _speech.value);
-            console.log('[keyup] _speech.characters: ' + _speech.characters);
-            console.log('[keyup] _speech.charactersCounter: ' + _speech.charactersCounter);
-            console.log('[keyup] _response.value: ' + _response.value);
-            console.log('[keyup] _response.characters: ' + _response.characters);
-            console.log('[keyup] _response.charactersCounter: ' + _response.charactersCounter);
+            if (State.debug) {
+                console.log('[keyup] _truth.value: ' + _truth.value);
+                console.log('[keyup] _truth.characters: ' + _truth.characters);
+                console.log('[keyup] _truth.charactersCounter: ' + _truth.charactersCounter);
+                console.log('[keyup] _speech.value: ' + _speech.value);
+                console.log('[keyup] _speech.characters: ' + _speech.characters);
+                console.log('[keyup] _speech.charactersCounter: ' + _speech.charactersCounter);
+                console.log('[keyup] _response.value: ' + _response.value);
+                console.log('[keyup] _response.characters: ' + _response.characters);
+                console.log('[keyup] _response.charactersCounter: ' + _response.charactersCounter);
+            }
         }
     )
     // Data binding - Component: counters
