@@ -111,83 +111,115 @@ var Binding = function(b) {
 
 
 // Models
-var Counter = function() {
-    return {
-        value: 0,
+var BubbleVirtue = function() {
+    var success = false;
+    var completed = false;
+    var result = {
+        errors_indices: [],
+        errors_num: 0,
+        errors_num_new: 0,
+        errors_num_total: 0,
+        value: ''
     };
-}
-var Bubble = function(value) {
+
+    var newleaf = function() {
+        success = false,
+        completed = false,
+        result.errors_indices = [],
+        result.errors_num = 0,
+        result.errors_num_new = 0,
+        result.value = '';
+    };
+    var newlife = function() {
+        newleaf();
+        result.errors_num_total = 0;
+    }
+
     return {
-        value: value !== undefined ? value : '',
-        characters: [],
-        charactersCounter: Counter(),
-        validate: function(truth) {
-            var response = this;
-            // If valid, returns original truth string if valid. Else returns a modified truth string with incorrect characters in elements e.g. <span class="invalid">X</span>
-            var result = {
-                success: false,
-                completed: false,
-                result: {
-                    error_indices: [],
-                    num_errors: 0,
-                    value: truth.value,
-                }
-            };
-            // if (response.value.length == 0) {
-            //     // Incomplete
-            // }
-            if (response.value.length <= truth.value.length) {
-                for (var i = 0; i < response.value.length; i++) {
-                    if (response.value[i] !== truth.value[i]) {
-                        // Invalid
-                        result.result.error_indices.push(i);
-                        // markInvalidBubble(truth.element, i);
-                    } else {
-                        // Valid
-                        // markValidBubble(truth.element, i);
+        success: success,
+        completed: completed,
+        result: result,
+        newleaf: newleaf,
+        newlife: newlife
+    }
+}
+var Bubble = function(default_value) {
+    var value = default_value;
+    var characters = [];
+    var charactersCounter = 0;
+
+    var virtue = BubbleVirtue();
+
+    // If valid, returns original truth string if valid.
+    // Else returns a modified truth string with incorrect characters in elements e.g. <span class="invalid">X</span>
+    var measureVirtue = function(truth) {
+        var bubble = this;
+
+        virtue.newleaf();
+
+        // if (response.value.length == 0) {
+        //     // Incomplete
+        // }
+        if (bubble.value.length <= truth.value.length) {
+            for (var i = 0; i < bubble.value.length; i++) {
+                if (bubble.value[i] !== truth.value[i]) {
+                    // Invalid
+                    virtue.result.errors_indices.push(i);
+                    if (i === bubble.value.length - 1) {
+                        virtue.result.errors_num_new = 1;
                     }
-                }
-                for (var i = response.value.length; i < truth.value.length; i++) {
+                } else {
                     // Valid
-                    // markNormalBubble(truth.element, i);
                 }
+            }
+            for (var i = bubble.value.length; i < truth.value.length; i++) {
+                // Valid
+            }
 
-                // Populate result
-                result.success = result.result.error_indices.length == 0 ? true : false;
-                result.result.num_errors = result.result.error_indices.length;
-
-                if (response.characters.length >= 0) {
-                    var characters = result.result.value.split('');
-                    for (var i = 0; i < characters.length; i++) {
-                        if (i === response.value.length) {
-                            characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                        }else if (result.result.error_indices.includes(i)) {
-                            characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                        }else {
-                            characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                        }
+            // Populate result
+            virtue.success = virtue.result.errors_indices.length == 0 ? true : false;
+            virtue.result.errors_num = virtue.result.errors_indices.length;
+            virtue.result.errors_num_total += virtue.result.errors_num_new;
+            if (bubble.value.length >= 0) {
+                var characters = truth.value.split('');
+                for (var i = 0; i < characters.length; i++) {
+                    if (i === bubble.value.length) {
+                        characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                    }else if (virtue.result.errors_indices.includes(i)) {
+                        characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                    }else {
+                        characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
                     }
-                    result.result.value = characters.join('')
                 }
+                virtue.result.value = characters.join('')
             }
-
-            if (result.success && response.value.length == truth.value.length) {
-                result.completed = true;
-            }
-
-            console.log('[validateBubble] result.success: ' + result.success);
-            console.log('[validateBubble] result.completed: ' + result.completed);
-            console.log('[validateBubble] result.result.error_indices: ' + result.result.error_indices);
-            console.log('[validateBubble] result.result.num_errors: ' + result.result.num_errors);
-            console.log('[validateBubble] result.result.value: ' + result.result.value);
-            return result;
         }
+
+        if (virtue.success && bubble.value.length == truth.value.length) {
+            virtue.completed = true;
+        }
+
+        console.log('[measureVirtue] result.success: ' + virtue.success);
+        console.log('[measureVirtue] result.completed: ' + virtue.completed);
+        console.log('[measureVirtue] virtue.result.errors_indices: ' + virtue.result.errors_indices);
+        console.log('[measureVirtue] virtue.result.errors_num: ' + virtue.result.errors_num);
+        console.log('[measureVirtue] virtue.result.errors_num_total: ' + virtue.result.errors_num_total);
+        console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
+        return virtue;
+    };
+
+    return {
+        value: value,
+        characters: characters,
+        charactersCounter: charactersCounter,
+        virtue: virtue,
+        measureVirtue: measureVirtue,
     };
 };
 
 // Controllers
 var BubbleController = function () {
-    var _controller = this;
+    var _virtues = State.student.virtues;
     var _truth = State.truth;
     var _speech = State.speech;
     var _response = State.response;
@@ -217,6 +249,9 @@ var BubbleController = function () {
         "DOMContentLoaded",
         function(event, _this, binding) {
             console.log('[DOMContentLoaded]');
+            // Set truth values
+            _truth.charactersCounter = _truth.value.length;
+
             // Set speech value
             _speech.value = _truth.value;
 
@@ -224,16 +259,25 @@ var BubbleController = function () {
             _speech.characters = _speech.value.split('');
 
             // Set speech counter
-            _speech.charactersCounter.value = _speech.value.length;
+            _speech.charactersCounter = _speech.value.length;
 
             // Validate response
-            var result = _response.validate(_truth);
+            var virtue = _response.measureVirtue(_truth);
             // Set speech value
-            _speech.value = result.result.value;
+            _speech.value = virtue.result.value;
+            if (virtue.completed) {
+                // Set homework value
+                _virtues.values.push[virtue];
+                _virtues.count += 1;
+
+                // Next homework
+                _response.virtue.newlife();
+                _truth.next();
+            }
 
             console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
             console.log('[DOMContentLoaded] _speech.characters: ' + _speech.characters);
-            console.log('[DOMContentLoaded] _speech.charactersCounter.value: ' + _speech.charactersCounter.value);
+            console.log('[DOMContentLoaded] _speech.charactersCounter: ' + _speech.charactersCounter);
         }
     );
 
@@ -255,39 +299,53 @@ var BubbleController = function () {
             _response.characters = _response.value.split('');
 
             // Set response counter
-            _response.charactersCounter.value = _response.value.length;
+            _response.charactersCounter = _response.value.length;
 
-            // Validate response
-            var result = _response.validate(_truth);
+            // measureVirtue response
+            var virtue = _response.measureVirtue(_truth);
             // Set speech value
-            _speech.value = result.result.value;
+            _speech.value = virtue.result.value;
 
             console.log('[keyup] _truth.value: ' + _truth.value);
             console.log('[keyup] _truth.characters: ' + _truth.characters);
-            console.log('[keyup] _truth.charactersCounter.value: ' + _truth.charactersCounter.value);
+            console.log('[keyup] _truth.charactersCounter: ' + _truth.charactersCounter);
             console.log('[keyup] _speech.value: ' + _speech.value);
             console.log('[keyup] _speech.characters: ' + _speech.characters);
-            console.log('[keyup] _speech.charactersCounter.value: ' + _speech.charactersCounter.value);
+            console.log('[keyup] _speech.charactersCounter: ' + _speech.charactersCounter);
             console.log('[keyup] _response.value: ' + _response.value);
             console.log('[keyup] _response.characters: ' + _response.characters);
-            console.log('[keyup] _response.charactersCounter.value: ' + _response.charactersCounter.value);
+            console.log('[keyup] _response.charactersCounter: ' + _response.charactersCounter);
         }
     )
     new Binding({
-        object: _response.charactersCounter,
-        property: "value"
+        object: _response,
+        property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 
-    // Data binding - Component: counters
-    var _counters = State.counters
     new Binding({
-        object: _counters.incorrectCharactersCounter,
-        property: "value"
+        object: _truth,
+        property: "charactersCounter"
+    }).addBinding(
+        document.getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
+
+    // Data binding - Component: counters
+    new Binding({
+        object: _response.virtue.result,
+        property: "errors_num_total"
     }).addBinding(
         document.getElementsByTagName('incorrectcharacterscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _virtues,
+        property: "count"
+    }).addBinding(
+        document.getElementsByTagName('homeworkcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 
@@ -311,10 +369,14 @@ var State = function() {
         truth: Bubble('Get some truth to type.'),
         speech: Bubble(''),
         response: Bubble(''),
-        result: null,
-        counters: {
-            incorrectCharactersCounter: Counter(),
-            homeworkCounter: Counter(),
+        student: {
+            homework: {
+                count: 0
+            },
+            virtues: {
+                count: 0,
+                values: []
+            }
         }
     }
 }();
