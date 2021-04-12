@@ -83,12 +83,12 @@ speech value {
     font-family: monospace;
     font-size: 1.5vw;
     text-align: center;
-    border-bottom: 1px solid transparent;
     /* border: none; */
     /* border-bottom: 1px solid #000; */
 }
 speech value span {
     margin-left: 5px;
+    border-bottom: 1px solid transparent;
 }
 speech value span.cursor {
     color: #fff;
