@@ -32,17 +32,33 @@
       </banner>
     </header>
     <main>
+      <text>
+        <value></value>
+      </text>
+
       <speech>
-        <content>This is our text. This is our text. This is our text. This is our text.</content>
+        <value></value>
       </speech>
+
       <response>
-        <textarea></textarea>
+        <textarea placeholder="BEGIN"></textarea>
       </response>
+
       <counters>
-        <charactercounter><label>Typed:</label><span>0/0</span></charactercounter>
-        <incorrectcharactercounter><label>Errors:</label><span>0</span></incorrectcharactercounter>
-        <homeworkcounter><label>Homework done:</label><span>0</span></homeworkcounter>
+        <characterscounter>
+          <label>Typed:</label>
+          <span><value></value>/0</span>
+        </characterscounter>
+        <incorrectcharacterscounter>
+          <label>Errors:</label>
+          <span><value></value></span>
+        </incorrectcharacterscounter>
+        <homeworkcounter>
+          <label>Homework done:</label>
+          <span><value></value></span>
+        </homeworkcounter>
       </counters>
+
     </main>
   </wrapper>
   <script src="app.js"></script>

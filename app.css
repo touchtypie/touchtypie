@@ -68,27 +68,31 @@ main {
     display: block;
 }
 
+text {
+    /* display: none; */
+}
+
 speech {
     display: block;
     height: 5vw;
 }
-
-speech>content {
+speech value {
     display: inline-block;
     width: 66.67%;
     padding: 1vw;
+    color: #fff;
+    font-family: monospace;
     font-size: 1.5vw;
     text-align: center;
     /* border: none; */
     /* border-bottom: 1px solid #000; */
 }
-
-speech>content .invalid {
+speech value .invalid {
     background: #ff0000;
     color: #fff;
 }
 
-speech>content .valid {
+speech value .valid {
     background: #00ff00;
     color: #fff;
 }
@@ -98,7 +102,7 @@ response {
     display: block;
 }
 
-response>textarea {
+response textarea {
     display: inline-block;
     width: 66.67%;
     height: 20vw;
@@ -113,7 +117,7 @@ response>textarea {
     /* border: none; */
 }
 
-counters>charactercounter {
+counters characterscounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1vw;
@@ -122,7 +126,7 @@ counters>charactercounter {
     font-size: 1vw;
     text-align: center;
 }
-counters>incorrectcharactercounter {
+counters incorrectcharacterscounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1vw;
@@ -131,7 +135,7 @@ counters>incorrectcharactercounter {
     font-size: 1vw;
     text-align: center;
 }
-counters>homeworkcounter {
+counters homeworkcounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1vw;

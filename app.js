@@ -1,3 +1,15 @@
+https://codetonics.com/javascript/detect-document-ready/
+function ready(callbackFunction){
+    if(document.readyState != 'loading')
+      callbackFunction(event)
+    else
+      document.addEventListener("DOMContentLoaded", callbackFunction)
+  }
+  ready(event => {
+    console.log('DOM is ready.')
+  })
+
+
 var Helpers = function () {
     return {
         htmlEntities: function htmlEntities(str) {
@@ -6,164 +18,253 @@ var Helpers = function () {
     };
 }()
 
-// Models
-var Bubble = function (element, value) {
-    var o = {
-        element: element,
-        props: {
-            value: '',
-            characters: []
-        },
-        setValue: function (value) {
-            this.props.value = value;
-            this.props.characters = value.split('')
+// Simple data binding with some modifications
+// Props to https://www.wintellect.com/data-binding-pure-javascript/
+function Binding(b) {
+    _this = this
+    this.elementBindings = []
+    this.value = b.object[b.property]
+    this.valueGetter = function(){
+        return _this.value;
+    }
+    this.valueSetter = function(val){
+        _this.value = val
+        for (var i = 0; i < _this.elementBindings.length; i++) {
+            var binding=_this.elementBindings[i]
+            binding.element[binding.attribute] = val
         }
-    };
-    o.setValue(value);
-
-    return o;
-};
-var Counter = function (element, value) {
-    var o = {
-        element: element,
-        props: {
-            value: 0,
-        },
-        setValue: function (value) {
-            this.props.value = value;
+    }
+    this.addBinding = function(element, attribute, event, callback){
+        var binding = {
+            element: element,
+            attribute: attribute,
+            event: event
         }
-    };
-    o.setValue(value);
+        if (event){
+            // E.g. DOMContentLoaded, onreadystatechange
+            var ele = /DOM|ready/.test(event) ? document : element;
+            if (callback) {
+                ele.addEventListener(event, function(event){
+                    callback(event, _this, binding);
+                });
+            }else {
+                ele.addEventListener(event, function(event){
+                    _this.valueSetter(element[attribute]);
+                });
+            }
+            binding.event = event
+        }
+        this.elementBindings.push(binding)
+        element[attribute] = _this.value
+        return _this
+    }
 
-    return o;
+    Object.defineProperty(b.object, b.property, {
+        get: this.valueGetter,
+        set: this.valueSetter
+    });
+
+    b.object[b.property] = this.value;
+    var a = b.object[b.property]
+    console.log('done.');
 }
 
-// Controller
-var BubbleController = function (o) {
-    var speech = Bubble(o.bubbles[0], o.bubbles[0].innerHTML);
-    var response = Bubble(o.bubbles[1], o.bubbles[1].value); // Textarea value
-    var characterCounter = Counter(o.counters[0], response.props.characters.length);
-    var incorrectCharacterCounter = Counter(o.counters[1], 0);
 
-    // Private
-    var characterizeBubble = function (bubble) {
-        // var domElements = [];
-        bubble.element.innerHTML = '';
-        for (var i = 0; i < bubble.props.characters.length; i++) {
-            characterElement = document.createElement('span');
-            characterElement.innerHTML = Helpers.htmlEntities(bubble.props.characters[i]);
-            // domElements.push(characterElement);
-            bubble.element.appendChild(characterElement);
-        }
+// Models
+var Counter = function() {
+    return {
+        value: 0,
     };
-    var markNormalBubble = function (ele, characterIndex) {
-        ele.getElementsByTagName('span')[characterIndex].className = '';
-    }
-    var markInvalidBubble = function (ele, characterIndex) {
-        ele.getElementsByTagName('span')[characterIndex].className = 'invalid';
-    }
-    var markValidBubble = function (ele, characterIndex) {
-        ele.getElementsByTagName('span')[characterIndex].className = 'valid';
-    }
-    var onKeyDown = function (e) {
-        console.log('[onKeyDown]');
+}
+var Bubble = function(value) {
+    return {
+        value: value !== undefined ? value : '',
+        value1: value !== undefined ? value : '',
+        characters: [],
+        charactersCounter: Counter()
+    };
+};
 
-        // Data binding
-        var ele = e.target;
-        response.setValue(ele.value); // Textarea
-        characterCounter.setValue(ele.value); // Textarea
-        console.log('[keyup] ele.value: ' + ele.value);
-        console.log('[keyup] ele.value.length: ' + ele.value.length);
-        console.log('[keyup] response.props.characters: ' + response.props.characters);
-        console.log('[keyup] response.props.characters.length: ' + response.props.characters.length);
+// Controllers
+var BubbleController = function () {
+    var _controller = this
+    var _text = State.text
+    var _speech = State.speech
+    var _response = State.response
 
-        // Mark
-        if (response.props.characters.length == 0) {
-            for (var i = 0; i < speech.props.characters.length; i++) {
-                markNormalBubble(speech.element, i);
-            }
+    // Data binding - Component: text
+    var a = new Binding({
+        object: _text,
+        property: "value",
+    })
+    .addBinding(
+        document.getElementsByTagName('text')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    )
+
+    // Data binding - Component: speech
+    var b = new Binding({
+        object: _speech,
+        property: "value",
+    })
+    .addBinding(
+        document.getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    )
+    .addBinding(
+        document.getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
+        'innerHTML',
+        "DOMContentLoaded",
+        function(event, _this, binding) {
+            console.log('onready');
+            // Set speech value
+            _this.valueSetter(_text.value);
+            // binding.element[binding.attribute] = _text.value
+
+            // Set speech characters
+            _speech.characters = _speech.value.split('');
+
+            // Set speech counter
+            _speech.charactersCounter.value = _speech.value.length;
+
+            console.log('_speech.value: ' + _speech.value);
         }
-        if (response.props.characters.length > 0) {
-            var errNum = 0;
-            for (var i = 0; i < response.props.characters.length; i++) {
-                if (response.props.characters[i] !== speech.props.characters[i]) {
-                    markInvalidBubble(speech.element, i);
-                    errNum++;
+    );
+
+    var a = 1;
+
+    // Data binding - Component: response
+    // new Binding({
+    //     object: _response,
+    //     property: "value"
+    // }).addBinding(
+    //     document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+    //     'value',    // textarea
+    //     "keyup",
+    //     function(event, _this, binding) {
+    //         // Set value
+    //         _this.valueSetter(binding.element[binding.attribute]);
+
+    //         // Set response characters
+    //         _response.characters = binding.element[binding.attribute].split('');
+
+    //         // Set response counter
+    //         // _response.charactersCounter.value = binding.element[binding.attribute].length;
+
+    //         // Validate response
+    //         var result = _controller.validateBubble(_speech, _response);
+    //         // Set speech value
+    //         _speech.value = result.result.value;
+
+    //         console.log('_response.value: ' + _response.value);
+    //     }
+    // )
+    // new Binding({
+    //     object: _response.charactersCounter,
+    //     property: "value"
+    // }).addBinding(
+    //     document.getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
+    //     'innerHTML'
+    // );
+
+    // Data binding - Component: counters
+    // var _counters = State.counters
+    // new Binding({
+    //     object: _counters.incorrectCharactersCounter,
+    //     property: "value"
+    // }).addBinding(
+    //     document.getElementsByTagName('incorrectcharacterscounter')[0].getElementsByTagName('value')[0],
+    //     'innerHTML'
+    // );
+
+    // If valid, returns original speech string if valid. Else returns modified speech string with incorrect characters in elements e.g. <span class="invalid">X</span>
+    this.validateBubble = function(speech, response) {
+        var result = {
+            success: false,
+            completed: false,
+            result: {
+                error_indices: [],
+                num_errors: 0,
+                value: speech.value,
+            }
+        };
+        if (response.characters.length == 0) {
+            result.success = true;
+        }
+        if (response.characters.length > 0 && response.characters.length <= speech.characters.length) {
+            for (var i = 0; i < response.characters.length; i++) {
+                if (response.characters[i] !== speech.characters[i]) {
+                    // Invalid
+                    result.result.error_indices.push(i);
+                    // markInvalidBubble(speech.element, i);
                 } else {
-                    markValidBubble(speech.element, i);
+                    // Valid
+                    // markValidBubble(speech.element, i);
                 }
             }
-            for (var i = response.props.characters.length; i < speech.props.characters.length; i++) {
-                markNormalBubble(speech.element, i);
+            for (var i = response.characters.length; i < speech.characters.length; i++) {
+                // Valid
+                // markNormalBubble(speech.element, i);
             }
 
-            characterCounter.setValue(response.props.characters.length);
-            characterCounter.element.getElementsByTagName('span')[0].innerHTML = Helpers.htmlEntities(response.props.characters.length + '/' + speech.props.characters.length);
+            // Populate result
+            result.success = result.result.error_indices.length == 0 ? true : false;
+            if (!result.success) {
+                result.success = false
+                var split = result.result.value.split('')
+                for (var i = 0; i < error_indices.length; i++) {
+                    split[error_indices[i]] = split[error_indices[i]].replace(/(.*)/, '<span class="invalid">$1</span>');
+                }
+                result.result.value = split.join()
 
-            incorrectCharacterCounter.setValue(errNum);
-            incorrectCharacterCounter.element.getElementsByTagName('span')[0].innerHTML  = Helpers.htmlEntities(errNum);
+                result.result.num_errors = result.result.error_indices.length;
+            }
+        }
+
+        if (result.success && response.characters.length == speech.characters.length) {
+            result.completed = true;
+        }
+
+        return result;
+    }
+
+    // Private
+    // var characterizeBubble = function (bubble) {
+    //     // var domElements = [];
+    //     bubble.element.innerHTML = '';
+    //     for (var i = 0; i < bubble.props.characters.length; i++) {
+    //         characterElement = document.createElement('span');
+    //         characterElement.innerHTML = Helpers.htmlEntities(bubble.props.characters[i]);
+    //         // domElements.push(characterElement);
+    //         bubble.element.appendChild(characterElement);
+    //     }
+    // };
+}
+
+// App state
+var State = function() {
+    return {
+        text: Bubble('Select some text.'),
+        speech: Bubble(''),
+        response: Bubble(''),
+        counters: {
+            incorrectCharactersCounter: Counter(),
+            homeworkCounter: Counter(),
         }
     }
-
-    var initBinds = function () {};
-    var initBubbles = function () {
-        characterizeBubble(speech);
-    };
-
-    // Public
-    var init = function () {
-        // Event listeners
-        initBinds();
-
-        // Characterization
-        initBubbles()
-    };
-
-    return {
-        init: init,
-        onKeyDown: onKeyDown,
-        response: response
-    };
-}
-
-var HomeworkCounterController = function (homeworkCounterElement) {
-    var homeworkCounter = Counter(homeworkCounterElement, 0);
-
-    var initBinds = function () {};
-
-    var onKeyDown = function() {
-        homeworkCounter.element.innerHTML += 1;
-    }
-
-    // Public
-    var init = function () {
-        // Event listeners
-        initBinds();
-    };
-
-    return {
-        init: init
-    };
-}
-
-var myApp = function () {
-    var bc = BubbleController({
-        bubbles: [
-            document.getElementsByTagName('speech')[0].getElementsByTagName('content')[0],
-            document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
-        ],
-        counters: [
-            document.getElementsByTagName('counters')[0].getElementsByTagName('charactercounter')[0],
-            document.getElementsByTagName('counters')[0].getElementsByTagName('incorrectcharactercounter')[0],
-        ]
-    });
-    var cc = HomeworkCounterController(
-        document.getElementsByTagName('counters')[0].getElementsByTagName('homeworkcounter')[0],
-    )
-    bc.response.element.addEventListener('keyup', function (e) {
-        bc.onKeyDown(e);
-    });
-
-    console.log(bc)
-    bc.init();
 }();
+var myApp = function () {
+    BubbleController();
+}();
+
+var a = {
+    foo: 'bar'
+};
+var b = {
+    foo: ''
+};
+
+b.foo = a.foo
+b.foo = 1;
+console.log(a.foo)
+console.log(b.foo)
