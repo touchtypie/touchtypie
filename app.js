@@ -106,7 +106,6 @@ var BubbleVirtue = function() {
 }
 var Bubble = function(default_value) {
     var value = default_value;
-    var characters = [];
     var charactersCounter = 0;
 
     var virtue = BubbleVirtue();
@@ -171,7 +170,6 @@ var Bubble = function(default_value) {
 
     return {
         value: value,
-        characters: characters,
         charactersCounter: charactersCounter,
         virtue: virtue,
         measureVirtue: measureVirtue,
@@ -216,9 +214,6 @@ var BubbleController = function () {
             // Set speech value
             _speech.value = _truth.value;
 
-            // Set speech characters
-            _speech.characters = _speech.value.split('');
-
             // Set speech counter
             _speech.charactersCounter = _speech.value.length;
 
@@ -229,7 +224,6 @@ var BubbleController = function () {
 
             if (State.debug) {
                 console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
-                console.log('[DOMContentLoaded] _speech.characters: ' + _speech.characters);
                 console.log('[DOMContentLoaded] _speech.charactersCounter: ' + _speech.charactersCounter);
             }
         }
@@ -246,9 +240,6 @@ var BubbleController = function () {
         function(event, _this, binding) {
             // Set value
             _this.valueSetter(binding.element[binding.attribute]);
-
-            // Set response characters
-            _response.characters = _response.value.split('');
 
             // Set response counter
             _response.charactersCounter = _response.value.length;
@@ -269,13 +260,10 @@ var BubbleController = function () {
 
             if (State.debug) {
                 console.log('[keyup] _truth.value: ' + _truth.value);
-                console.log('[keyup] _truth.characters: ' + _truth.characters);
                 console.log('[keyup] _truth.charactersCounter: ' + _truth.charactersCounter);
                 console.log('[keyup] _speech.value: ' + _speech.value);
-                console.log('[keyup] _speech.characters: ' + _speech.characters);
                 console.log('[keyup] _speech.charactersCounter: ' + _speech.charactersCounter);
                 console.log('[keyup] _response.value: ' + _response.value);
-                console.log('[keyup] _response.characters: ' + _response.characters);
                 console.log('[keyup] _response.charactersCounter: ' + _response.charactersCounter);
             }
         }
