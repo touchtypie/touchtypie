@@ -75,6 +75,7 @@ var BubbleVirtue = function() {
     var success = false;
     var completed = false;
     var result = {
+        characters_num: 0,
         errors_indices: [],
         errors_num: 0,
         errors_num_new: 0,
@@ -114,6 +115,7 @@ var Bubble = function(default_value) {
     var measureVirtue = function(truth) {
         var bubble = this;
 
+        var value_length_prev = virtue.result.characters_num;
         virtue.newleaf();
 
         if (bubble.value.length <= truth.value.length) {
@@ -121,7 +123,7 @@ var Bubble = function(default_value) {
                 if (bubble.value[i] !== truth.value[i]) {
                     // Invalid
                     virtue.result.errors_indices.push(i);
-                    if (i === bubble.value.length - 1) {
+                    if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
                         virtue.result.errors_num_new = 1;
                     }
                 }else {
@@ -134,6 +136,7 @@ var Bubble = function(default_value) {
 
             // Populate result
             virtue.success = virtue.result.errors_indices.length == 0 ? true : false;
+            virtue.result.characters_num = bubble.value.length;
             virtue.result.errors_num = virtue.result.errors_indices.length;
             virtue.result.errors_num_total += virtue.result.errors_num_new;
             if (bubble.value.length >= 0) {
