@@ -317,6 +317,7 @@ var BubbleController = function () {
             console.log('[keyup] _response.charactersCounter: ' + _response.charactersCounter);
         }
     )
+    // Data binding - Component: counters
     new Binding({
         object: _response,
         property: "charactersCounter"
@@ -324,7 +325,6 @@ var BubbleController = function () {
         document.getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
-
     new Binding({
         object: _truth,
         property: "charactersCounter"
@@ -332,20 +332,25 @@ var BubbleController = function () {
         document.getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
-
-    // Data binding - Component: counters
+    new Binding({
+        object: _response.virtue.result,
+        property: "errors_num"
+    }).addBinding(
+        document.getElementsByTagName('errorscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
     new Binding({
         object: _response.virtue.result,
         property: "errors_num_total"
     }).addBinding(
-        document.getElementsByTagName('incorrectcharacterscounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('totalerrorscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _virtues,
         property: "count"
     }).addBinding(
-        document.getElementsByTagName('homeworkcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('totalhomeworkcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 

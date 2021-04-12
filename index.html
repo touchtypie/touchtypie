@@ -44,20 +44,26 @@
         <textarea placeholder="BEGIN"></textarea>
       </response>
 
-      <counters>
+      <homeworkcounters>
         <characterscounter>
           <label>Typed:</label>
-          <span><value></value>/<total></total></span>
+          <span><value></value>&nbsp;/&nbsp;<total></total></span>
         </characterscounter>
-        <incorrectcharacterscounter>
+        <errorscounter>
+          <label>Errors:</label>
+          <span><value></value></span>
+        </errorscounter>
+      </homeworkcounters>
+      <globalcounters>
+        <totalerrorscounter>
           <label>Total errors:</label>
           <span><value></value></span>
-        </incorrectcharacterscounter>
-        <homeworkcounter>
-          <label>Homework:</label>
+        </totalerrorscounter>
+        <totalhomeworkcounter>
+          <label>Total Homework:</label>
           <span><value></value></span>
-        </homeworkcounter>
-      </counters>
+        </totalhomeworkcounter>
+      </globalcounters>
 
     </main>
   </wrapper>

@@ -131,7 +131,7 @@ response textarea {
     /* border: none; */
 }
 
-counters characterscounter {
+homeworkcounters characterscounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1vw;
@@ -140,7 +140,7 @@ counters characterscounter {
     font-size: 1vw;
     text-align: center;
 }
-counters incorrectcharacterscounter {
+homeworkcounters errorscounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1vw;
@@ -149,7 +149,16 @@ counters incorrectcharacterscounter {
     font-size: 1vw;
     text-align: center;
 }
-counters homeworkcounter {
+globalcounters totalerrorscounter {
+    display: inline-block;
+    border-radius: 1vw;
+    padding: 1vw;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+globalcounters totalhomeworkcounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1vw;
