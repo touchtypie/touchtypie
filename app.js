@@ -223,15 +223,6 @@ var BubbleController = function () {
             var virtue = _response.measureVirtue(_truth);
             // Set speech value
             _speech.value = virtue.result.value;
-            if (virtue.completed) {
-                // Set homework value
-                _virtues.values.push[virtue];
-                _virtues.count += 1;
-
-                // Next homework
-                _response.virtue.newlife();
-                _truth.next();
-            }
 
             if (State.debug) {
                 console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
@@ -240,8 +231,6 @@ var BubbleController = function () {
             }
         }
     );
-
-    var a = 1;
 
     // Data binding - Component: response
     new Binding({
@@ -265,6 +254,15 @@ var BubbleController = function () {
             var virtue = _response.measureVirtue(_truth);
             // Set speech value
             _speech.value = virtue.result.value;
+            if (virtue.completed) {
+                // Set homework value
+                _virtues.values.push[virtue];
+                _virtues.count += 1;
+
+                // Next homework
+                _response.virtue.newlife();
+                _truth.next();
+            }
 
             if (State.debug) {
                 console.log('[keyup] _truth.value: ' + _truth.value);
