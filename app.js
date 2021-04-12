@@ -129,9 +129,7 @@ var Bubble = function(default_value) {
 
         virtue.newleaf();
 
-        // if (response.value.length == 0) {
-        //     // Incomplete
-        // }
+
         if (bubble.value.length <= truth.value.length) {
             for (var i = 0; i < bubble.value.length; i++) {
                 if (bubble.value[i] !== truth.value[i]) {
@@ -331,18 +329,6 @@ var BubbleController = function () {
         document.getElementsByTagName('totalhomeworkcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
-
-    // Private
-    // var characterizeBubble = function (bubble) {
-    //     // var domElements = [];
-    //     bubble.element.innerHTML = '';
-    //     for (var i = 0; i < bubble.props.characters.length; i++) {
-    //         characterElement = document.createElement('span');
-    //         characterElement.innerHTML = Helpers.htmlEntities(bubble.props.characters[i]);
-    //         // domElements.push(characterElement);
-    //         bubble.element.appendChild(characterElement);
-    //     }
-    // };
 }
 
 // App state
@@ -366,15 +352,3 @@ var State = function() {
 var myApp = function () {
     BubbleController();
 }();
-
-var a = {
-    foo: 'bar'
-};
-var b = {
-    foo: ''
-};
-
-b.foo = a.foo
-b.foo = 1;
-console.log(a.foo)
-console.log(b.foo)
