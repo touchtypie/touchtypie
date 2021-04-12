@@ -136,13 +136,13 @@ var Bubble = function(default_value) {
                     if (i === bubble.value.length - 1) {
                         virtue.result.errors_num_new = 1;
                     }
-                } else {
+                }else {
                     // Valid
                 }
             }
-            for (var i = bubble.value.length; i < truth.value.length; i++) {
-                // Valid
-            }
+            // for (var i = bubble.value.length; i < truth.value.length; i++) {
+            //     // Valid
+            // }
 
             // Populate result
             virtue.success = virtue.result.errors_indices.length == 0 ? true : false;
