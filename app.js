@@ -254,8 +254,8 @@ var BubbleController = function () {
                 _virtues.count += 1;
 
                 // Next homework
-                _response.virtue.newlife();
-                _truth.next();
+                // _response.virtue.newlife();
+                // _truth.next();
             }
 
             if (State.debug) {
