@@ -122,13 +122,11 @@ var Bubble = function(default_value) {
 
     var virtue = BubbleVirtue();
 
-    // If valid, returns original truth string if valid.
-    // Else returns a modified truth string with incorrect characters in elements e.g. <span class="invalid">X</span>
+    // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
     var measureVirtue = function(truth) {
         var bubble = this;
 
         virtue.newleaf();
-
 
         if (bubble.value.length <= truth.value.length) {
             for (var i = 0; i < bubble.value.length; i++) {
