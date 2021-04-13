@@ -145,34 +145,57 @@ progressbar characterscounter {
 }
 
 homeworkcounters {
+    display: inline-block;
+    vertical-align: top;
+    width: 33%;
 }
+homeworkcounters heading {
+    margin: 2vw;
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+homeworkcounters characterscounter,
 homeworkcounters hitcounter,
 homeworkcounters hitpercentagecounter,
 homeworkcounters misscounter,
 homeworkcounters misspercentagecounter {
-    display: inline-block;
+    display: block;
     border-radius: 1vw;
-    padding: 1.5vw;
+    /* padding: 1.5vw; */
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
     text-align: center;
 }
 globalcounters {
+    display: inline-block;
+    vertical-align: top;
+    width: 33%;
+}
+globalcounters heading {
+    margin: 2vw;
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
 }
 globalcounters misstotalcounter {
-    display: inline-block;
+    display: block;
     border-radius: 1vw;
-    padding: 1.5vw;
+    /* padding: 1.5vw; */
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
     text-align: center;
 }
 globalcounters homeworktotalcounter {
-    display: inline-block;
+    display: block;
     border-radius: 1vw;
-    padding: 1.5vw;
+    /* padding: 1.5vw; */
     color: #fff;
     font-family: monospace;
     font-size: 1vw;
