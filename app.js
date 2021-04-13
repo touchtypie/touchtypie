@@ -77,23 +77,23 @@ var BubbleVirtue = function() {
     var result = {
         value: '',
         value_length: 0,
-        errors_indices: [],
-        errors_num: 0,
-        errors_num_new: 0,
-        errors_num_total: 0,
+        miss_indices: [],
+        miss_num: 0,
+        miss_num_new: 0,
+        miss_num_total: 0,
     };
 
     var newleaf = function() {
         this.success = false,
         this.completed = false,
-        this.result.errors_indices = [],
-        this.result.errors_num = 0,
-        this.result.errors_num_new = 0,
+        this.result.miss_indices = [],
+        this.result.miss_num = 0,
+        this.result.miss_num_new = 0,
         this.result.value = '';
     };
     var newlife = function() {
         newleaf();
-        this.result.errors_num_total = 0;
+        this.result.miss_num_total = 0;
     }
 
     return {
@@ -121,9 +121,9 @@ var Bubble = function(default_value) {
             for (var i = 0; i < bubble.value.length; i++) {
                 if (bubble.value[i] !== truth.value[i]) {
                     // Invalid
-                    virtue.result.errors_indices.push(i);
+                    virtue.result.miss_indices.push(i);
                     if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
-                        virtue.result.errors_num_new = 1;
+                        virtue.result.miss_num_new = 1;
                     }
                 }else {
                     // Valid
@@ -134,13 +134,13 @@ var Bubble = function(default_value) {
             // }
 
             // Populate result
-            virtue.success = virtue.result.errors_indices.length == 0 ? true : false;
+            virtue.success = virtue.result.miss_indices.length == 0 ? true : false;
             if (bubble.value.length >= 0) {
                 var characters = truth.value.split('');
                 for (var i = 0; i < characters.length; i++) {
                     if (i === bubble.value.length) {
                         characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                    }else if (virtue.result.errors_indices.includes(i)) {
+                    }else if (virtue.result.miss_indices.includes(i)) {
                         characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
                     }else {
                         characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
@@ -149,8 +149,8 @@ var Bubble = function(default_value) {
                 virtue.result.value = characters.join('')
             }
             virtue.result.value_length = bubble.value.length;
-            virtue.result.errors_num = virtue.result.errors_indices.length;
-            virtue.result.errors_num_total += virtue.result.errors_num_new;
+            virtue.result.miss_num = virtue.result.miss_indices.length;
+            virtue.result.miss_num_total += virtue.result.miss_num_new;
         }
 
         if (virtue.success && bubble.value.length == truth.value.length) {
@@ -160,9 +160,9 @@ var Bubble = function(default_value) {
         if (State.debug) {
             console.log('[measureVirtue] result.success: ' + virtue.success);
             console.log('[measureVirtue] result.completed: ' + virtue.completed);
-            console.log('[measureVirtue] virtue.result.errors_indices: ' + virtue.result.errors_indices);
-            console.log('[measureVirtue] virtue.result.errors_num: ' + virtue.result.errors_num);
-            console.log('[measureVirtue] virtue.result.errors_num_total: ' + virtue.result.errors_num_total);
+            console.log('[measureVirtue] virtue.result.miss_indices: ' + virtue.result.miss_indices);
+            console.log('[measureVirtue] virtue.result.miss_num: ' + virtue.result.miss_num);
+            console.log('[measureVirtue] virtue.result.miss_num_total: ' + virtue.result.miss_num_total);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
         }
         return virtue;
@@ -285,23 +285,23 @@ var BubbleController = function () {
     );
     new Binding({
         object: _response.virtue.result,
-        property: "errors_num"
+        property: "miss_num"
     }).addBinding(
-        document.getElementsByTagName('errorscounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _response.virtue.result,
-        property: "errors_num_total"
+        property: "miss_num_total"
     }).addBinding(
-        document.getElementsByTagName('totalerrorscounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('misstotalcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _virtues,
         property: "count"
     }).addBinding(
-        document.getElementsByTagName('totalhomeworkcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 }

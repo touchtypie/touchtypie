@@ -146,7 +146,7 @@ progressbar characterscounter {
 
 homeworkcounters {
 }
-homeworkcounters errorscounter {
+homeworkcounters misscounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1.5vw;
@@ -157,7 +157,7 @@ homeworkcounters errorscounter {
 }
 globalcounters {
 }
-globalcounters totalerrorscounter {
+globalcounters misstotalcounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1.5vw;
@@ -166,7 +166,7 @@ globalcounters totalerrorscounter {
     font-size: 1vw;
     text-align: center;
 }
-globalcounters totalhomeworkcounter {
+globalcounters homeworktotalcounter {
     display: inline-block;
     border-radius: 1vw;
     padding: 1.5vw;
