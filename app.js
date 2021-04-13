@@ -78,6 +78,7 @@ var BubbleVirtue = function() {
         value: '',
         value_length: 0,
         shot_num_total: 0,
+        amend_num_total: 0,
         hits_indices: [],
         hit_num: 0,
         hit_num_percentage: 0.00,
@@ -103,6 +104,7 @@ var BubbleVirtue = function() {
     var newlife = function() {
         newleaf();
         this.result.shots_num_total = 0;
+        this.result.amend_num_total = 0;
     }
 
     return {
@@ -120,7 +122,7 @@ var Bubble = function(default_value) {
     var virtue = BubbleVirtue();
 
     // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
-    var measureVirtue = function(truth) {
+    var measureVirtue = function(truth, amend) {
         var bubble = this;
 
         var value_length_prev = virtue.result.value_length;
@@ -162,6 +164,7 @@ var Bubble = function(default_value) {
                 virtue.result.value = characters.join('')
             }
             virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
+            virtue.result.amend_num_total += amend === true ? 1 : 0;
             virtue.result.value_length = bubble.value.length;
             virtue.result.hit_num = virtue.result.hits_indices.length;
             virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
@@ -253,6 +256,9 @@ var BubbleController = function () {
         'value',    // textarea
         "keyup",
         function(event, _this, binding) {
+            var key = event.keyCode || event.charCode;
+            var amend = ( key == 8 || key == 46 ) ? true : false;
+
             // Set value
             _this.valueSetter(binding.element[binding.attribute]);
 
@@ -260,7 +266,7 @@ var BubbleController = function () {
             _response.charactersCounter = _response.value.length;
 
             // measureVirtue response
-            var virtue = _response.measureVirtue(_truth);
+            var virtue = _response.measureVirtue(_truth, amend);
             // Set speech value
             _speech.value = virtue.result.value;
             _student.hit_num_total += virtue.result.hit_num_new;
@@ -307,6 +313,13 @@ var BubbleController = function () {
         property: "shot_num_total"
     }).addBinding(
         document.getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "amend_num_total"
+    }).addBinding(
+        document.getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
