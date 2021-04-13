@@ -79,8 +79,10 @@ var BubbleVirtue = function() {
         value_length: 0,
         hits_indices: [],
         hit_num: 0,
+        hit_num_percentage: 0.00,
         miss_indices: [],
         miss_num: 0,
+        miss_num_percentage: 0.00,
         miss_num_new: 0,
         miss_num_total: 0,
     };
@@ -90,8 +92,10 @@ var BubbleVirtue = function() {
         this.completed = false,
         this.result.hits_indices = [],
         this.result.hit_num = 0,
+        this.result.hit_num_percentage = 0.00,
         this.result.miss_indices = [],
         this.result.miss_num = 0,
+        this.result.miss_num_percentage = 0.00,
         this.result.miss_num_new = 0,
         this.result.value = '';
     };
@@ -155,7 +159,9 @@ var Bubble = function(default_value) {
             }
             virtue.result.value_length = bubble.value.length;
             virtue.result.hit_num = virtue.result.hits_indices.length;
+            virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
             virtue.result.miss_num = virtue.result.miss_indices.length;
+            virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
             virtue.result.miss_num_total += virtue.result.miss_num_new;
         }
 
@@ -298,9 +304,23 @@ var BubbleController = function () {
     );
     new Binding({
         object: _response.virtue.result,
+        property: "hit_num_percentage"
+    }).addBinding(
+        document.getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
         property: "miss_num"
     }).addBinding(
         document.getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "miss_num_percentage"
+    }).addBinding(
+        document.getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
