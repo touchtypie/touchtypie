@@ -84,7 +84,6 @@ var BubbleVirtue = function() {
         miss_num: 0,
         miss_num_percentage: 0.00,
         miss_num_new: 0,
-        miss_num_total: 0,
     };
 
     var newleaf = function() {
@@ -102,7 +101,6 @@ var BubbleVirtue = function() {
     };
     var newlife = function() {
         newleaf();
-        this.result.miss_num_total = 0;
     }
 
     return {
@@ -166,7 +164,6 @@ var Bubble = function(default_value) {
             virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
             virtue.result.miss_num = virtue.result.miss_indices.length;
             virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
-            virtue.result.miss_num_total += virtue.result.miss_num_new;
         }
 
         if (virtue.success && bubble.value.length == truth.value.length) {
@@ -178,7 +175,6 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] result.completed: ' + virtue.completed);
             console.log('[measureVirtue] virtue.result.miss_indices: ' + virtue.result.miss_indices);
             console.log('[measureVirtue] virtue.result.miss_num: ' + virtue.result.miss_num);
-            console.log('[measureVirtue] virtue.result.miss_num_total: ' + virtue.result.miss_num_total);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
         }
         return virtue;
@@ -265,6 +261,7 @@ var BubbleController = function () {
             // Set speech value
             _speech.value = virtue.result.value;
             _student.hit_num_total += virtue.result.hit_num_new;
+            _student.miss_num_total += virtue.result.miss_num_new;
             if (virtue.completed) {
                 // Set hits value
 
@@ -339,7 +336,7 @@ var BubbleController = function () {
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _student,
         property: "miss_num_total"
     }).addBinding(
         document.getElementsByTagName('misstotalcounter')[0].getElementsByTagName('value')[0],
@@ -366,6 +363,7 @@ var State = function() {
                 count: 0
             },
             hit_num_total: 0,
+            miss_num_total: 0,
             virtues: {
                 count: 0,
                 values: []
