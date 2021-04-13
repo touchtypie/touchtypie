@@ -146,6 +146,7 @@ progressbar characterscounter {
 
 homeworkcounters {
 }
+homeworkcounters hitcounter,
 homeworkcounters misscounter {
     display: inline-block;
     border-radius: 1vw;

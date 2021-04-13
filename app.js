@@ -77,6 +77,8 @@ var BubbleVirtue = function() {
     var result = {
         value: '',
         value_length: 0,
+        hits_indices: [],
+        hit_num: 0,
         miss_indices: [],
         miss_num: 0,
         miss_num_new: 0,
@@ -86,6 +88,8 @@ var BubbleVirtue = function() {
     var newleaf = function() {
         this.success = false,
         this.completed = false,
+        this.result.hits_indices = [],
+        this.result.hit_num = 0,
         this.result.miss_indices = [],
         this.result.miss_num = 0,
         this.result.miss_num_new = 0,
@@ -127,6 +131,7 @@ var Bubble = function(default_value) {
                     }
                 }else {
                     // Valid
+                    virtue.result.hits_indices.push(i);
                 }
             }
             // for (var i = bubble.value.length; i < truth.value.length; i++) {
@@ -149,6 +154,7 @@ var Bubble = function(default_value) {
                 virtue.result.value = characters.join('')
             }
             virtue.result.value_length = bubble.value.length;
+            virtue.result.hit_num = virtue.result.hits_indices.length;
             virtue.result.miss_num = virtue.result.miss_indices.length;
             virtue.result.miss_num_total += virtue.result.miss_num_new;
         }
@@ -281,6 +287,13 @@ var BubbleController = function () {
         property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "hit_num"
+    }).addBinding(
+        document.getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
