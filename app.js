@@ -93,6 +93,7 @@ var BubbleVirtue = function() {
         this.result.hits_indices = [],
         this.result.hit_num = 0,
         this.result.hit_num_percentage = 0.00,
+        this.result.hit_num_new = 0,
         this.result.miss_indices = [],
         this.result.miss_num = 0,
         this.result.miss_num_percentage = 0.00,
@@ -136,6 +137,9 @@ var Bubble = function(default_value) {
                 }else {
                     // Valid
                     virtue.result.hits_indices.push(i);
+                    if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                        virtue.result.hit_num_new = 1;
+                    }
                 }
             }
             // for (var i = bubble.value.length; i < truth.value.length; i++) {
@@ -190,7 +194,7 @@ var Bubble = function(default_value) {
 
 // Controllers
 var BubbleController = function () {
-    var _virtues = State.student.virtues;
+    var _student = State.student;
     var _truth = State.truth;
     var _speech = State.speech;
     var _response = State.response;
@@ -260,10 +264,13 @@ var BubbleController = function () {
             var virtue = _response.measureVirtue(_truth);
             // Set speech value
             _speech.value = virtue.result.value;
+            _student.hit_num_total += virtue.result.hit_num_new;
             if (virtue.completed) {
+                // Set hits value
+
                 // Set homework value
-                _virtues.values.push[virtue];
-                _virtues.count += 1;
+                _student.virtues.values.push[virtue];
+                _student.virtues.count += 1;
 
                 // Next homework
                 // _response.virtue.newlife();
@@ -323,6 +330,14 @@ var BubbleController = function () {
         document.getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
+
+    new Binding({
+        object: _student,
+        property: "hit_num_total"
+    }).addBinding(
+        document.getElementsByTagName('hittotalcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
     new Binding({
         object: _response.virtue.result,
         property: "miss_num_total"
@@ -331,7 +346,7 @@ var BubbleController = function () {
         'innerHTML'
     );
     new Binding({
-        object: _virtues,
+        object: _student.virtues,
         property: "count"
     }).addBinding(
         document.getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('value')[0],
@@ -350,6 +365,7 @@ var State = function() {
             homework: {
                 count: 0
             },
+            hit_num_total: 0,
             virtues: {
                 count: 0,
                 values: []

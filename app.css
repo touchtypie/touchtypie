@@ -183,17 +183,10 @@ globalcounters heading {
     font-size: 1vw;
     text-align: center;
 }
-globalcounters misstotalcounter {
-    display: block;
-    border-radius: 1vw;
-    /* padding: 1.5vw; */
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
+globalcounters hittotalcounter,
+globalcounters misstotalcounter,
 globalcounters homeworktotalcounter {
-    display: block;
+        display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
     color: #fff;
