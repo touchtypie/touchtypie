@@ -164,7 +164,7 @@ var Bubble = function(default_value) {
                 virtue.result.value = characters.join('')
             }
             virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
-            virtue.result.amend_num_total += amend === true ? 1 : 0;
+            virtue.result.amend_num_total += bubble.value.length < value_length_prev && amend === true ? 1 : 0;
             virtue.result.value_length = bubble.value.length;
             virtue.result.hit_num = virtue.result.hits_indices.length;
             virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
