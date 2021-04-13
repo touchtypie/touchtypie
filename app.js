@@ -77,6 +77,7 @@ var BubbleVirtue = function() {
     var result = {
         value: '',
         value_length: 0,
+        shot_num_total: 0,
         hits_indices: [],
         hit_num: 0,
         hit_num_percentage: 0.00,
@@ -101,6 +102,7 @@ var BubbleVirtue = function() {
     };
     var newlife = function() {
         newleaf();
+        this.result.shots_num_total = 0;
     }
 
     return {
@@ -159,6 +161,7 @@ var Bubble = function(default_value) {
                 }
                 virtue.result.value = characters.join('')
             }
+            virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
             virtue.result.value_length = bubble.value.length;
             virtue.result.hit_num = virtue.result.hits_indices.length;
             virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
@@ -297,6 +300,13 @@ var BubbleController = function () {
         property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "shot_num_total"
+    }).addBinding(
+        document.getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({

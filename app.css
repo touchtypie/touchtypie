@@ -158,6 +158,7 @@ homeworkcounters heading {
     text-align: center;
 }
 homeworkcounters characterscounter,
+homeworkcounters shotcounter,
 homeworkcounters hitcounter,
 homeworkcounters hitpercentagecounter,
 homeworkcounters misscounter,
