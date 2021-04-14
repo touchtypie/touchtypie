@@ -300,7 +300,7 @@ var BubbleController = function () {
             }
         }
     )
-    // Data binding - Component: unitprogresscounters
+    // Data binding - Component: unitprogress
     new Binding({
         object: _response,
         property: "charactersCounter"

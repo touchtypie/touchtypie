@@ -144,12 +144,12 @@ progressbar characterscounter {
     text-align: center;
 }
 
-unitprogresscounters {
+unitprogress {
     display: inline-block;
     vertical-align: top;
     width: 20%;
 }
-unitprogresscounters heading {
+unitprogress heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -157,11 +157,11 @@ unitprogresscounters heading {
     font-size: 1vw;
     text-align: center;
 }
-unitprogresscounters characterscounter,
-unitprogresscounters hitcounter,
-unitprogresscounters hitpercentagecounter,
-unitprogresscounters misscounter,
-unitprogresscounters misspercentagecounter {
+unitprogress characterscounter,
+unitprogress hitcounter,
+unitprogress hitpercentagecounter,
+unitprogress misscounter,
+unitprogress misspercentagecounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
