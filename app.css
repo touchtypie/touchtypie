@@ -210,9 +210,9 @@ globaloverall heading {
     font-size: 1vw;
     text-align: center;
 }
-globaloverall shottotalcounter,
-globaloverall hittotalcounter,
-globaloverall misstotalcounter,
+globaloverall shotcounter,
+globaloverall hitcounter,
+globaloverall misscounter,
 globaloverall homeworktotalcounter {
         display: block;
     border-radius: 1vw;

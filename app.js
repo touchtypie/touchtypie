@@ -389,21 +389,21 @@ var BubbleController = function () {
         object: _student,
         property: "shot_num_total"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('shottotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _student,
         property: "hit_num_total"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hittotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _student,
         property: "miss_num_total"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misstotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
