@@ -93,16 +93,16 @@ var BubbleVirtue = function() {
     };
 
     var newleaf = function() {
-        this.success = false,
-        this.completed = false,
-        this.result.hits_indices = [],
-        this.result.hit_num = 0,
-        this.result.hit_num_percentage = 0.00,
-        this.result.hit_num_new = 0,
-        this.result.miss_indices = [],
-        this.result.miss_num = 0,
-        this.result.miss_num_percentage = 0.00,
-        this.result.miss_num_new = 0,
+        this.success = false;
+        this.completed = false;
+        this.result.hits_indices = [];
+        this.result.hit_num = 0;
+        this.result.hit_num_percentage = 0.00;
+        this.result.hit_num_new = 0;
+        this.result.miss_indices = [];
+        this.result.miss_num = 0;
+        this.result.miss_num_percentage = 0.00;
+        this.result.miss_num_new = 0;
         this.result.value = '';
     };
     var newlife = function() {
