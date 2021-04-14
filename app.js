@@ -172,14 +172,15 @@ var Bubble = function(default_value) {
                 }
                 virtue.result.value = characters.join('')
             }
-            virtue.result.hit_num_total += virtue.result.hit_num_new;
-            virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
-            virtue.result.amend_num_total += bubble.value.length < value_length_prev && amend === true ? 1 : 0;
             virtue.result.value_length = bubble.value.length;
             virtue.result.hit_num = virtue.result.hits_indices.length;
             virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
             virtue.result.miss_num = virtue.result.miss_indices.length;
             virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
+
+            virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
+            virtue.result.hit_num_total += virtue.result.hit_num_new;
+            virtue.result.amend_num_total += bubble.value.length < value_length_prev && amend === true ? 1 : 0;
         }
 
         if (virtue.success && bubble.value.length == truth.value.length) {
