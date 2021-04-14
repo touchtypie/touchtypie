@@ -305,42 +305,42 @@ var BubbleController = function () {
         object: _response,
         property: "charactersCounter"
     }).addBinding(
-        document.getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _truth,
         property: "charactersCounter"
     }).addBinding(
-        document.getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
     new Binding({
         object: _response.virtue.result,
         property: "hit_num"
     }).addBinding(
-        document.getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _response.virtue.result,
         property: "hit_num_percentage"
     }).addBinding(
-        document.getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _response.virtue.result,
         property: "miss_num"
     }).addBinding(
-        document.getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _response.virtue.result,
         property: "miss_num_percentage"
     }).addBinding(
-        document.getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 
@@ -349,14 +349,14 @@ var BubbleController = function () {
         object: _response.virtue.result,
         property: "shot_num_total"
     }).addBinding(
-        document.getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _response.virtue.result,
         property: "amend_num_total"
     }).addBinding(
-        document.getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 
@@ -365,28 +365,28 @@ var BubbleController = function () {
         object: _student,
         property: "hit_num_total"
     }).addBinding(
-        document.getElementsByTagName('hittotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hittotalcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _student,
         property: "miss_num_total"
     }).addBinding(
-        document.getElementsByTagName('misstotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misstotalcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _student.virtues,
         property: "count"
     }).addBinding(
-        document.getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _student.homework,
         property: "num_total"
     }).addBinding(
-        document.getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('total')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
 }
