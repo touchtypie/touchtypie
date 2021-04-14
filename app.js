@@ -79,6 +79,7 @@ var BubbleVirtue = function() {
         value_length: 0,
 
         // Progress
+        shot_num_new: 0,
         hits_indices: [],
         hit_num: 0,
         hit_num_new: 0,
@@ -140,6 +141,7 @@ var Bubble = function(default_value) {
         virtue.newleaf();
 
         if (bubble.value.length <= truth.value.length) {
+            virtue.result.shot_num_new = 1;
             for (var i = 0; i < bubble.value.length; i++) {
                 if (bubble.value[i] !== truth.value[i]) {
                     // Invalid
@@ -283,6 +285,7 @@ var BubbleController = function () {
             var virtue = _response.measureVirtue(_truth, amend);
             // Set speech value
             _speech.value = virtue.result.value;
+            _student.shot_num_total += virtue.result.shot_num_new;
             _student.hit_num_total += virtue.result.hit_num_new;
             _student.miss_num_total += virtue.result.miss_num_new;
             if (virtue.completed) {
@@ -384,6 +387,13 @@ var BubbleController = function () {
     // Data binding - Component: globaloverall
     new Binding({
         object: _student,
+        property: "shot_num_total"
+    }).addBinding(
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('shottotalcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _student,
         property: "hit_num_total"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hittotalcounter')[0].getElementsByTagName('value')[0],
@@ -424,6 +434,7 @@ var State = function() {
                 count: 0,
                 num_total: 0
             },
+            shot_num_total: 0,
             hit_num_total: 0,
             miss_num_total: 0,
             virtues: {
