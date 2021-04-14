@@ -186,6 +186,7 @@ unitoverall heading {
 }
 unitoverall shotcounter,
 unitoverall hitcounter,
+unitoverall misscounter,
 unitoverall amendcounter {
     display: block;
     border-radius: 1vw;
