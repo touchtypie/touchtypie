@@ -144,12 +144,12 @@ progressbar characterscounter {
     text-align: center;
 }
 
-homeworkcounters {
+unitprogresscounters {
     display: inline-block;
     vertical-align: top;
     width: 33%;
 }
-homeworkcounters heading {
+unitprogresscounters heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -157,13 +157,13 @@ homeworkcounters heading {
     font-size: 1vw;
     text-align: center;
 }
-homeworkcounters characterscounter,
-homeworkcounters shotcounter,
-homeworkcounters amendcounter,
-homeworkcounters hitcounter,
-homeworkcounters hitpercentagecounter,
-homeworkcounters misscounter,
-homeworkcounters misspercentagecounter {
+unitprogresscounters characterscounter,
+unitprogresscounters shotcounter,
+unitprogresscounters amendcounter,
+unitprogresscounters hitcounter,
+unitprogresscounters hitpercentagecounter,
+unitprogresscounters misscounter,
+unitprogresscounters misspercentagecounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
