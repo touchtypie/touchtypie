@@ -81,11 +81,12 @@ var BubbleVirtue = function() {
         // Progress
         hits_indices: [],
         hit_num: 0,
+        hit_num_new: 0,
         hit_num_percentage: 0.00,
         miss_indices: [],
         miss_num: 0,
-        miss_num_percentage: 0.00,
         miss_num_new: 0,
+        miss_num_percentage: 0.00,
 
         // Overall
         shot_num_total: 0,
@@ -100,12 +101,12 @@ var BubbleVirtue = function() {
 
         this.result.hits_indices = [];
         this.result.hit_num = 0;
-        this.result.hit_num_percentage = 0.00;
         this.result.hit_num_new = 0;
+        this.result.hit_num_percentage = 0.00;
         this.result.miss_indices = [];
         this.result.miss_num = 0;
-        this.result.miss_num_percentage = 0.00;
         this.result.miss_num_new = 0;
+        this.result.miss_num_percentage = 0.00;
     };
     var newlife = function() {
         newleaf();
