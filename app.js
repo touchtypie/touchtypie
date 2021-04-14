@@ -77,8 +77,8 @@ var BubbleVirtue = function() {
     var result = {
         value: '',
         value_length: 0,
-        shot_num_total: 0,
-        amend_num_total: 0,
+
+        // Progress
         hits_indices: [],
         hit_num: 0,
         hit_num_percentage: 0.00,
@@ -86,6 +86,10 @@ var BubbleVirtue = function() {
         miss_num: 0,
         miss_num_percentage: 0.00,
         miss_num_new: 0,
+
+        // Overall
+        shot_num_total: 0,
+        amend_num_total: 0,
     };
 
     var newleaf = function() {
