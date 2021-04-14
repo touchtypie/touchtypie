@@ -293,7 +293,7 @@ var BubbleController = function () {
             }
         }
     )
-    // Data binding - Component: counters
+    // Data binding - Component: unitprogresscounters
     new Binding({
         object: _response,
         property: "charactersCounter"
@@ -306,20 +306,6 @@ var BubbleController = function () {
         property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _response.virtue.result,
-        property: "shot_num_total"
-    }).addBinding(
-        document.getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _response.virtue.result,
-        property: "amend_num_total"
-    }).addBinding(
-        document.getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
@@ -348,6 +334,22 @@ var BubbleController = function () {
         property: "miss_num_percentage"
     }).addBinding(
         document.getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+
+    // Data binding - Component: unitoverallounters
+    new Binding({
+        object: _response.virtue.result,
+        property: "shot_num_total"
+    }).addBinding(
+        document.getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "amend_num_total"
+    }).addBinding(
+        document.getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 

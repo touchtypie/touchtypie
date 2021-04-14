@@ -147,7 +147,7 @@ progressbar characterscounter {
 unitprogresscounters {
     display: inline-block;
     vertical-align: top;
-    width: 33%;
+    width: 20%;
 }
 unitprogresscounters heading {
     margin: 2vw;
@@ -158,8 +158,6 @@ unitprogresscounters heading {
     text-align: center;
 }
 unitprogresscounters characterscounter,
-unitprogresscounters shotcounter,
-unitprogresscounters amendcounter,
 unitprogresscounters hitcounter,
 unitprogresscounters hitpercentagecounter,
 unitprogresscounters misscounter,
@@ -172,10 +170,35 @@ unitprogresscounters misspercentagecounter {
     font-size: 1vw;
     text-align: center;
 }
+
+unitoverallounters {
+    display: inline-block;
+    vertical-align: top;
+    width: 20%;
+}
+unitoverallounters heading {
+    margin: 2vw;
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+unitoverallounters shotcounter,
+unitoverallounters amendcounter {
+    display: block;
+    border-radius: 1vw;
+    /* padding: 1.5vw; */
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+
 globalcounters {
     display: inline-block;
     vertical-align: top;
-    width: 33%;
+    width: 20%;
 }
 globalcounters heading {
     margin: 2vw;
