@@ -185,6 +185,7 @@ unitoverall heading {
     text-align: center;
 }
 unitoverall shotcounter,
+unitoverall hitcounter,
 unitoverall amendcounter {
     display: block;
     border-radius: 1vw;
