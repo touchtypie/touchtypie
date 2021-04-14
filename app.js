@@ -353,6 +353,7 @@ var BubbleController = function () {
         'innerHTML'
     );
 
+    // Data binding - Component: globalcounters
     new Binding({
         object: _student,
         property: "hit_num_total"
