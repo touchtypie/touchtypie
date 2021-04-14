@@ -344,7 +344,7 @@ var BubbleController = function () {
         'innerHTML'
     );
 
-    // Data binding - Component: unitoverallcounters
+    // Data binding - Component: unitoverall
     new Binding({
         object: _response.virtue.result,
         property: "shot_num_total"

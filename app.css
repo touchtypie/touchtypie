@@ -171,12 +171,12 @@ unitprogress misspercentagecounter {
     text-align: center;
 }
 
-unitoverallcounters {
+unitoverall {
     display: inline-block;
     vertical-align: top;
     width: 20%;
 }
-unitoverallcounters heading {
+unitoverall heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -184,8 +184,8 @@ unitoverallcounters heading {
     font-size: 1vw;
     text-align: center;
 }
-unitoverallcounters shotcounter,
-unitoverallcounters amendcounter {
+unitoverall shotcounter,
+unitoverall amendcounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
