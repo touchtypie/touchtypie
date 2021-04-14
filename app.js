@@ -372,6 +372,13 @@ var BubbleController = function () {
         document.getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
+    new Binding({
+        object: _student.homework,
+        property: "num_total"
+    }).addBinding(
+        document.getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
 }
 
 // App state
@@ -383,7 +390,8 @@ var State = function() {
         response: Bubble(''),
         student: {
             homework: {
-                count: 0
+                count: 0,
+                num_total: 0
             },
             hit_num_total: 0,
             miss_num_total: 0,
