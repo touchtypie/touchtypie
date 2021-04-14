@@ -195,12 +195,12 @@ unitoverall amendcounter {
     text-align: center;
 }
 
-globalcounters {
+globaloverall {
     display: inline-block;
     vertical-align: top;
     width: 20%;
 }
-globalcounters heading {
+globaloverall heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -208,9 +208,9 @@ globalcounters heading {
     font-size: 1vw;
     text-align: center;
 }
-globalcounters hittotalcounter,
-globalcounters misstotalcounter,
-globalcounters homeworktotalcounter {
+globaloverall hittotalcounter,
+globaloverall misstotalcounter,
+globaloverall homeworktotalcounter {
         display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
