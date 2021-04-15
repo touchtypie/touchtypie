@@ -217,6 +217,7 @@ globaloverall shotcounter,
 globaloverall hitcounter,
 globaloverall hitpercentagecounter,
 globaloverall misscounter,
+globaloverall misspercentagecounter,
 globaloverall homeworkcounter {
         display: block;
     border-radius: 1vw;
