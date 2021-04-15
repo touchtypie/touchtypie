@@ -88,6 +88,7 @@ var BubbleVirtue = function() {
         miss_num: 0,
         miss_num_new: 0,
         miss_num_percentage: 0.00,
+        amend_num_new: 0,
 
         // Unit
         shot_num_total: 0,
@@ -148,6 +149,7 @@ var Bubble = function(default_value) {
 
         if (bubble.value.length <= truth.value.length) {
             virtue.result.shot_num_new = 1;
+            virtue.result.amend_num_new = bubble.value.length < value_length_prev && amend === true ? 1 : 0
             for (var i = 0; i < bubble.value.length; i++) {
                 if (bubble.value[i] !== truth.value[i]) {
                     // Invalid
@@ -163,6 +165,7 @@ var Bubble = function(default_value) {
                     }
                 }
             }
+
             // for (var i = bubble.value.length; i < truth.value.length; i++) {
             //     // Valid
             // }
@@ -193,7 +196,7 @@ var Bubble = function(default_value) {
             virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0.00 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
             virtue.result.miss_num_total += virtue.result.miss_num_new;
             virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
-            virtue.result.amend_num_total += bubble.value.length < value_length_prev && amend === true ? 1 : 0;
+            virtue.result.amend_num_total += virtue.result.amend_num_new;
             virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         }
 
