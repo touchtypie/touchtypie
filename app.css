@@ -215,6 +215,7 @@ globaloverall heading {
 }
 globaloverall shotcounter,
 globaloverall hitcounter,
+globaloverall hitpercentagecounter,
 globaloverall misscounter,
 globaloverall homeworkcounter {
         display: block;
