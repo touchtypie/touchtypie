@@ -186,6 +186,7 @@ unitoverall heading {
 }
 unitoverall shotcounter,
 unitoverall hitcounter,
+unitoverall hitpercentagecounter,
 unitoverall misscounter,
 unitoverall amendcounter {
     display: block;
