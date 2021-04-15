@@ -96,6 +96,7 @@ var BubbleVirtue = function() {
         miss_num_total: 0,
         miss_num_total_percentage: 0.00,
         amend_num_total: 0,
+        amend_num_total_percentage: 0.00,
     };
 
     var newleaf = function() {
@@ -121,6 +122,7 @@ var BubbleVirtue = function() {
         this.result.miss_num_total_percentage = 0.00;
         this.result.shots_num_total = 0;
         this.result.amend_num_total = 0;
+        this.result.amend_num_total_percentage = 0;
     }
 
     return {
@@ -192,6 +194,7 @@ var Bubble = function(default_value) {
             virtue.result.miss_num_total += virtue.result.miss_num_new;
             virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
             virtue.result.amend_num_total += bubble.value.length < value_length_prev && amend === true ? 1 : 0;
+            virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         }
 
         if (virtue.success && bubble.value.length == truth.value.length) {
@@ -401,6 +404,13 @@ var BubbleController = function () {
         property: "amend_num_total"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "amend_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 

@@ -189,6 +189,7 @@ unitoverall hitcounter,
 unitoverall hitpercentagecounter,
 unitoverall misscounter,
 unitoverall misspercentagecounter,
+unitoverall amendpercentagecounter,
 unitoverall amendcounter {
     display: block;
     border-radius: 1vw;
