@@ -89,10 +89,10 @@ var BubbleVirtue = function() {
         miss_num_new: 0,
         miss_num_percentage: 0.00,
 
-        // Overall
+        // Unit
+        shot_num_total: 0,
         hit_num_total: 0,
         miss_num_total: 0,
-        shot_num_total: 0,
         amend_num_total: 0,
     };
 
