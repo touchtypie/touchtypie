@@ -213,7 +213,7 @@ globaloverall heading {
 globaloverall shotcounter,
 globaloverall hitcounter,
 globaloverall misscounter,
-globaloverall homeworktotalcounter {
+globaloverall homeworkcounter {
         display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */

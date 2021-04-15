@@ -410,14 +410,14 @@ var BubbleController = function () {
         object: _student.virtues,
         property: "count"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworkcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _student.homework,
         property: "num_total"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworktotalcounter')[0].getElementsByTagName('total')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworkcounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
 }
