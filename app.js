@@ -221,6 +221,17 @@ var Bubble = function(default_value) {
         measureVirtue: measureVirtue,
     };
 };
+var StudentVirtue = function() {
+    return {
+        shot_num_total: 0,
+        hit_num_total: 0,
+        hit_num_total_percentage: 0.00,
+        miss_num_total: 0,
+        miss_num_total_percentage: 0.00,
+        amend_num_total: 0,
+        amend_num_total_percentage: 0.00
+    };
+};
 
 // Controllers
 var BubbleController = function () {
@@ -297,16 +308,15 @@ var BubbleController = function () {
             var virtue = _response.measureVirtue(_truth, amend);
             // Set speech value
             _speech.value = virtue.result.value;
-            _student.shot_num_total += virtue.result.shot_num_new;
-            _student.hit_num_total += virtue.result.hit_num_new;
-            _student.hit_num_total_percentage = _student.hit_num_total == 0 ? 0.00 : (_student.hit_num_total / _student.shot_num_total * 100).toFixed(2)
-            _student.miss_num_total += virtue.result.miss_num_new;
-            _student.miss_num_total_percentage = _student.miss_num_total == 0 ? 0.00 : (_student.miss_num_total / _student.shot_num_total * 100).toFixed(2)
-            _student.amend_num_total += virtue.result.amend_num_new;
-            _student.amend_num_total_percentage = _student.amend_num_total == 0 ? 0.00 : (_student.amend_num_total / _student.shot_num_total * 100).toFixed(2)
+            // Populate global virtues
+            _student.virtue.shot_num_total += virtue.result.shot_num_new;
+            _student.virtue.hit_num_total += virtue.result.hit_num_new;
+            _student.virtue.hit_num_total_percentage = _student.virtue.hit_num_total == 0 ? 0.00 : (_student.virtue.hit_num_total / _student.virtue.shot_num_total * 100).toFixed(2)
+            _student.virtue.miss_num_total += virtue.result.miss_num_new;
+            _student.virtue.miss_num_total_percentage = _student.virtue.miss_num_total == 0 ? 0.00 : (_student.virtue.miss_num_total / _student.virtue.shot_num_total * 100).toFixed(2)
+            _student.virtue.amend_num_total += virtue.result.amend_num_new;
+            _student.virtue.amend_num_total_percentage = _student.virtue.amend_num_total == 0 ? 0.00 : (_student.virtue.amend_num_total / _student.virtue.shot_num_total * 100).toFixed(2)
             if (virtue.completed) {
-                // Set hits value
-
                 // Set homework value
                 _student.virtues.values.push[virtue];
                 _student.virtues.count += 1;
@@ -423,49 +433,49 @@ var BubbleController = function () {
 
     // Data binding - Component: globaloverall
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "shot_num_total"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "hit_num_total"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "hit_num_total_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "miss_num_total"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "miss_num_total_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "amend_num_total"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student,
+        object: _student.virtue,
         property: "amend_num_total_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
@@ -499,13 +509,7 @@ var State = function() {
                 count: 0,
                 num_total: 0
             },
-            shot_num_total: 0,
-            hit_num_total: 0,
-            hit_num_total_percentage: 0.00,
-            miss_num_total: 0,
-            miss_num_total_percentage: 0.00,
-            amend_num_total: 0,
-            amend_num_total_percentage: 0.00,
+            virtue: StudentVirtue(),
             virtues: {
                 count: 0,
                 values: []
