@@ -232,6 +232,19 @@ var StudentVirtue = function() {
         amend_num_total_percentage: 0.00
     };
 };
+var Student = function() {
+    return {
+        homework: {
+            count: 0,
+            num_total: 0
+        },
+        virtue: StudentVirtue(),
+        virtues: {
+            count: 0,
+            values: []
+        }
+    }
+};
 
 // Controllers
 var BubbleController = function () {
@@ -504,17 +517,7 @@ var State = function() {
         truth: Bubble('Get some truth to type.'),
         speech: Bubble(''),
         response: Bubble(''),
-        student: {
-            homework: {
-                count: 0,
-                num_total: 0
-            },
-            virtue: StudentVirtue(),
-            virtues: {
-                count: 0,
-                values: []
-            }
-        }
+        student: Student()
     }
 }();
 var myApp = function () {
