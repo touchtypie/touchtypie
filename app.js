@@ -302,6 +302,7 @@ var BubbleController = function () {
             _student.hit_num_total_percentage = _student.hit_num_total == 0 ? 0.00 : (_student.hit_num_total / _student.shot_num_total * 100).toFixed(2)
             _student.miss_num_total += virtue.result.miss_num_new;
             _student.miss_num_total_percentage = _student.miss_num_total == 0 ? 0.00 : (_student.miss_num_total / _student.shot_num_total * 100).toFixed(2)
+            _student.amend_num_total += virtue.result.amend_num_new;
             if (virtue.completed) {
                 // Set hits value
 
@@ -456,6 +457,13 @@ var BubbleController = function () {
         'innerHTML'
     );
     new Binding({
+        object: _student,
+        property: "amend_num_total"
+    }).addBinding(
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
         object: _student.virtues,
         property: "count"
     }).addBinding(
@@ -488,6 +496,7 @@ var State = function() {
             hit_num_total_percentage: 0.00,
             miss_num_total: 0,
             miss_num_total_percentage: 0.00,
+            amend_num_total: 0,
             virtues: {
                 count: 0,
                 values: []
