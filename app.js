@@ -94,6 +94,7 @@ var BubbleVirtue = function() {
         hit_num_total: 0,
         hit_num_total_percentage: 0.00,
         miss_num_total: 0,
+        miss_num_total_percentage: 0.00,
         amend_num_total: 0,
     };
 
@@ -117,6 +118,7 @@ var BubbleVirtue = function() {
         this.result.hit_num_total = 0;
         this.result.hit_num_total_percentage = 0.00;
         this.result.miss_num_total = 0;
+        this.result.miss_num_total_percentage = 0.00;
         this.result.shots_num_total = 0;
         this.result.amend_num_total = 0;
     }
@@ -188,6 +190,7 @@ var Bubble = function(default_value) {
             virtue.result.hit_num_total += virtue.result.hit_num_new;
             virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0.00 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
             virtue.result.miss_num_total += virtue.result.miss_num_new;
+            virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
             virtue.result.amend_num_total += bubble.value.length < value_length_prev && amend === true ? 1 : 0;
         }
 
@@ -384,6 +387,13 @@ var BubbleController = function () {
         property: "miss_num_total"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _response.virtue.result,
+        property: "miss_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
