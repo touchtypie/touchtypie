@@ -370,7 +370,7 @@ var BubbleController = function () {
             _student.virtue.amend_num_total_percentage = _student.virtue.amend_num_total == 0 ? 0.00 : (_student.virtue.amend_num_total / _student.virtue.shot_num_total * 100).toFixed(2)
             if (virtue.result.completed) {
                 // Set homework value
-                _student.virtues.values.push[virtue];
+                _student.virtues.values.push(virtue);
                 _student.virtues.count += 1;
 
                 // Next homework
