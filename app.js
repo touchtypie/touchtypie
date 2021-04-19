@@ -141,6 +141,13 @@ var Bubble = function(default_value) {
 
     var virtue = BubbleVirtue();
 
+    // Creates a new virtue
+    var reset = function() {
+        this.value = '';
+        this.charactersCounter = 0;
+        this.virtue = BubbleVirtue();
+    };
+
     // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
     var measureVirtue = function(truth, amend) {
         var bubble = this;
@@ -220,6 +227,7 @@ var Bubble = function(default_value) {
         value: value,
         charactersCounter: charactersCounter,
         virtue: virtue,
+        reset: reset,
         measureVirtue: measureVirtue,
     };
 };
