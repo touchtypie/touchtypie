@@ -109,6 +109,7 @@ var BubbleVirtue = function() {
 
         this.result.value = '';
 
+        this.result.shot_num_new = 0;
         this.result.hits_indices = [];
         this.result.hit_num = 0;
         this.result.hit_num_new = 0;
