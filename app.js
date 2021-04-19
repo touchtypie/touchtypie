@@ -72,37 +72,40 @@ var Binding = function(b) {
 
 // Models
 var BubbleVirtue = function() {
-    var success = false;
-    var completed = false;
-    var result = {
-        value: '',
-        value_length: 0,
+    var newVirtue = function() {
+        return {
+            success: false,
+            completed: false,
+            value: '',
+            value_length: 0,
 
-        // Progress
-        shot_num_new: 0,
-        hits_indices: [],
-        hit_num: 0,
-        hit_num_new: 0,
-        hit_num_percentage: 0.00,
-        miss_indices: [],
-        miss_num: 0,
-        miss_num_new: 0,
-        miss_num_percentage: 0.00,
-        amend_num_new: 0,
+            // Progress
+            shot_num_new: 0,
+            hits_indices: [],
+            hit_num: 0,
+            hit_num_new: 0,
+            hit_num_percentage: 0.00,
+            miss_indices: [],
+            miss_num: 0,
+            miss_num_new: 0,
+            miss_num_percentage: 0.00,
+            amend_num_new: 0,
 
-        // Unit
-        shot_num_total: 0,
-        hit_num_total: 0,
-        hit_num_total_percentage: 0.00,
-        miss_num_total: 0,
-        miss_num_total_percentage: 0.00,
-        amend_num_total: 0,
-        amend_num_total_percentage: 0.00,
-    };
+            // Unit
+            shot_num_total: 0,
+            hit_num_total: 0,
+            hit_num_total_percentage: 0.00,
+            miss_num_total: 0,
+            miss_num_total_percentage: 0.00,
+            amend_num_total: 0,
+            amend_num_total_percentage: 0.00,
+        };
+    }
+    var result = newVirtue();
 
     var newleaf = function() {
-        this.success = false;
-        this.completed = false;
+        this.result.success = false;
+        this.result.completed = false;
 
         this.result.value = '';
 
@@ -116,7 +119,7 @@ var BubbleVirtue = function() {
         this.result.miss_num_percentage = 0.00;
     };
     var newlife = function() {
-        newleaf();
+        this.newleaf();
         this.result.hit_num_total = 0;
         this.result.hit_num_total_percentage = 0.00;
         this.result.miss_num_total = 0;
@@ -127,8 +130,6 @@ var BubbleVirtue = function() {
     }
 
     return {
-        success: success,
-        completed: completed,
         result: result,
         newleaf: newleaf,
         newlife: newlife
@@ -179,7 +180,7 @@ var Bubble = function(default_value) {
             // }
 
             // Populate result
-            virtue.success = virtue.result.miss_indices.length == 0 ? true : false;
+            virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
             if (bubble.value.length >= 0) {
                 var characters = truth.value.split('');
                 for (var i = 0; i < characters.length; i++) {
@@ -208,13 +209,13 @@ var Bubble = function(default_value) {
             virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         }
 
-        if (virtue.success && bubble.value.length == truth.value.length) {
-            virtue.completed = true;
+        if (virtue.result.success && bubble.value.length == truth.value.length) {
+            virtue.result.completed = true;
         }
 
         if (State.debug) {
-            console.log('[measureVirtue] result.success: ' + virtue.success);
-            console.log('[measureVirtue] result.completed: ' + virtue.completed);
+            console.log('[measureVirtue] result.success: ' + virtue.result.success);
+            console.log('[measureVirtue] result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.miss_indices: ' + virtue.result.miss_indices);
             console.log('[measureVirtue] virtue.result.miss_num: ' + virtue.result.miss_num);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
@@ -367,7 +368,7 @@ var BubbleController = function () {
             _student.virtue.miss_num_total_percentage = _student.virtue.miss_num_total == 0 ? 0.00 : (_student.virtue.miss_num_total / _student.virtue.shot_num_total * 100).toFixed(2)
             _student.virtue.amend_num_total += virtue.result.amend_num_new;
             _student.virtue.amend_num_total_percentage = _student.virtue.amend_num_total == 0 ? 0.00 : (_student.virtue.amend_num_total / _student.virtue.shot_num_total * 100).toFixed(2)
-            if (virtue.completed) {
+            if (virtue.result.completed) {
                 // Set homework value
                 _student.virtues.values.push[virtue];
                 _student.virtues.count += 1;
