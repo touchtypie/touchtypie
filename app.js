@@ -54,10 +54,10 @@ var Binding = function(b) {
     b.object[b.property] = value;
 
     if (State.debug) {
-        console.log('[Binding][out] State.truth.value: ' + State.truth);
-        console.log('[Binding][out] State.truth.value: ' + State.truth.value);
-        console.log('[Binding][out] State.speech.value: ' + State.speech);
-        console.log('[Binding][out] State.speech.value: ' + State.speech.value);
+        console.log('[Binding][out] State.training.trainer.truth.value: ' + State.training.trainer.truth);
+        console.log('[Binding][out] State.training.trainer.truth.value: ' + State.training.trainer.truth.value);
+        console.log('[Binding][out] State.training.trainer.truth.value: ' + State.training.trainer.truth);
+        console.log('[Binding][out] State.training.trainer.truth.value: ' + State.training.trainer.truth.value);
     }
 
     return {
@@ -232,8 +232,15 @@ var StudentVirtue = function() {
         amend_num_total_percentage: 0.00
     };
 };
+var Trainer = function() {
+    return {
+        truth:  Bubble('Get some truth to type.'),
+        speech: Bubble('')
+    };
+};
 var Student = function() {
     return {
+        response: Bubble(''),
         homework: {
             count: 0,
             num_total: 0
@@ -245,13 +252,20 @@ var Student = function() {
         }
     }
 };
+var Training = function() {
+    return {
+        trainer:  Trainer(),
+        student: Student()
+    };
+}
 
 // Controllers
 var BubbleController = function () {
-    var _student = State.student;
-    var _truth = State.truth;
-    var _speech = State.speech;
-    var _response = State.response;
+    var _trainer = State.training.trainer;
+    var _truth = State.training.trainer.truth;
+    var _speech = State.training.trainer.speech;
+    var _student = State.training.student;
+    var _response = State.training.student.response;
 
     // Data binding - Component: truth
     Binding({
@@ -521,10 +535,7 @@ var BubbleController = function () {
 var State = function() {
     return {
         debug: true,
-        truth: Bubble('Get some truth to type.'),
-        speech: Bubble(''),
-        response: Bubble(''),
-        student: Student()
+        training: Training()
     }
 }();
 var myApp = function () {
