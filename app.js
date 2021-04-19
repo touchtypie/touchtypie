@@ -135,6 +135,7 @@ var BubbleVirtue = function() {
     }
 }
 var Bubble = function(default_value) {
+    var disabled = false;
     var value = default_value;
     var charactersCounter = 0;
 
@@ -215,6 +216,7 @@ var Bubble = function(default_value) {
     };
 
     return {
+        disabled: disabled,
         value: value,
         charactersCounter: charactersCounter,
         virtue: virtue,
@@ -314,6 +316,13 @@ var BubbleController = function () {
     );
 
     // Data binding - Component: response
+    new Binding({
+        object: _response,
+        property: "disabled"
+    }).addBinding(
+        document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        'disabled'    // textarea
+    )
     new Binding({
         object: _response,
         property: "value"
