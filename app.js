@@ -306,6 +306,13 @@ var BubbleController = function () {
     }).addBinding(
         document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
         'value',    // textarea
+        "DOMContentLoaded",
+        function(event, _this, binding) {
+            binding.element.focus()
+        }
+    ).addBinding(
+        document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        'value',    // textarea
         "keyup",
         function(event, _this, binding) {
             var key = event.keyCode || event.charCode;
