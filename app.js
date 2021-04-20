@@ -265,7 +265,7 @@ var Trainer = function() {
     var speech = Bubble('');
 
     var callback;
-    var getNewHomework = function(callback) {
+    var getNewUnit = function(callback) {
         var _this = this;
         var method='GET';
         var url = 'style.css';
@@ -301,13 +301,13 @@ var Trainer = function() {
     return {
         truth: truth ,
         speech: speech,
-        getNewHomework: getNewHomework
+        getNewUnit: getNewUnit
     };
 };
 var Student = function() {
     return {
         response: Bubble(''),
-        homework: {
+        units: {
             count: 0,
             num_total: 0
         },
@@ -357,7 +357,7 @@ var Student = function() {
         stashVirtue: function(virtue) {
             var _student = this;
 
-            // Set homework value
+            // Set units value
             _student.virtues.values.push(virtue);
             _student.virtues.count += 1;
         }
@@ -399,8 +399,8 @@ var Training = function() {
         _this.student.response.reset();
         // _this.student.response.disabled = true;
 
-        // Fetch new homework
-        _this.trainer.getNewHomework(function(text) {
+        // Fetch new units
+        _this.trainer.getNewUnit(function(text) {
             _this.start(text);
         });
     };
@@ -492,7 +492,7 @@ var BubbleController = function () {
             if (virtue.result.completed) {
                 _student.stashVirtue(virtue);
 
-                // Next homework
+                // Run the next training unit
                 // _response.virtue.newlife();
                 _training.next();
                 // _truth.next();
@@ -657,14 +657,14 @@ var BubbleController = function () {
         object: _student.virtues,
         property: "count"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworkcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.homework,
+        object: _student.units,
         property: "num_total"
     }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('homeworkcounter')[0].getElementsByTagName('total')[0],
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
 }

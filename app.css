@@ -220,7 +220,7 @@ globaloverall misscounter,
 globaloverall misspercentagecounter,
 globaloverall amendcounter,
 globaloverall amendpercentagecounter,
-globaloverall homeworkcounter {
+globaloverall unitcounter {
         display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
