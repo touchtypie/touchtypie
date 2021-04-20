@@ -486,8 +486,8 @@ var TrainingController = function () {
             var key = event.keyCode || event.charCode;
             var amend = ( key == 8 || key == 46 ) ? true : false;
 
-            // Set student response
-            _this.valueSetter(binding.element[binding.attribute]);
+            // Set student response. Remove all CRs
+            _this.valueSetter(binding.element[binding.attribute].replace(/\r/g, ''));
             // Set student response counter
             _training.student.response.charactersCounter = _training.student.response.value.length;
 
