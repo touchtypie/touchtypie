@@ -194,7 +194,7 @@ var Bubble = function(default_value) {
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (bubble.value.length >= 0) {
             var characters = truth.value.split('');
-            var _prependHtml, _classHtml;
+            var lfIndices = [0], _prependHtml, _classHtml;
             for (var i = 0; i < characters.length; i++) {
                 _prependHtml = '';
                 _classHtml = '';
@@ -202,6 +202,7 @@ var Bubble = function(default_value) {
                     _prependHtml = '<character class="line-feed-placeholder"></character>';
                 }
                 if (/\n/.test(characters[i])) {
+                    lfIndices.push(i);
                     _prependHtml = '<br />';
                     _classHtml = 'line-feed ';
                     characters[i] = '';
@@ -215,10 +216,35 @@ var Bubble = function(default_value) {
                 }
                 characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
             }
-            // Show at most 100 characters
-            var startIndex = bubble.value.length - 1 - 50;
-            var endIndex = bubble.value.length - 1 + 50;
-            virtue.result.value = startIndex >= 0 && endIndex <= characters.length ? characters.slice(startIndex, endIndex).join('') : characters.slice(0, 99).join('');
+
+            // Calculate the boundaries of the value
+            const cursor = bubble.value.length > 0 ? bubble.value.length - 1 + 1 : 0;
+            const min_index = 0;
+            const max_index = characters.length - 1;
+            var startIndex = min_index;
+            var endIndex = max_index;
+            if (lfIndices.length > 0) {
+                // Find nearest LF index relative to cursor
+                var nearestLfIndicesIndex = 0;
+                for(var i = 0; i < lfIndices.length; i++) {
+                    if (lfIndices[i] <= cursor) {
+                        nearestLfIndicesIndex = i;
+                    }else {
+                        break;
+                    }
+                }
+                // Show the previous x and next x lines relative to cursor
+                const padLfMax = 5;
+                const padLfBefore = 2;
+                const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
+                const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
+                startIndex = lfIndices[startLfIndicesIdx];
+                // -1 here to exclude the finalmost LF?
+                endIndex = lfIndices[endLfIndicesIdx] > 0 ? lfIndices[endLfIndicesIdx] : endIndex;
+                // Filter down to 100 characters max
+                endIndex = endIndex - startIndex > 100 ? startIndex + 100 : endIndex;
+                virtue.result.value = characters.slice(startIndex, endIndex + 1).join('');
+            }
         }
         virtue.result.value_length = bubble.value.length;
         virtue.result.hit_num = virtue.result.hit_indices.length;
@@ -465,6 +491,9 @@ var TrainingController = function () {
             console.log('[DOMContentLoaded]');
 
             _training.start()
+
+            // Might want to get data on init
+            // _training.next()
         }
     );
 
