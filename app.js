@@ -208,7 +208,7 @@ var Bubble = function(default_value) {
                 }else {
                     _classHtml = '';
                 }
-                characters[i] = _prependHtml + '<span class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
             }
             // Show at most 100 characters
             var startIndex = bubble.value.length - 1 - 50;
