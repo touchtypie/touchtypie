@@ -1,0 +1,22 @@
+version: '2.2'
+services:
+
+  web:
+    image: nginx:1.14-alpine
+    # Enable labels for traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy-network"
+      - "traefik.frontend.rule=Host:touchtypie.example.com"
+      - "traefik.port=80"
+      - "traefik.frontend.headers.SSLRedirect=false"
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+    # Enable networks for traefik
+    networks:
+      - proxy-network
+
+# Enable networks for traefik
+networks:
+  proxy-network:
+    external: true
