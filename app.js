@@ -197,7 +197,7 @@ var Bubble = function(default_value) {
             var _breakHtml = '', _classHtml = '';
             for (var i = 0; i < characters.length; i++) {
                 _breakHtml = '';
-                if (/\r\n|\n/.test(characters[i])) {
+                if (/\n/.test(characters[i])) {
                     _breakHtml = '<br />';
                     characters[i] = ' ';
                 }
