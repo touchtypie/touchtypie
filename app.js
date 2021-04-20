@@ -267,7 +267,7 @@ var Trainer = function() {
     var getNewUnit = function(callback) {
         var _this = this;
         var method='GET';
-        var url = 'style.css';
+        var url = '/app.css';
         _this.callback = callback;
 
         var readbody = function(xhr) {
@@ -285,7 +285,7 @@ var Trainer = function() {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(event, event) {
             if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                _this.callback(readBody(xhr));
+                _this.callback(readbody(xhr));
             }
 
             // Debug
