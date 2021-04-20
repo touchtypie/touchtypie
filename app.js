@@ -1,7 +1,7 @@
 var Helpers = function () {
     return {
         htmlEntities: function htmlEntities(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /, '&nbsp;');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /, '&nbsp;').replace(/\s+$/, '<br/>');
         }
     };
 }()
@@ -194,14 +194,21 @@ var Bubble = function(default_value) {
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (bubble.value.length >= 0) {
             var characters = truth.value.split('');
+            var _breakHtml = '', _classHtml = '';
             for (var i = 0; i < characters.length; i++) {
-                if (i === bubble.value.length) {
-                    characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                }else if (virtue.result.miss_indices.includes(i)) {
-                    characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                }else {
-                    characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                _breakHtml = '';
+                if (/\r\n|\n/.test(characters[i])) {
+                    _breakHtml = '<br />';
+                    characters[i] = ' ';
                 }
+                if (i === bubble.value.length) {
+                    _classHtml = 'cursor';
+                }else if (virtue.result.miss_indices.includes(i)) {
+                    _classHtml = 'invalid';
+                }else {
+                    _classHtml = '';
+                }
+                characters[i] = _breakHtml + '<span class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</span>';
             }
             virtue.result.value = characters.join('')
         }
