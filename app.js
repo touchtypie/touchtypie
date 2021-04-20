@@ -143,7 +143,7 @@ var BubbleVirtue = function() {
     return {
         result: result,
         newleaf: newleaf,
-        newlife: newlife
+        // newlife: newlife
     }
 }
 var Bubble = function(default_value) {
