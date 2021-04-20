@@ -199,7 +199,7 @@ var Bubble = function(default_value) {
                 _breakHtml = '';
                 if (/\n/.test(characters[i])) {
                     _breakHtml = '<br />';
-                    characters[i] = ' ';
+                    characters[i] = '';
                 }
                 if (i === bubble.value.length) {
                     _classHtml = 'cursor';
