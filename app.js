@@ -167,58 +167,56 @@ var Bubble = function(default_value) {
         var value_length_prev = virtue.result.value_length;
         virtue.newleaf();
 
-        if (bubble.value.length <= truth.value.length) {
-            virtue.result.shot_num_new = 1;
-            virtue.result.amend_num_new = bubble.value.length < value_length_prev && amend === true ? 1 : 0
-            for (var i = 0; i < bubble.value.length; i++) {
-                if (bubble.value[i] !== truth.value[i]) {
-                    // Invalid
-                    virtue.result.miss_indices.push(i);
-                    if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
-                        virtue.result.miss_num_new = 1;
-                    }
-                }else {
-                    // Valid
-                    virtue.result.hit_indices.push(i);
-                    if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
-                        virtue.result.hit_num_new = 1;
-                    }
+        virtue.result.shot_num_new = 1;
+        virtue.result.amend_num_new = bubble.value.length < value_length_prev && amend === true ? 1 : 0
+        for (var i = 0; i < bubble.value.length && i < truth.value.length; i++) {
+            if (bubble.value[i] !== truth.value[i]) {
+                // Invalid
+                virtue.result.miss_indices.push(i);
+                if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                    virtue.result.miss_num_new = 1;
+                }
+            }else {
+                // Valid
+                virtue.result.hit_indices.push(i);
+                if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                    virtue.result.hit_num_new = 1;
                 }
             }
-
-            // for (var i = bubble.value.length; i < truth.value.length; i++) {
-            //     // Valid
-            // }
-
-            // Populate result
-            virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
-            if (bubble.value.length >= 0) {
-                var characters = truth.value.split('');
-                for (var i = 0; i < characters.length; i++) {
-                    if (i === bubble.value.length) {
-                        characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                    }else if (virtue.result.miss_indices.includes(i)) {
-                        characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                    }else {
-                        characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
-                    }
-                }
-                virtue.result.value = characters.join('')
-            }
-            virtue.result.value_length = bubble.value.length;
-            virtue.result.hit_num = virtue.result.hit_indices.length;
-            virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
-            virtue.result.miss_num = virtue.result.miss_indices.length;
-            virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
-
-            virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
-            virtue.result.hit_num_total += virtue.result.hit_num_new;
-            virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0.00 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
-            virtue.result.miss_num_total += virtue.result.miss_num_new;
-            virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
-            virtue.result.amend_num_total += virtue.result.amend_num_new;
-            virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         }
+
+        // for (var i = bubble.value.length; i < truth.value.length; i++) {
+        //     // Valid
+        // }
+
+        // Populate result
+        virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
+        if (bubble.value.length >= 0) {
+            var characters = truth.value.split('');
+            for (var i = 0; i < characters.length; i++) {
+                if (i === bubble.value.length) {
+                    characters[i] = '<span class="cursor">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                }else if (virtue.result.miss_indices.includes(i)) {
+                    characters[i] = '<span class="invalid">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                }else {
+                    characters[i] = '<span class="">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                }
+            }
+            virtue.result.value = characters.join('')
+        }
+        virtue.result.value_length = bubble.value.length;
+        virtue.result.hit_num = virtue.result.hit_indices.length;
+        virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
+        virtue.result.miss_num = virtue.result.miss_indices.length;
+        virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
+
+        virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
+        virtue.result.hit_num_total += virtue.result.hit_num_new;
+        virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0.00 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.miss_num_total += virtue.result.miss_num_new;
+        virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.amend_num_total += virtue.result.amend_num_new;
+        virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
 
         if (virtue.result.success && bubble.value.length == truth.value.length) {
             virtue.result.completed = true;
