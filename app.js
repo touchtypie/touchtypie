@@ -360,6 +360,7 @@ var Student = function() {
             // Set units value
             _student.virtues.values.push(virtue);
             _student.virtues.count += 1;
+            _student.units.count += 1;
         }
     }
 };
@@ -654,7 +655,7 @@ var BubbleController = function () {
         'innerHTML'
     );
     new Binding({
-        object: _student.virtues,
+        object: _student.units,
         property: "count"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
