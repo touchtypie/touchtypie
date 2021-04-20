@@ -79,9 +79,6 @@ speech value {
     display: inline-block;
     width: 66.67%;
     padding: 1vw;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1.5vw;
     text-align: left;
     /* border: none; */
     /* border-bottom: 1px solid #000; */
@@ -90,22 +87,17 @@ speech value character {
     display: inline;
     margin-left: 5px;
     border: 1px solid transparent;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.5vw;
 }
 speech value character.line-feed {
     border: 1px solid transparent;
 }
 speech value character.cursor {
-    color: #fff;
-    font-family: monospace;
-    font-size: 1.5vw;
-    text-align: center;
     border: 1px solid #fff;
 }
 speech value character.invalid {
-    color: #fff;
-    font-family: monospace;
-    font-size: 1.5vw;
-    text-align: center;
     border: 1px solid #ff0000;
 }
 speech value character.valid {
