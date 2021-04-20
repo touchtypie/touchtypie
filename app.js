@@ -99,6 +99,15 @@ var BubbleVirtue = function() {
             miss_num_total_percentage: 0.00,
             amend_num_total: 0,
             amend_num_total_percentage: 0.00,
+
+            // Global
+            shot_num_global: 0,
+            hit_num_global: 0,
+            hit_num_global_percentage: 0.00,
+            miss_num_global: 0,
+            miss_num_global_percentage: 0.00,
+            amend_num_global: 0,
+            amend_num_global_percentage: 0.00,
         };
     }
     var result = newVirtue();
@@ -108,6 +117,7 @@ var BubbleVirtue = function() {
         this.result.completed = false;
 
         this.result.value = '';
+        this.result.value_length = 0;
 
         this.result.shot_num_new = 0;
         this.result.hits_indices = [];
@@ -217,9 +227,26 @@ var Bubble = function(default_value) {
         if (State.debug) {
             console.log('[measureVirtue] result.success: ' + virtue.result.success);
             console.log('[measureVirtue] result.completed: ' + virtue.result.completed);
-            console.log('[measureVirtue] virtue.result.miss_indices: ' + virtue.result.miss_indices);
-            console.log('[measureVirtue] virtue.result.miss_num: ' + virtue.result.miss_num);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
+            console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
+            console.log('[measureVirtue] virtue.result.shot_num_new: ' + virtue.result.shot_num_new);
+            console.log('[measureVirtue] virtue.result.hits_indices: ' + virtue.result.hits_indices);
+            console.log('[measureVirtue] virtue.result.hit_num_new: ' + virtue.result.hit_num_new);
+            console.log('[measureVirtue] virtue.result.hit_num: ' + virtue.result.hit_num);
+            console.log('[measureVirtue] virtue.result.hit_num_percentage: ' + virtue.result.hit_num_percentage);
+            console.log('[measureVirtue] virtue.result.miss_indices: ' + virtue.result.miss_indices);
+            console.log('[measureVirtue] virtue.result.miss_num_new: ' + virtue.result.miss_num_new);
+            console.log('[measureVirtue] virtue.result.miss_num: ' + virtue.result.miss_num);
+            console.log('[measureVirtue] virtue.result.miss_num_percentage: ' + virtue.result.miss_num_percentage);
+            console.log('[measureVirtue] virtue.result.amend_num_new: ' + virtue.result.amend_num_new);
+
+            console.log('[measureVirtue] virtue.result.shot_num_total: ' + virtue.result.shot_num_total);
+            console.log('[measureVirtue] virtue.result.hit_num_total: ' + virtue.result.hit_num_total);
+            console.log('[measureVirtue] virtue.result.hit_num_total_percentage: ' + virtue.result.hit_num_total_percentage);
+            console.log('[measureVirtue] virtue.result.miss_num_total: ' + virtue.result.miss_num_total);
+            console.log('[measureVirtue] virtue.result.miss_num_total_percentage: ' + virtue.result.miss_num_total_percentage);
+            console.log('[measureVirtue] virtue.result.amend_num_total: ' + virtue.result.amend_num_total);
+            console.log('[measureVirtue] virtue.result.amend_num_total_percentage: ' + virtue.result.amend_num_total_percentage);
         }
         return virtue;
     };
@@ -250,6 +277,51 @@ var Student = function() {
         virtues: {
             count: 0,
             values: []
+        },
+        inheritVirtue: function(virtue) {
+            var _student = this;
+
+            // Populate my virtue (progress, non-cumulative)
+            _student.virtue.result.success = virtue.result.success;
+            _student.virtue.result.completed = virtue.result.completed;
+            _student.virtue.result.value = virtue.result.value;
+            _student.virtue.result.value_length = virtue.result.value_length;
+            _student.virtue.result.shot_num_new = virtue.result.shot_num_new;
+            _student.virtue.result.hits_indices = virtue.result.hits_indices;
+            _student.virtue.result.hit_num = virtue.result.hit_num;
+            _student.virtue.result.hit_num_new = virtue.result.hit_num_new;
+            _student.virtue.result.hit_num_percentage = virtue.result.hit_num_percentage;
+            _student.virtue.result.miss_indices = virtue.result.miss_indices;
+            _student.virtue.result.miss_num = virtue.result.miss_num;
+            _student.virtue.result.miss_num_new = virtue.result.miss_num_new;
+            _student.virtue.result.miss_num_percentage = virtue.result.miss_num_percentage;
+            _student.virtue.result.amend_num_new = virtue.result.amend_num_new;
+
+            // Populate my virtue (unit, cumulative)
+            _student.virtue.result.shot_num_total = virtue.result.shot_num_total;
+            _student.virtue.result.hit_num_total = virtue.result.hit_num_total;
+            _student.virtue.result.hit_num_total_percentage = virtue.result.hit_num_total_percentage;
+            _student.virtue.result.miss_num_total = virtue.result.miss_num_total;
+            _student.virtue.result.miss_num_total_percentage = virtue.result.miss_num_total_percentage;
+            _student.virtue.result.amend_num_total = virtue.result.amend_num_total;
+            _student.virtue.result.amend_num_total_percentage = virtue.result.amend_num_total_percentage;
+
+            // Popululate my virtue (global, cumulative)
+            _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
+            _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
+            _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : (_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+            _student.virtue.result.miss_num_global += virtue.result.miss_num_new;
+            _student.virtue.result.miss_num_global_percentage = _student.virtue.result.miss_num_global == 0 ? 0.00 : (_student.virtue.result.miss_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+            _student.virtue.result.amend_num_global += virtue.result.amend_num_new;
+            _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+
+        },
+        stashVirtue: function(virtue) {
+            var _student = this;
+
+            // Set homework value
+            _student.virtues.values.push(virtue);
+            _student.virtues.count += 1;
         }
     }
 };
@@ -258,11 +330,11 @@ var Training = function() {
         trainer:  Trainer(),
         student: Student()
     };
-}
+};
 
 // Controllers
 var BubbleController = function () {
-    var _trainer = State.training.trainer;
+    var _training = State.training;
     var _truth = State.training.trainer.truth;
     var _speech = State.training.trainer.speech;
     var _student = State.training.student;
@@ -350,21 +422,13 @@ var BubbleController = function () {
             var virtue = _response.measureVirtue(_truth, amend);
             // Set speech value
             _speech.value = virtue.result.value;
-            // Populate global virtues
-            _student.virtue.result.shot_num_total += virtue.result.shot_num_new;
-            _student.virtue.result.hit_num_total += virtue.result.hit_num_new;
-            _student.virtue.result.hit_num_total_percentage = _student.virtue.result.hit_num_total == 0 ? 0.00 : (_student.virtue.result.hit_num_total / _student.virtue.result.shot_num_total * 100).toFixed(2)
-            _student.virtue.result.miss_num_total += virtue.result.miss_num_new;
-            _student.virtue.result.miss_num_total_percentage = _student.virtue.result.miss_num_total == 0 ? 0.00 : (_student.virtue.result.miss_num_total / _student.virtue.result.shot_num_total * 100).toFixed(2)
-            _student.virtue.result.amend_num_total += virtue.result.amend_num_new;
-            _student.virtue.result.amend_num_total_percentage = _student.virtue.result.amend_num_total == 0 ? 0.00 : (_student.virtue.result.amend_num_total / _student.virtue.result.shot_num_total * 100).toFixed(2)
+            // Update State
+            _student.inheritVirtue(virtue);
             if (virtue.result.completed) {
-                // Set homework value
-                _student.virtues.values.push(virtue);
-                _student.virtues.count += 1;
+                _student.stashVirtue(virtue);
 
                 // Next homework
-                // _response.vidtue.newlife();
+                // _response.virtue.newlife();
                 // _truth.next();
             }
 
@@ -394,28 +458,28 @@ var BubbleController = function () {
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "hit_num"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "hit_num_percentage"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "miss_num"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "miss_num_percentage"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
@@ -424,49 +488,49 @@ var BubbleController = function () {
 
     // Data binding - Component: unitoverall
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "shot_num_total"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "hit_num_total"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "hit_num_total_percentage"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "miss_num_total"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "miss_num_total_percentage"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "amend_num_total"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _response.virtue.result,
+        object: _training.student.virtue.result,
         property: "amend_num_total_percentage"
     }).addBinding(
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
@@ -475,50 +539,50 @@ var BubbleController = function () {
 
     // Data binding - Component: globaloverall
     new Binding({
-        object: _student.virtue.result,
-        property: "shot_num_total"
+        object: _training.student.virtue.result,
+        property: "shot_num_global"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.virtue.result,
-        property: "hit_num_total"
+        object: _training.student.virtue.result,
+        property: "hit_num_global"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.virtue.result,
-        property: "hit_num_total_percentage"
+        object: _training.student.virtue.result,
+        property: "hit_num_global_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.virtue.result,
-        property: "miss_num_total"
+        object: _training.student.virtue.result,
+        property: "miss_num_global"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.virtue.result,
-        property: "miss_num_total_percentage"
+        object: _training.student.virtue.result,
+        property: "miss_num_global_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.virtue.result,
-        property: "amend_num_total"
+        object: _training.student.virtue.result,
+        property: "amend_num_global"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.virtue.result,
-        property: "amend_num_total_percentage"
+        object: _training.student.virtue.result,
+        property: "amend_num_global_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
