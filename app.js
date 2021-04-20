@@ -288,9 +288,15 @@ var Trainer = function() {
             if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
                 _this.callback(readBody(xhr));
             }
-            if (_this.callback) {
-                if (State.debug) {
-                    _this.callback('zzz');
+
+            // Debug
+            if (State.debug) {
+                console.log('[xhr.onreadystatechange] :' + xhr.readyState);
+                console.log('[xhr.status] :' + xhr.status);
+                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 0) {
+                    if (_this.callback) {
+                        _this.callback('zzz');
+                    }
                 }
             }
         };
@@ -387,6 +393,8 @@ var Training = function() {
         var virtue = _this.student.response.measureVirtue(_this.trainer.truth);
         // Set speech value
         _this.trainer.speech.value = virtue.result.value;
+        // Set student unit num_total
+        _this.student.units.num_total++;
 
         if (State.debug) {
             console.log('[Training][start] _this.trainer.speech.value: ' + _this.trainer.speech.value);
