@@ -25,6 +25,20 @@
             "url": "http://touchtypie.example.com/index.html",
             "webRoot": "${workspaceFolder}",
             "profile": "default"
-        }
+        },
+        {
+            "name": "Remote debug localhost",
+            "type": "firefox",
+            "request": "attach",
+            "url": "http://localhost:8080/index.html",
+            "webRoot": "${workspaceFolder}",
+        },
+        {
+            "name": "Remote debug localhost",
+            "type": "firefox",
+            "request": "attach",
+            "url": "http://touchtypie.example.com/index.html",
+            "webRoot": "${workspaceFolder}",
+        },
     ]
 }
