@@ -218,12 +218,12 @@ var Bubble = function(default_value) {
             }
 
             // Calculate the boundaries of the value
-            const cursor = bubble.value.length > 0 ? bubble.value.length - 1 + 1 : 0;
-            const min_index = 0;
-            const max_index = characters.length - 1;
-            var startIndex = min_index;
-            var endIndex = max_index;
             if (lfIndices.length > 0) {
+                const cursor = bubble.value.length > 0 ? bubble.value.length - 1 + 1 : 0;
+                const minIndex = 0;
+                const maxIndex = characters.length - 1;
+                var startIndex = minIndex;
+                var endIndex = maxIndex;
                 // Find nearest LF index relative to cursor
                 var nearestLfIndicesIndex = 0;
                 for(var i = 0; i < lfIndices.length; i++) {
@@ -233,7 +233,7 @@ var Bubble = function(default_value) {
                         break;
                     }
                 }
-                // Show the previous x and next x lines relative to cursor
+                // Show the previous x lines and next y lines relative to cursor
                 const padLfMax = 5;
                 const padLfBefore = 2;
                 const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
