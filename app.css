@@ -87,6 +87,7 @@ speech value {
     /* border-bottom: 1px solid #000; */
 }
 speech value span {
+    display: inline;
     margin-left: 5px;
     border: 1px solid transparent;
 }
