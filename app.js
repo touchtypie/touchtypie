@@ -210,7 +210,10 @@ var Bubble = function(default_value) {
                 }
                 characters[i] = _breakHtml + '<span class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</span>';
             }
-            virtue.result.value = characters.join('')
+            // Show at most 100 characters
+            var startIndex = bubble.value.length - 1 - 50;
+            var endIndex = bubble.value.length - 1 + 50;
+            virtue.result.value = startIndex >= 0 && endIndex <= characters.length ? characters.slice(startIndex, endIndex).join('') : characters.slice(0, 99).join('');
         }
         virtue.result.value_length = bubble.value.length;
         virtue.result.hit_num = virtue.result.hit_indices.length;
