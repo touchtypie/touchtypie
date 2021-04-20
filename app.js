@@ -81,7 +81,7 @@ var BubbleVirtue = function() {
 
             // Progress
             shot_num_new: 0,
-            hits_indices: [],
+            hit_indices: [],
             hit_num: 0,
             hit_num_new: 0,
             hit_num_percentage: 0.00,
@@ -120,7 +120,7 @@ var BubbleVirtue = function() {
         this.result.value_length = 0;
 
         this.result.shot_num_new = 0;
-        this.result.hits_indices = [];
+        this.result.hit_indices = [];
         this.result.hit_num = 0;
         this.result.hit_num_new = 0;
         this.result.hit_num_percentage = 0.00;
@@ -179,7 +179,7 @@ var Bubble = function(default_value) {
                     }
                 }else {
                     // Valid
-                    virtue.result.hits_indices.push(i);
+                    virtue.result.hit_indices.push(i);
                     if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
                         virtue.result.hit_num_new = 1;
                     }
@@ -206,7 +206,7 @@ var Bubble = function(default_value) {
                 virtue.result.value = characters.join('')
             }
             virtue.result.value_length = bubble.value.length;
-            virtue.result.hit_num = virtue.result.hits_indices.length;
+            virtue.result.hit_num = virtue.result.hit_indices.length;
             virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
             virtue.result.miss_num = virtue.result.miss_indices.length;
             virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
@@ -230,7 +230,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
             console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
             console.log('[measureVirtue] virtue.result.shot_num_new: ' + virtue.result.shot_num_new);
-            console.log('[measureVirtue] virtue.result.hits_indices: ' + virtue.result.hits_indices);
+            console.log('[measureVirtue] virtue.result.hit_indices: ' + virtue.result.hit_indices);
             console.log('[measureVirtue] virtue.result.hit_num_new: ' + virtue.result.hit_num_new);
             console.log('[measureVirtue] virtue.result.hit_num: ' + virtue.result.hit_num);
             console.log('[measureVirtue] virtue.result.hit_num_percentage: ' + virtue.result.hit_num_percentage);
@@ -325,7 +325,7 @@ var Student = function() {
             _student.virtue.result.value = virtue.result.value;
             _student.virtue.result.value_length = virtue.result.value_length;
             _student.virtue.result.shot_num_new = virtue.result.shot_num_new;
-            _student.virtue.result.hits_indices = virtue.result.hits_indices;
+            _student.virtue.result.hit_indices = virtue.result.hit_indices;
             _student.virtue.result.hit_num = virtue.result.hit_num;
             _student.virtue.result.hit_num_new = virtue.result.hit_num_new;
             _student.virtue.result.hit_num_percentage = virtue.result.hit_num_percentage;
