@@ -169,6 +169,7 @@ var Bubble = function(default_value) {
 
         virtue.result.shot_num_new = 1;
         virtue.result.amend_num_new = amend === true && bubble.value.length < value_length_prev ? 1 : virtue.result.amend_num_new;
+        virtue.result.miss_num_new = amend === false && bubble.value.length > truth.value.length ? 1 : virtue.result.miss_num_new;
         for (var i = 0; i < bubble.value.length && i < truth.value.length; i++) {
             if (bubble.value[i] !== truth.value[i]) {
                 // Invalid
