@@ -127,6 +127,7 @@ var BubbleVirtue = function() {
         this.result.miss_num = 0;
         this.result.miss_num_new = 0;
         this.result.miss_num_percentage = 0.00;
+        this.result.amend_num_new = 0;
     };
     var newlife = function() {
         this.newleaf();
