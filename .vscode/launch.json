@@ -7,7 +7,6 @@
             "request": "launch",
             "reAttach": true,
             "file": "${workspaceFolder}/index.html"
-
         },
         {
             "name": "Launch localhost",
@@ -15,7 +14,8 @@
             "request": "launch",
             "reAttach": true,
             "url": "http://localhost:8080/index.html",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
+            "profile": "default"
         },
         {
             "name": "Launch touchtypie.example.com",
@@ -23,7 +23,8 @@
             "request": "launch",
             "reAttach": true,
             "url": "http://touchtypie.example.com/index.html",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
+            "profile": "default"
         }
     ]
 }
