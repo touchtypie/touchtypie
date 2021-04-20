@@ -194,11 +194,11 @@ var Bubble = function(default_value) {
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (bubble.value.length >= 0) {
             var characters = truth.value.split('');
-            var _breakHtml = '', _classHtml = '';
+            var _prependHtml = '', _classHtml = '';
             for (var i = 0; i < characters.length; i++) {
-                _breakHtml = '';
+                _prependHtml = '';
                 if (/\n/.test(characters[i])) {
-                    _breakHtml = '<br />';
+                    _prependHtml = '<br />';
                     characters[i] = '';
                 }
                 if (i === bubble.value.length) {
@@ -208,7 +208,7 @@ var Bubble = function(default_value) {
                 }else {
                     _classHtml = '';
                 }
-                characters[i] = _breakHtml + '<span class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</span>';
+                characters[i] = _prependHtml + '<span class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</span>';
             }
             // Show at most 100 characters
             var startIndex = bubble.value.length - 1 - 50;
