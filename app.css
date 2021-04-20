@@ -82,7 +82,7 @@ speech value {
     color: #fff;
     font-family: monospace;
     font-size: 1.5vw;
-    text-align: center;
+    text-align: left;
     /* border: none; */
     /* border-bottom: 1px solid #000; */
 }
@@ -126,7 +126,7 @@ response textarea {
     color: #fff;
     font-family: monospace;
     font-size: 1.5vw;
-    text-align: center;
+    text-align: left;
     /* border: none; */
     letter-spacing: 0.25vw;
 }
