@@ -326,9 +326,38 @@ var Student = function() {
     }
 };
 var Training = function() {
+    var _this = this;
+    var trainer = Trainer();
+    var student = Student();
+
+    var start = function(text) {
+        var _this = this;
+        // Set truth values
+        if (text) {
+            _this.trainer.truth.value = text;
+        }
+        _this.trainer.truth.charactersCounter = _this.trainer.truth.value.length;
+
+        // Set speech value
+        _this.trainer.speech.value = _this.trainer.truth.value;
+
+        // Set speech counter
+        _this.trainer.speech.charactersCounter = _this.trainer.speech.value.length;
+
+        // Validate response
+        var virtue = _this.student.response.measureVirtue(_this.trainer.truth);
+        // Set speech value
+        _this.trainer.speech.value = virtue.result.value;
+
+        if (State.debug) {
+            console.log('[Training][start] _this.trainer.speech.value: ' + _this.trainer.speech.value);
+            console.log('[Training][start] _this.trainer.speech.charactersCounter: ' + _this.trainer.speech.charactersCounter);
+        }
+    };
     return {
-        trainer:  Trainer(),
-        student: Student()
+        trainer: trainer,
+        student: student,
+        start: start
     };
 };
 
@@ -365,24 +394,8 @@ var BubbleController = function () {
         "DOMContentLoaded",
         function(event, _this, binding) {
             console.log('[DOMContentLoaded]');
-            // Set truth values
-            _truth.charactersCounter = _truth.value.length;
 
-            // Set speech value
-            _speech.value = _truth.value;
-
-            // Set speech counter
-            _speech.charactersCounter = _speech.value.length;
-
-            // Validate response
-            var virtue = _response.measureVirtue(_truth);
-            // Set speech value
-            _speech.value = virtue.result.value;
-
-            if (State.debug) {
-                console.log('[DOMContentLoaded] _speech.value: ' + _speech.value);
-                console.log('[DOMContentLoaded] _speech.charactersCounter: ' + _speech.charactersCounter);
-            }
+            _training.start()
         }
     );
 
