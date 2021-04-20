@@ -261,9 +261,47 @@ var Bubble = function(default_value) {
     };
 };
 var Trainer = function() {
+    var truth = Bubble('Get some truth to type.');
+    var speech = Bubble('');
+
+    var callback;
+    var getNewHomework = function(callback) {
+        var _this = this;
+        var method='GET';
+        var url = 'style.css';
+        _this.callback = callback;
+
+        var readbody = function(xhr) {
+            var data;
+            if (!xhr.responseType || xhr.responseType === "text") {
+                data = xhr.responseText;
+            } else if (xhr.responseType === "document") {
+                data = xhr.responseXML;
+            } else {
+                data = xhr.response;
+            }
+            return data;
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(event, event) {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                _this.callback(readBody(xhr));
+            }
+            if (_this.callback) {
+                if (State.debug) {
+                    _this.callback('zzz');
+                }
+            }
+        };
+        xhr.open(method, url);
+        xhr.send(null);
+    };
+
     return {
-        truth:  Bubble('Get some truth to type.'),
-        speech: Bubble('')
+        truth: truth ,
+        speech: speech,
+        getNewHomework: getNewHomework
     };
 };
 var Student = function() {
@@ -354,10 +392,24 @@ var Training = function() {
             console.log('[Training][start] _this.trainer.speech.charactersCounter: ' + _this.trainer.speech.charactersCounter);
         }
     };
+
+    var next = function() {
+        var _this = this;
+        // Refresh the student response
+        _this.student.response.reset();
+        // _this.student.response.disabled = true;
+
+        // Fetch new homework
+        _this.trainer.getNewHomework(function(text) {
+            _this.start(text);
+        });
+    };
+
     return {
         trainer: trainer,
         student: student,
-        start: start
+        start: start,
+        next: next
     };
 };
 
@@ -442,6 +494,7 @@ var BubbleController = function () {
 
                 // Next homework
                 // _response.virtue.newlife();
+                _training.next();
                 // _truth.next();
             }
 
