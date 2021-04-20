@@ -418,7 +418,7 @@ var Training = function() {
 };
 
 // Controllers
-var BubbleController = function () {
+var TrainingController = function () {
     var _training = State.training;
 
     // Data binding - Component: truth
@@ -675,5 +675,5 @@ var State = function() {
     }
 }();
 var myApp = function () {
-    BubbleController();
+    TrainingController();
 }();
