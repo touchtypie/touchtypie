@@ -69,7 +69,6 @@ var Binding = function(b) {
     };
 }
 
-
 // Models
 var BubbleVirtue = function() {
     var newVirtue = function() {
@@ -381,15 +380,13 @@ var Training = function() {
         }
         _this.trainer.truth.charactersCounter = _this.trainer.truth.value.length;
 
-        // Set speech value
+        // Set trainer speech
         _this.trainer.speech.value = _this.trainer.truth.value;
-
-        // Set speech counter
         _this.trainer.speech.charactersCounter = _this.trainer.speech.value.length;
 
-        // Validate response
+        // Validate student response
         var virtue = _this.student.response.measureVirtue(_this.trainer.truth);
-        // Set speech value
+        // Set trainer speech value
         _this.trainer.speech.value = virtue.result.value;
         // Set student unit num_total
         _this.student.units.num_total++;
@@ -423,14 +420,10 @@ var Training = function() {
 // Controllers
 var BubbleController = function () {
     var _training = State.training;
-    var _truth = State.training.trainer.truth;
-    var _speech = State.training.trainer.speech;
-    var _student = State.training.student;
-    var _response = State.training.student.response;
 
     // Data binding - Component: truth
     Binding({
-        object: _truth,
+        object: _training.trainer.truth,
         property: "value"
     })
     .addBinding(
@@ -440,7 +433,7 @@ var BubbleController = function () {
 
     // Data binding - Component: speech
     Binding({
-        object: _speech,
+        object: _training.trainer.speech,
         property: "value"
     })
     .addBinding(
@@ -460,14 +453,14 @@ var BubbleController = function () {
 
     // Data binding - Component: response
     new Binding({
-        object: _response,
+        object: _training.student.response,
         property: "disabled"
     }).addBinding(
         document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
         'disabled'    // textarea
     )
     new Binding({
-        object: _response,
+        object: _training.student.response,
         property: "value"
     }).addBinding(
         document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
@@ -484,47 +477,45 @@ var BubbleController = function () {
             var key = event.keyCode || event.charCode;
             var amend = ( key == 8 || key == 46 ) ? true : false;
 
-            // Set value
+            // Set student response
             _this.valueSetter(binding.element[binding.attribute]);
+            // Set student response counter
+            _training.student.response.charactersCounter = _training.student.response.value.length;
 
-            // Set response counter
-            _response.charactersCounter = _response.value.length;
-
-            // measureVirtue response
-            var virtue = _response.measureVirtue(_truth, amend);
-            // Set speech value
-            _speech.value = virtue.result.value;
-            // Update State
-            _student.inheritVirtue(virtue);
+            // Validate student response
+            var virtue = _training.student.response.measureVirtue(_training.trainer.truth, amend);
+            // Set trainer speech value
+            _training.trainer.speech.value = virtue.result.value;
+            // Update student virtue
+            _training.student.inheritVirtue(virtue);
             if (virtue.result.completed) {
-                _student.stashVirtue(virtue);
+                // Record student virtue
+                _training.student.stashVirtue(virtue);
 
                 // Run the next training unit
-                // _response.virtue.newlife();
                 _training.next();
-                // _truth.next();
             }
 
             if (State.debug) {
-                console.log('[keyup] _truth.value: ' + _truth.value);
-                console.log('[keyup] _truth.charactersCounter: ' + _truth.charactersCounter);
-                console.log('[keyup] _speech.value: ' + _speech.value);
-                console.log('[keyup] _speech.charactersCounter: ' + _speech.charactersCounter);
-                console.log('[keyup] _response.value: ' + _response.value);
-                console.log('[keyup] _response.charactersCounter: ' + _response.charactersCounter);
+                console.log('[keyup] _training.trainer.truth.value: ' + _training.trainer.truth.value);
+                console.log('[keyup] _training.trainer.truth.charactersCounter: ' + _training.trainer.truth.charactersCounter);
+                console.log('[keyup] _training.trainer.speech.value: ' + _training.trainer.speech.value);
+                console.log('[keyup] _training.trainer.speech.charactersCounter: ' + _training.trainer.speech.charactersCounter);
+                console.log('[keyup] _training.student.response.value: ' + _training.student.response.value);
+                console.log('[keyup] _training.student.response.charactersCounter: ' + _training.student.response.charactersCounter);
             }
         }
     )
     // Data binding - Component: unitprogress
     new Binding({
-        object: _response,
+        object: _training.student.response,
         property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _truth,
+        object: _training.trainer.truth,
         property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
@@ -661,14 +652,14 @@ var BubbleController = function () {
         'innerHTML'
     );
     new Binding({
-        object: _student.units,
+        object: _training.student.units,
         property: "count"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _student.units,
+        object: _training.student.units,
         property: "num_total"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
