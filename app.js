@@ -194,19 +194,24 @@ var Bubble = function(default_value) {
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (bubble.value.length >= 0) {
             var characters = truth.value.split('');
-            var _prependHtml = '', _classHtml = '';
+            var _prependHtml, _classHtml;
             for (var i = 0; i < characters.length; i++) {
                 _prependHtml = '';
+                _classHtml = '';
+                if (i == 0) {
+                    _prependHtml = '<character class="line-feed-placeholder"></charplaceholder>';
+                }
                 if (/\n/.test(characters[i])) {
                     _prependHtml = '<br />';
+                    _classHtml = 'line-feed ';
                     characters[i] = '';
                 }
                 if (i === bubble.value.length) {
-                    _classHtml = 'cursor';
+                    _classHtml += 'cursor';
                 }else if (virtue.result.miss_indices.includes(i)) {
-                    _classHtml = 'invalid';
-                }else {
-                    _classHtml = '';
+                    _classHtml += 'invalid';
+                }else if (i <= bubble.value.length) {
+                    _classHtml += 'valid';
                 }
                 characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
             }

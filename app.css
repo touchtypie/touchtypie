@@ -91,6 +91,9 @@ speech value character {
     margin-left: 5px;
     border: 1px solid transparent;
 }
+speech value character.line-feed {
+    border: 1px solid transparent;
+}
 speech value character.cursor {
     color: #fff;
     font-family: monospace;
@@ -105,10 +108,8 @@ speech value character.invalid {
     text-align: center;
     border: 1px solid #ff0000;
 }
-
 speech value character.valid {
-    background: #00ff00;
-    color: #fff;
+    border: 1px solid transparent;
 }
 
 response {
