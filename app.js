@@ -160,6 +160,80 @@ var Bubble = function(default_value) {
         this.virtue = BubbleVirtue();
     };
 
+    // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
+    var getPeekIndices = function(bubble, truth) {
+        const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1: 0;
+
+        // By default the peak (substring) around the cursor is x maximum characters
+        const maxLength = 100;
+        var startIndex = cursorIndex - ((maxLength / 2) - 1) > 0 ? cursorIndex - ((maxLength / 2) - 1) : 0
+        var endIndex = cursorIndex + ((maxLength / 2) - 1) < maxLength ? cursorIndex + ((maxLength / 2) - 1) : maxLength;
+        // return truth.value.substr(startIndex, endIndex - startIndex);
+
+        // From this point, determine if the truth value is multiline.
+        // Determine all LF indices of truth value. Consider the start of string as a LF
+        var lfIndices = [0];
+        if (lfIndices.length > 0) {
+            for (var i = 0; i < truth.value.length; i++) {
+                if (/\n/.test(truth.value[i])) {
+                    lfIndices.push(i);
+                }
+            }
+
+            // Find nearest LF index relative to cursor
+            var nearestLfIndicesIndex = 0;
+            for(var i = 0; i < lfIndices.length; i++) {
+                // Look +1 characters ahead of the cursor
+                if (lfIndices[i] <= cursorIndex + 1) {
+                    nearestLfIndicesIndex = i;
+                }else {
+                    break;
+                }
+            }
+            // Get characters between x LFs before cursor and x+1 LFs after cursor
+            const padLfMax = 5;
+            const padLfBefore = 2;
+            const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
+            const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
+            // If there are enough LF characters following the cursor, set our new peek indices to the LF positions
+            if (lfIndices[endLfIndicesIdx] > 0) {
+                startIndex = lfIndices[startLfIndicesIdx];
+                endIndex = lfIndices[endLfIndicesIdx];
+                console.log('startIndex: ' + startIndex);
+                console.log('endIndex: ' + endIndex);
+            }
+        }
+        return [startIndex, endIndex];
+    }
+
+    // Returns a HTML string with highlighted error(s) and cursor positions, based on given value validated against giuven array of miss_indices
+    var getFeedbackHtmlValue = function(value, truthValue) {
+        var characters = truthValue.split('');
+
+        var _prependHtml, _classHtml;
+        for (var i = 0; i < characters.length; i++) {
+            _prependHtml = '';
+            _classHtml = '';
+            if (i == 0) {
+                _prependHtml = '<character class="line-feed-placeholder"></character>';
+            }
+            if (/\n/.test(characters[i])) {
+                _prependHtml = '<br />';
+                _classHtml = 'line-feed ';
+                characters[i] = '';
+            }
+            if (i === value.length) {
+                _classHtml += 'cursor';
+            }else if (i <= value.length - 1 && value[i] !== truthValue[i]) {
+                _classHtml += 'invalid';
+            }else if (i <= value.length) {
+                _classHtml += 'valid';
+            }
+            characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
+        }
+        return characters.join('');
+    }
+
     // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
     var measureVirtue = function(truth, amend) {
         var bubble = this;
@@ -192,60 +266,13 @@ var Bubble = function(default_value) {
 
         // Populate result
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
-        if (bubble.value.length >= 0) {
-            var characters = truth.value.split('');
-            var lfIndices = [0], _prependHtml, _classHtml;
-            for (var i = 0; i < characters.length; i++) {
-                _prependHtml = '';
-                _classHtml = '';
-                if (i == 0) {
-                    _prependHtml = '<character class="line-feed-placeholder"></character>';
-                }
-                if (/\n/.test(characters[i])) {
-                    lfIndices.push(i);
-                    _prependHtml = '<br />';
-                    _classHtml = 'line-feed ';
-                    characters[i] = '';
-                }
-                if (i === bubble.value.length) {
-                    _classHtml += 'cursor';
-                }else if (virtue.result.miss_indices.includes(i)) {
-                    _classHtml += 'invalid';
-                }else if (i <= bubble.value.length) {
-                    _classHtml += 'valid';
-                }
-                characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
-            }
-
-            // Calculate the boundaries of the value
-            if (lfIndices.length > 0) {
-                const cursor = bubble.value.length > 0 ? bubble.value.length - 1 + 1 : 0;
-                const minIndex = 0;
-                const maxIndex = characters.length - 1;
-                var startIndex = minIndex;
-                var endIndex = maxIndex;
-                // Find nearest LF index relative to cursor
-                var nearestLfIndicesIndex = 0;
-                for(var i = 0; i < lfIndices.length; i++) {
-                    if (lfIndices[i] <= cursor) {
-                        nearestLfIndicesIndex = i;
-                    }else {
-                        break;
-                    }
-                }
-                // Show the previous x lines and next y lines relative to cursor
-                const padLfMax = 5;
-                const padLfBefore = 2;
-                const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
-                const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
-                startIndex = lfIndices[startLfIndicesIdx];
-                // -1 here to exclude the finalmost LF?
-                endIndex = lfIndices[endLfIndicesIdx] > 0 ? lfIndices[endLfIndicesIdx] : endIndex;
-                // Filter down to 100 characters max
-                endIndex = endIndex - startIndex > 100 ? startIndex + 100 : endIndex;
-                virtue.result.value = characters.slice(startIndex, endIndex + 1).join('');
-            }
-        }
+        const peekIndices= getPeekIndices(bubble, truth);
+        const startIndex = peekIndices[0];
+        const endIndex = peekIndices[1];
+        virtue.result.value = getFeedbackHtmlValue(
+            bubble.value.length == 0 ? bubble.value : bubble.value.substring(startIndex, endIndex + 1 < bubble.value.length ? endIndex + 1: bubble.value.length ),
+            truth.value.substring(startIndex, endIndex + 1)
+        );
         virtue.result.value_length = bubble.value.length;
         virtue.result.hit_num = virtue.result.hit_indices.length;
         virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
