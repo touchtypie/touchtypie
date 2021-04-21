@@ -199,7 +199,7 @@ var Bubble = function(default_value) {
                 _prependHtml = '';
                 _classHtml = '';
                 if (i == 0) {
-                    _prependHtml = '<character class="line-feed-placeholder"></charplaceholder>';
+                    _prependHtml = '<character class="line-feed-placeholder"></character>';
                 }
                 if (/\n/.test(characters[i])) {
                     _prependHtml = '<br />';
