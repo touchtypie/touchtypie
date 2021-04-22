@@ -331,12 +331,10 @@ var Trainer = function() {
     var truth = Bubble('Get some truth to type.');
     var speech = Bubble('');
 
-    var callback;
     var getNewUnit = function(callback) {
         var _this = this;
         var method='GET';
         var url = '/app.css';
-        _this.callback = callback;
 
         var readbody = function(xhr) {
             var data;
@@ -353,7 +351,9 @@ var Trainer = function() {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(event, event) {
             if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
-                _this.callback(readbody(xhr));
+                if (callback) {
+                    callback(readbody(xhr));
+                }
             }
 
             // Debug
@@ -361,8 +361,8 @@ var Trainer = function() {
                 console.log('[xhr.onreadystatechange] :' + xhr.readyState);
                 console.log('[xhr.status] :' + xhr.status);
                 if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 0) {
-                    if (_this.callback) {
-                        _this.callback('zzz');
+                    if (callback) {
+                        callback('zzz');
                     }
                 }
             }
