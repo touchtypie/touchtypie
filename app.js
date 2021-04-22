@@ -331,11 +331,10 @@ var Trainer = function() {
     var truth = Bubble('Get some truth to type.');
     var speech = Bubble('');
 
-    var getNewUnit = function(callback) {
-        var _this = this;
-        var method='GET';
-        var url = '/app.css';
-
+    var fetch = function (params) {
+        var method = params.method;
+        var url = params.url;
+        var callback = params.callback;
         var readbody = function(xhr) {
             var data;
             if (!xhr.responseType || xhr.responseType === "text") {
@@ -369,6 +368,14 @@ var Trainer = function() {
         };
         xhr.open(method, url);
         xhr.send(null);
+    };
+
+    var getNewUnit = function(callback) {
+        fetch({
+            method: 'GET',
+            url: 'app.css',
+            callback: callback
+        });
     };
 
     return {
