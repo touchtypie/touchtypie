@@ -327,14 +327,26 @@ var Bubble = function(default_value) {
         measureVirtue: measureVirtue,
     };
 };
-var Trainer = function() {
-    var truth = Bubble('Get some truth to type.');
-    var speech = Bubble('');
+var Book = function() {
+    return {
+        id: '',
+        content: ''
+    }
+};
+// A representation of memory: working memory, short-term memory, and long-term memory.
+var Memory = function() {
+    // Mental representations of books
+    var bookCollectionIds = [ 'https://leojonathanoh.github.io/bible_databases/links/links.txt' ];
+    var books = [];
+    var bookCount;
+    var bookIds = [];
 
+    // Fetch content from long-term memory
     var fetch = function (params) {
         var method = params.method;
         var url = params.url;
         var callback = params.callback;
+        var callbackData = typeof(params.callbackData) !== 'undefined' ? params.callbackData : null;
         var readbody = function(xhr) {
             var data;
             if (!xhr.responseType || xhr.responseType === "text") {
@@ -349,9 +361,9 @@ var Trainer = function() {
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(event, event) {
-            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200 || xhr.readyState == XMLHttpRequest.DONE && xhr.status == 304) {
                 if (callback) {
-                    callback(readbody(xhr));
+                    callback(readbody(xhr), callbackData);
                 }
             }
 
@@ -361,7 +373,7 @@ var Trainer = function() {
                 console.log('[xhr.status] :' + xhr.status);
                 if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 0) {
                     if (callback) {
-                        callback('zzz');
+                        callback('zzz', callbackData);
                     }
                 }
             }
@@ -370,18 +382,112 @@ var Trainer = function() {
         xhr.send(null);
     };
 
-    var getNewUnit = function(callback) {
+    // Have I been refreshed with all books?
+    var isReady = function() {
+        var ready = [];
+        for (var i = 0; i < books.length; i++) {
+            if (books[i].content === '') {
+                return false;
+            }else {
+                ready.push(i);
+            }
+        }
+        return ready.length > 0 && ready.length === books.length ? true : false;
+        // return books.length > 0 && books.length === bookCount ? true : false;
+    };
+
+    // Recollection
+    var recall = function(callback) {
+        var _this = this;
         fetch({
             method: 'GET',
-            url: 'app.css',
-            callback: callback
+            url: bookCollectionIds[0],
+            callback: function(bookIds) {
+                recallBooks(_this, bookIds, function() {
+                    // Once all books are recalled are done, call the callback
+                    if (isReady()) {
+                        callback();
+                    }
+                });
+            }
+        });
+    };
+
+    // Recollection of books and their content
+    var recallBooks = function(_this, bookIds, callback) {
+        // Recall reading the book
+        _this.bookIds = bookIds.split(/\r\n|\n/) //.slice(0,1);
+        for (var i = 0; i < _this.bookIds.length; i++) {
+            var book = Book();
+            book.id = _this.bookIds[i];
+            _this.books.push(book);
+        }
+        _this.bookCount = _this.bookIds.length;
+
+        // Refresh my memory of its content
+        for (var k in _this.books) {
+            fetch({
+                method: 'GET',
+                url: _this.books[k].id,
+                callback: function(text, data) {
+                    var _this = data.self;
+                    var key = data.key;
+                    _this.books[key].content = text;
+                    callback();
+                },
+                callbackData: { self: _this, key: k }
+            });
+        }
+    };
+
+    return {
+        books: books,
+        bookIds: bookIds,
+        bookCount: bookCount,
+        isReady: isReady,
+        recall: recall
+    };
+};
+var Trainer = function() {
+    var memory = Memory();
+    var memoryCursor = 0;
+    var truth = Bubble('Get some truth to type.');
+    var speech = Bubble('');
+
+    var getCurrentThoughtContent = function() {
+         return memory.books[memoryCursor].content;
+    };
+
+    var getNextThoughtContent = function() {
+        memoryCursor++
+        getCurrentThoughtContent();
+    };
+
+    var isKnowledgeReady = function() {
+        return memory.isReady();
+    };
+
+    var prepareKnowledge = function(callback) {
+        if (!isKnowledgeReady()) {
+            recallKnowledge(function() {
+                callback();
+            });
+        }
+    };
+
+    var recallKnowledge = function(callback) {
+        memory.recall(function() {
+            callback();
         });
     };
 
     return {
-        truth: truth ,
+        truth: truth,
         speech: speech,
-        getNewUnit: getNewUnit
+        getCurrentThoughtContent: getCurrentThoughtContent,
+        getNextThoughtContent: getNextThoughtContent,
+        isKnowledgeReady: isKnowledgeReady,
+        prepareKnowledge: prepareKnowledge,
     };
 };
 var Student = function() {
@@ -449,6 +555,15 @@ var Training = function() {
     var trainer = Trainer();
     var student = Student();
 
+    var prepare = function() {
+        var _this = this;
+        _this.student.response.disabled = true;
+        _this.trainer.prepareKnowledge(function() {
+            _this.student.response.disabled = false;
+            _this.start(_this.trainer.getCurrentThoughtContent());
+        });
+    };
+
     var start = function(text) {
         var _this = this;
         // Set truth values
@@ -479,18 +594,15 @@ var Training = function() {
         // Refresh the student response
         _this.student.response.reset();
         // _this.student.response.disabled = true;
-
-        // Fetch new units
-        _this.trainer.getNewUnit(function(text) {
-            _this.start(text);
-        });
+        start(_this.trainer.getNextThoughtContent());
     };
 
     return {
         trainer: trainer,
         student: student,
+        next: next,
+        prepare: prepare,
         start: start,
-        next: next
     };
 };
 
@@ -524,8 +636,7 @@ var TrainingController = function () {
         function(event, _this, binding) {
             console.log('[DOMContentLoaded]');
 
-            _training.start()
-
+            _training.prepare()
             // Might want to get data on init
             // _training.next()
         }
