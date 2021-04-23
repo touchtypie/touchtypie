@@ -95,9 +95,11 @@ speech value character {
     line-height: 1.5vw;
 }
 speech value character.line-feed {
-    border: 1px solid transparent;
+    /* border: 1px solid transparent; */
+    display: none;
 }
 speech value character.cursor {
+    display: inline-block;
     border: 1px solid #fff;
 }
 speech value character.invalid {
