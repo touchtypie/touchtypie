@@ -493,6 +493,7 @@ var Trainer = function() {
 var Student = function() {
     return {
         response: Bubble(''),
+        focusElement: null,
         units: {
             count: 0,
             num_total: 0
@@ -501,6 +502,9 @@ var Student = function() {
         virtues: {
             count: 0,
             values: []
+        },
+        focus: function() {
+            this.focusElement.focus();
         },
         inheritVirtue: function(virtue) {
             var _student = this;
@@ -540,6 +544,9 @@ var Student = function() {
             _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
 
         },
+        setFocus: function(element) {
+            this.focusElement = element;
+        },
         stashVirtue: function(virtue) {
             var _student = this;
 
@@ -565,6 +572,7 @@ var Training = function() {
         _this.trainer.prepareKnowledge(function() {
             _this.student.response.disabled = false;
             _this.start(_this.trainer.getCurrentThoughtContent());
+            _this.student.focus();
         });
     };
 
@@ -663,7 +671,8 @@ var TrainingController = function () {
         'value',    // textarea
         "DOMContentLoaded",
         function(event, _this, binding) {
-            binding.element.focus()
+            _training.student.setFocus(binding.element);
+            _training.student.focus();
         }
     ).addBinding(
         document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
