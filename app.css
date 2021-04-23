@@ -78,7 +78,7 @@ speech {
 speech value {
     display: inline-block;
     width: 66.67%;
-    padding: 1vw;
+    /* padding: 1vw; */
     text-align: left;
     /* border: none; */
     /* border-bottom: 1px solid #000; */
