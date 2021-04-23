@@ -100,7 +100,19 @@ speech value character.line-feed {
 speech value character.cursor {
     display: inline-block;
     border: 1px solid #fff;
+    animation: blink 0.77s linear infinite;
 }
+@keyframes blink {
+    /* 0% {
+        border-color: rgba( 255, 255, 255, 0);
+    } */
+    50% {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        border-color: rgba(255, 255, 255, 1);
+    }
+  }
 speech value character.invalid {
     border: 1px solid #ff0000;
 }
