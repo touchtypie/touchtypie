@@ -451,7 +451,7 @@ var Memory = function() {
 var Trainer = function() {
     var memory = Memory();
     var memoryCursor = 0;
-    var truth = Bubble('Get some truth to type.');
+    var truth = Bubble('Get ready...');
     var speech = Bubble('');
 
     var getCurrentThoughtContent = function() {
@@ -557,6 +557,10 @@ var Training = function() {
 
     var prepare = function() {
         var _this = this;
+
+        // Begin the training with a trainer's intro speech
+        _this.start();
+
         _this.student.response.disabled = true;
         _this.trainer.prepareKnowledge(function() {
             _this.student.response.disabled = false;
@@ -636,7 +640,8 @@ var TrainingController = function () {
         function(event, _this, binding) {
             console.log('[DOMContentLoaded]');
 
-            _training.prepare()
+            _training.prepare();
+
             // Might want to get data on init
             // _training.next()
         }
