@@ -454,13 +454,13 @@ var Trainer = function() {
     var truth = Bubble('Get ready...');
     var speech = Bubble('');
 
-    var getCurrentThoughtContent = function() {
+    var getCurrentTopicContent = function() {
          return memory.books[memoryCursor].content;
     };
 
-    var getNextThoughtContent = function() {
+    var getNextTopicContent = function() {
         memoryCursor++
-        getCurrentThoughtContent();
+        getCurrentTopicContent();
     };
 
     var isKnowledgeReady = function() {
@@ -484,8 +484,8 @@ var Trainer = function() {
     return {
         truth: truth,
         speech: speech,
-        getCurrentThoughtContent: getCurrentThoughtContent,
-        getNextThoughtContent: getNextThoughtContent,
+        getCurrentTopicContent: getCurrentTopicContent,
+        getNextTopicContent: getNextTopicContent,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
     };
@@ -571,7 +571,7 @@ var Training = function() {
         _this.student.response.disabled = true;
         _this.trainer.prepareKnowledge(function() {
             _this.student.response.disabled = false;
-            _this.start(_this.trainer.getCurrentThoughtContent());
+            _this.start(_this.trainer.getCurrentTopicContent());
             _this.student.focus();
         });
     };
@@ -606,7 +606,7 @@ var Training = function() {
         // Refresh the student response
         _this.student.response.reset();
         // _this.student.response.disabled = true;
-        start(_this.trainer.getNextThoughtContent());
+        start(_this.trainer.getNextTopicContent());
     };
 
     return {
