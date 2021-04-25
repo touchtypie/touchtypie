@@ -337,9 +337,10 @@ var Book = function() {
 var Memory = function() {
     // Mental representations of books
     var bookCollectionIds = [ 'https://leojonathanoh.github.io/bible_databases/links/links.txt' ];
-    var books = [];
+    var books = {};
     var bookCount;
     var bookIds = [];
+    var workingMemoryBookId = '';
 
     // Fetch content from long-term memory
     var fetch = function (params) {
@@ -382,18 +383,39 @@ var Memory = function() {
         xhr.send(null);
     };
 
+    // Retrieval
+    var getBook = function() {
+        var _this = this;
+        return books[_this.workingMemoryBookId];
+    };
+
+    var getNextBook = function() {
+        var _this = this;
+        var keys = Object.keys(books);
+        var nextIndex = keys.indexOf(_this.workingMemoryBookId) + 1;
+        if (nextIndex !== -1) {
+            var nextKey = keys[nextIndex];
+            _this.workingMemoryBookId = nextKey;
+            return _this.getBook();
+        }else {
+            return null;
+        }
+    };
+
     // Have I been refreshed with all books?
     var isReady = function() {
-        var ready = [];
-        for (var i = 0; i < books.length; i++) {
-            if (books[i].content === '') {
+        for (var k in books) {
+            if (books[k].content === '') {
                 return false;
-            }else {
-                ready.push(i);
             }
         }
-        return ready.length > 0 && ready.length === books.length ? true : false;
-        // return books.length > 0 && books.length === bookCount ? true : false;
+        return Object.keys(books).length > 0 ? true : false;
+    };
+
+    // Working memory
+    var prepareWorkingMemory = function() {
+        var _this = this;
+        this.workingMemoryBookId = Object.keys(books)[0];
     };
 
     // Recollection
@@ -420,7 +442,7 @@ var Memory = function() {
         for (var i = 0; i < _this.bookIds.length; i++) {
             var book = Book();
             book.id = _this.bookIds[i];
-            _this.books.push(book);
+            _this.books[book.id] = book;
         }
         _this.bookCount = _this.bookIds.length;
 
@@ -444,23 +466,29 @@ var Memory = function() {
         books: books,
         bookIds: bookIds,
         bookCount: bookCount,
+        workingMemoryBookId: workingMemoryBookId,
+        getBook: getBook,
+        getNextBook: getNextBook,
         isReady: isReady,
-        recall: recall
+        prepareWorkingMemory: prepareWorkingMemory,
+        recall: recall,
     };
 };
 var Trainer = function() {
     var memory = Memory();
-    var memoryCursor = 0;
     var truth = Bubble('Get ready...');
     var speech = Bubble('');
 
+    var getCurrentTopic = function() {
+        return memory.getBook().id;
+    };
+
     var getCurrentTopicContent = function() {
-         return memory.books[memoryCursor].content;
+        return memory.getBook().content;
     };
 
     var getNextTopicContent = function() {
-        memoryCursor++
-        getCurrentTopicContent();
+        return memory.getNextBook().content;
     };
 
     var isKnowledgeReady = function() {
@@ -481,13 +509,20 @@ var Trainer = function() {
         });
     };
 
+    var setAttention = function() {
+        memory.prepareWorkingMemory();
+    };
+
     return {
         truth: truth,
         speech: speech,
+        memory: memory,
+        getCurrentTopic: getCurrentTopic,
         getCurrentTopicContent: getCurrentTopicContent,
         getNextTopicContent: getNextTopicContent,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
+        setAttention: setAttention
     };
 };
 var Student = function() {
@@ -570,6 +605,7 @@ var Training = function() {
 
         _this.student.response.disabled = true;
         _this.trainer.prepareKnowledge(function() {
+            _this.trainer.setAttention();
             _this.student.response.disabled = false;
             _this.start(_this.trainer.getCurrentTopicContent());
             _this.student.focus();
