@@ -479,6 +479,10 @@ var Trainer = function() {
     var truth = Bubble('Get ready...');
     var speech = Bubble('');
 
+    var getTopics = function() {
+        return memory.bookIds;
+    };
+
     var getCurrentTopic = function() {
         return memory.getBook().id;
     };
@@ -498,6 +502,7 @@ var Trainer = function() {
     var prepareKnowledge = function(callback) {
         if (!isKnowledgeReady()) {
             recallKnowledge(function() {
+                setAttention();
                 callback();
             });
         }
@@ -513,16 +518,21 @@ var Trainer = function() {
         memory.prepareWorkingMemory();
     };
 
+    var setCurrentTopic = function(bookId) {
+        memory.workingMemoryBookId = bookId;
+    };
+
     return {
         truth: truth,
         speech: speech,
         memory: memory,
+        getTopics: getTopics,
         getCurrentTopic: getCurrentTopic,
         getCurrentTopicContent: getCurrentTopicContent,
         getNextTopicContent: getNextTopicContent,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
-        setAttention: setAttention
+        setCurrentTopic: setCurrentTopic,
     };
 };
 var Student = function() {
@@ -597,7 +607,7 @@ var Training = function() {
     var trainer = Trainer();
     var student = Student();
 
-    var prepare = function() {
+    var prepare = function(callback) {
         var _this = this;
 
         // Begin the training with a trainer's intro speech
@@ -605,10 +615,13 @@ var Training = function() {
 
         _this.student.response.disabled = true;
         _this.trainer.prepareKnowledge(function() {
-            _this.trainer.setAttention();
             _this.student.response.disabled = false;
             _this.start(_this.trainer.getCurrentTopicContent());
             _this.student.focus();
+
+            if (callback) {
+                callback();
+            }
         });
     };
 
@@ -658,6 +671,61 @@ var Training = function() {
 var TrainingController = function () {
     var _training = State.training;
 
+    var recreateTopicSelectOptions = function(event, _this, binding) {
+        // If new topic was selected, change to that topic
+        var topic = _training.trainer.getCurrentTopic();
+        var topicNew = binding.element.value;
+        if (topic !== topicNew) {
+            // On DOMContenteLoaded, the .value is empty
+            if (topicNew === '') {
+                topicNew = topic;
+            }
+            _training.trainer.setCurrentTopic(topicNew);
+            _training.start(_training.trainer.getCurrentTopicContent());
+
+            // Remove all options
+            binding.element.innerHTML = '';
+            // Recreate all options
+            var topics = _training.trainer.getTopics();
+            var optionElement;
+            for (var i = 0; i < topics.length; i++) {
+                optionElement = document.createElement('option');
+                if (topics[i] === _training.trainer.getCurrentTopic()) {
+                    optionElement.setAttribute('selected', true);
+                }
+                optionElement.setAttribute('value', topics[i]);
+                optionElement.innerHTML = decodeURIComponent(topics[i].replace(/.+\/([^\/]+)$/, '$1'));
+                binding.element.appendChild(optionElement);
+            }
+
+        }
+    };
+
+    // Data binding - Component: topics
+    Binding({
+        object: _training.trainer.memory,
+        property: "workingMemoryBookId"
+    })
+    .addBinding(
+        document.getElementsByTagName('topics')[0].getElementsByTagName('select')[0],
+        'value',
+        'DOMContentLoaded',
+        function(event, _this, binding) {
+            _training.prepare(function() {
+                recreateTopicSelectOptions(event, _this, binding);
+                // Fire the change event to populate this element with <option> elements
+                // binding.element.onchange();
+                // binding.element.dispatchEvent(new Event('change'));
+            });
+        }
+    )
+    .addBinding(
+        document.getElementsByTagName('topics')[0].getElementsByTagName('select')[0],
+        'innerHTML',
+        'change',
+        recreateTopicSelectOptions
+    );
+
     // Data binding - Component: truth
     Binding({
         object: _training.trainer.truth,
@@ -684,7 +752,7 @@ var TrainingController = function () {
         function(event, _this, binding) {
             console.log('[DOMContentLoaded]');
 
-            _training.prepare();
+            // _training.prepare();
 
             // Might want to get data on init
             // _training.next()

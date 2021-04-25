@@ -68,12 +68,34 @@ main {
     display: block;
 }
 
+topics {
+    display: block;
+}
+topics select {
+    width: 30%;
+    height: auto;
+    color: #fff;
+    background: transparent;
+    border: 1px solid #fff;
+    border-radius: 5vw;
+    font-size: 1vw;
+    line-height: 1vw;
+    text-align: center;
+}
+topics select option {
+    color: #f00;
+    font-size: 1vw;
+    font-family: monospace;
+    line-height: 1vw;
+}
+
 truth {
     /* display: none; */
 }
 
 speech {
     display: block;
+    margin-top: 1vw;
 }
 speech value {
     display: inline-block;
