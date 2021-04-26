@@ -166,12 +166,12 @@ menubutton span {
     line-height: 1;
 }
 
-topics {
+menuselect {
     display: block;
     width: 66.67%;
     margin: 0 auto;
 }
-topics label {
+menuselect label {
     display: inline-block;
     vertical-align: middle;
     width: 33.33%;
@@ -181,7 +181,7 @@ topics label {
     font-size: 1vw;
     text-align: center;
 }
-topics select {
+menuselect select {
     display: inline-block;
     vertical-align: middle;
     width: 66.67%;
@@ -194,7 +194,7 @@ topics select {
     line-height: 1vw;
     text-align: center;
 }
-topics select option {
+menuselect select option {
     color: #f00;
     font-size: 1vw;
     font-family: monospace;

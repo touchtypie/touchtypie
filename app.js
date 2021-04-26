@@ -748,13 +748,13 @@ var TrainingController = function () {
         }
     };
 
-    // Data binding - Component: topics
+    // Data binding - Component: menuselect
     Binding({
         object: _training.trainer.memory,
         property: "workingMemoryBookId"
     })
     .addBinding(
-        document.getElementsByTagName('topics')[0].getElementsByTagName('select')[0],
+        document.getElementsByTagName('menuselect')[0].getElementsByTagName('select')[0],
         'value',
         'DOMContentLoaded',
         function(event, _this, binding) {
@@ -767,7 +767,7 @@ var TrainingController = function () {
         }
     )
     .addBinding(
-        document.getElementsByTagName('topics')[0].getElementsByTagName('select')[0],
+        document.getElementsByTagName('menuselect')[0].getElementsByTagName('select')[0],
         'innerHTML',
         'change',
         recreateTopicSelectOptions
