@@ -12,6 +12,7 @@ html {
 body {
     background: #fff;
     /* color: #000; */
+    font-size: 0;
 
     overflow: visible !important;
     /* background: -webkit-linear-gradient(45deg, #085078 10%, #85d8ce 90%);
