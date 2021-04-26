@@ -12,11 +12,6 @@ html {
 body {
     background: #fff;
     /* color: #000; */
-    color: #fff;
-    font-family: monospace;
-    font-weight: normal;
-    text-align: center;
-    font-size: 0;
 
     overflow: visible !important;
     /* background: -webkit-linear-gradient(45deg, #085078 10%, #85d8ce 90%);
@@ -33,6 +28,10 @@ div {
 a,
 span {
     display: inline-block;
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
 }
 
 .bold {
@@ -53,17 +52,20 @@ header {
     padding: 2vw;
     /* border-bottom: 1px solid #000; */
 }
-
 header>banner {
     display: block;
+    text-align: center;
 }
-
 header>banner span {
+    display: block;
+    width: 50%;
     margin: 0 auto;
+    text-align: center;
+    color: #fff;
     font-size: 2vw;
     text-transform: uppercase;
-}
 
+}
 main {
     display: block;
 }
@@ -72,6 +74,8 @@ topics {
     display: block;
 }
 topics select {
+    display: block;
+    margin: 0 auto;
     width: 30%;
     height: auto;
     color: #fff;
@@ -90,7 +94,7 @@ topics select option {
 }
 
 truth {
-    /* display: none; */
+    display: none;
 }
 
 speech {
@@ -98,7 +102,8 @@ speech {
     margin-top: 1vw;
 }
 speech value {
-    display: inline-block;
+    display: block;
+    margin: 0 auto;
     width: 66.67%;
     /* padding: 1vw; */
     text-align: left;
@@ -148,7 +153,8 @@ response {
 }
 
 response textarea {
-    display: inline-block;
+    display: block;
+    margin: 0 auto;
     width: 66.67%;
     height: 20vw;
     padding: 1.75vw;
@@ -163,12 +169,14 @@ response textarea {
     /* letter-spacing: 0.25vw; */
 }
 
-
-progressbar {
+statistics {
+    display: block;
+    text-align: center;;
+}
+statistics progressbar {
     display: block;
 }
-progressbar characterscounter {
-    display: block;
+statistics progressbar characterscounter {
     border-radius: 1vw;
     color: #fff;
     font-family: monospace;
@@ -176,12 +184,12 @@ progressbar characterscounter {
     text-align: center;
 }
 
-unitprogress {
+statistics unitprogress {
     display: inline-block;
     vertical-align: top;
     width: 20%;
 }
-unitprogress heading {
+statistics unitprogress heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -189,12 +197,12 @@ unitprogress heading {
     font-size: 1vw;
     text-align: center;
 }
-unitprogress characterscounter,
-unitprogress characterspercentagecounter,
-unitprogress hitcounter,
-unitprogress hitpercentagecounter,
-unitprogress misscounter,
-unitprogress misspercentagecounter {
+statistics unitprogress characterscounter,
+statistics unitprogress characterspercentagecounter,
+statistics unitprogress hitcounter,
+statistics unitprogress hitpercentagecounter,
+statistics unitprogress misscounter,
+statistics unitprogress misspercentagecounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
@@ -203,13 +211,22 @@ unitprogress misspercentagecounter {
     font-size: 1vw;
     text-align: center;
 }
+statistics unitprogress label,
+statistics unitprogress value,
+statistics unitprogress total,
+statistics unitprogress span {
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+}
 
-unitoverall {
+statistics unitoverall {
     display: inline-block;
     vertical-align: top;
     width: 20%;
 }
-unitoverall heading {
+statistics unitoverall heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -217,15 +234,15 @@ unitoverall heading {
     font-size: 1vw;
     text-align: center;
 }
-unitoverall shotcounter,
-unitoverall hitcounter,
-unitoverall hitpercentagecounter,
-unitoverall misscounter,
-unitoverall misspercentagecounter,
-unitoverall amendcounter,
-unitoverall amendpercentagecounter,
-unitoverall othercounter,
-unitoverall otherpercentagecounter {
+statistics unitoverall shotcounter,
+statistics unitoverall hitcounter,
+statistics unitoverall hitpercentagecounter,
+statistics unitoverall misscounter,
+statistics unitoverall misspercentagecounter,
+statistics unitoverall amendcounter,
+statistics unitoverall amendpercentagecounter,
+statistics unitoverall othercounter,
+statistics unitoverall otherpercentagecounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
@@ -234,13 +251,22 @@ unitoverall otherpercentagecounter {
     font-size: 1vw;
     text-align: center;
 }
+statistics unitoverall label,
+statistics unitoverall value,
+statistics unitoverall total,
+statistics unitoverall span {
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+}
 
-globaloverall {
+statistics globaloverall {
     display: inline-block;
     vertical-align: top;
     width: 20%;
 }
-globaloverall heading {
+statistics globaloverall heading {
     margin: 2vw;
     display: block;
     color: #fff;
@@ -248,16 +274,16 @@ globaloverall heading {
     font-size: 1vw;
     text-align: center;
 }
-globaloverall shotcounter,
-globaloverall hitcounter,
-globaloverall hitpercentagecounter,
-globaloverall misscounter,
-globaloverall misspercentagecounter,
-globaloverall amendcounter,
-globaloverall amendpercentagecounter,
-globaloverall othercounter,
-globaloverall otherpercentagecounter,
-globaloverall unitcounter {
+statistics globaloverall shotcounter,
+statistics globaloverall hitcounter,
+statistics globaloverall hitpercentagecounter,
+statistics globaloverall misscounter,
+statistics globaloverall misspercentagecounter,
+statistics globaloverall amendcounter,
+statistics globaloverall amendpercentagecounter,
+statistics globaloverall othercounter,
+statistics globaloverall otherpercentagecounter,
+statistics globaloverall unitcounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
@@ -265,4 +291,13 @@ globaloverall unitcounter {
     font-family: monospace;
     font-size: 1vw;
     text-align: center;
+}
+statistics globaloverall label,
+statistics globaloverall value,
+statistics globaloverall total,
+statistics globaloverall span {
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
 }
