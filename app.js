@@ -237,13 +237,14 @@ var Bubble = function(default_value) {
     }
 
     // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
-    var measureVirtue = function(truth, amend) {
+    var measureVirtue = function(truth, key) {
         var bubble = this;
+        var amend = ( key == 8 || key == 46 ) ? true : false;
 
         var value_length_prev = virtue.result.value_length;
         virtue.newleaf();
 
-        virtue.result.shot_num_new = 1;
+        virtue.result.shot_num_new = key ? 1 : 0;
         for (var i = 0; i < bubble.value.length && i < truth.value.length; i++) {
             if (bubble.value[i] !== truth.value[i]) {
                 // Invalid
@@ -282,7 +283,7 @@ var Bubble = function(default_value) {
         virtue.result.miss_num = virtue.result.miss_indices.length;
         virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
 
-        virtue.result.shot_num_total += bubble.value.length == 0 ? 0 : 1;
+        virtue.result.shot_num_total += virtue.result.shot_num_new;
         virtue.result.hit_num_total += virtue.result.hit_num_new;
         virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0.00 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         virtue.result.miss_num_total += virtue.result.miss_num_new;
@@ -789,7 +790,6 @@ var TrainingController = function () {
         "keyup",
         function(event, _this, binding) {
             var key = event.keyCode || event.charCode;
-            var amend = ( key == 8 || key == 46 ) ? true : false;
 
             // Set student response. Remove all CRs
             _this.valueSetter(binding.element[binding.attribute].replace(/\r/g, ''));
@@ -797,7 +797,7 @@ var TrainingController = function () {
             _training.student.response.charactersCounter = _training.student.response.value.length;
 
             // Validate student response
-            var virtue = _training.student.response.measureVirtue(_training.trainer.truth, amend);
+            var virtue = _training.student.response.measureVirtue(_training.trainer.truth, key);
             // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue
