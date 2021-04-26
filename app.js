@@ -628,6 +628,9 @@ var Student = function() {
 };
 var Training = function() {
     var _this = this;
+    var environment = {
+        state: ''
+    };
     var trainer = Trainer();
     var student = Student();
 
@@ -683,6 +686,7 @@ var Training = function() {
     };
 
     return {
+        environment: environment,
         trainer: trainer,
         student: student,
         next: next,
@@ -694,6 +698,25 @@ var Training = function() {
 // Controllers
 var TrainingController = function () {
     var _training = State.training;
+
+    // Data binding - Component: menu
+    Binding({
+        object: _training.environment,
+        property: "state"
+    })
+    .addBinding(
+        document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0],
+        'className',
+    )
+
+    // Event listeners - Component: menu environment
+    document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
+        _training.environment.state = _training.environment.state === '' ? 'customize' : '';
+    });
+    document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('backdrop')[0].addEventListener('click', function(element, event) {
+        _training.environment.state = _training.environment.state === '' ? 'customize' : '';
+    });
+
 
     var recreateTopicSelectOptions = function(event, _this, binding) {
         // If new topic was selected, change to that topic
