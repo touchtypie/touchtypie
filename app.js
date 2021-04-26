@@ -77,6 +77,7 @@ var BubbleVirtue = function() {
             completed: false,
             value: '',
             value_length: 0,
+            value_length_percentage: 0,
 
             // Progress
             shot_num_new: 0,
@@ -117,6 +118,7 @@ var BubbleVirtue = function() {
 
         this.result.value = '';
         this.result.value_length = 0;
+        this.result.value_length_percentage = 0;
 
         this.result.shot_num_new = 0;
         this.result.hit_indices = [];
@@ -274,6 +276,7 @@ var Bubble = function(default_value) {
             truth.value.substring(startIndex, endIndex + 1)
         );
         virtue.result.value_length = bubble.value.length;
+        virtue.result.value_length_percentage = bubble.value.length == 0 ? 0.00 : (bubble.value.length / truth.value.length * 100).toFixed(2);
         virtue.result.hit_num = virtue.result.hit_indices.length;
         virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
         virtue.result.miss_num = virtue.result.miss_indices.length;
@@ -296,6 +299,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
             console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
+            console.log('[measureVirtue] virtue.result.value_length_percentage: ' + virtue.result.value_length_percentage);
             console.log('[measureVirtue] virtue.result.shot_num_new: ' + virtue.result.shot_num_new);
             console.log('[measureVirtue] virtue.result.hit_indices: ' + virtue.result.hit_indices);
             console.log('[measureVirtue] virtue.result.hit_num_new: ' + virtue.result.hit_num_new);
@@ -559,6 +563,7 @@ var Student = function() {
             _student.virtue.result.completed = virtue.result.completed;
             _student.virtue.result.value = virtue.result.value;
             _student.virtue.result.value_length = virtue.result.value_length;
+            _student.virtue.result.value_length_percentage = virtue.result.value_length_percentage;
             _student.virtue.result.shot_num_new = virtue.result.shot_num_new;
             _student.virtue.result.hit_indices = virtue.result.hit_indices;
             _student.virtue.result.hit_num = virtue.result.hit_num;
@@ -828,6 +833,13 @@ var TrainingController = function () {
         property: "charactersCounter"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "value_length_percentage"
+    }).addBinding(
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({

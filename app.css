@@ -190,6 +190,7 @@ unitprogress heading {
     text-align: center;
 }
 unitprogress characterscounter,
+unitprogress characterspercentagecounter,
 unitprogress hitcounter,
 unitprogress hitpercentagecounter,
 unitprogress misscounter,
