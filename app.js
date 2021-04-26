@@ -294,13 +294,13 @@ var Bubble = function(default_value) {
 
         virtue.result.shot_num_total += virtue.result.shot_num_new;
         virtue.result.hit_num_total += virtue.result.hit_num_new;
-        virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0.00 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         virtue.result.miss_num_total += virtue.result.miss_num_new;
-        virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         virtue.result.amend_num_total += virtue.result.amend_num_new;
-        virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         virtue.result.other_num_total += virtue.result.other_num_new;
-        virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0.00 ? 0.00 : (virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : (virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2);
 
         if (virtue.result.success && bubble.value.length == truth.value.length) {
             virtue.result.completed = true;
