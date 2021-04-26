@@ -817,8 +817,8 @@ var TrainingController = function () {
     )
     // Data binding - Component: unitprogress
     new Binding({
-        object: _training.student.response,
-        property: "charactersCounter"
+        object: _training.student.virtue.result,
+        property: "value_length"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
