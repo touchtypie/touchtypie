@@ -101,6 +101,7 @@ var BubbleVirtue = function() {
             amend_num_total: 0,
             amend_num_total_percentage: 0.00,
             other_num_total: 0,
+            other_num_total_percentage: 0.00,
 
             // Global
             shot_num_global: 0,
@@ -110,7 +111,8 @@ var BubbleVirtue = function() {
             miss_num_global_percentage: 0.00,
             amend_num_global: 0,
             amend_num_global_percentage: 0.00,
-            other_num_global: 0
+            other_num_global: 0,
+            other_num_global_percentage: 0.00
         };
     }
     var result = newVirtue();
@@ -145,6 +147,7 @@ var BubbleVirtue = function() {
         this.result.amend_num_total = 0;
         this.result.amend_num_total_percentage = 0;
         this.result.other_num_total = 0;
+        this.result.other_num_total_percentage = 0;
     }
 
     return {
@@ -297,6 +300,7 @@ var Bubble = function(default_value) {
         virtue.result.amend_num_total += virtue.result.amend_num_new;
         virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         virtue.result.other_num_total += virtue.result.other_num_new;
+        virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0.00 ? 0.00 : (virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2);
 
         if (virtue.result.success && bubble.value.length == truth.value.length) {
             virtue.result.completed = true;
@@ -328,6 +332,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.amend_num_total: ' + virtue.result.amend_num_total);
             console.log('[measureVirtue] virtue.result.amend_num_total_percentage: ' + virtue.result.amend_num_total_percentage);
             console.log('[measureVirtue] virtue.result.other_num_total: ' + virtue.result.other_num_total);
+            console.log('[measureVirtue] virtue.result.other_num_total_percentage: ' + virtue.result.other_num_total_percentage);
         }
         return virtue;
     };
@@ -594,6 +599,7 @@ var Student = function() {
             _student.virtue.result.amend_num_total = virtue.result.amend_num_total;
             _student.virtue.result.amend_num_total_percentage = virtue.result.amend_num_total_percentage;
             _student.virtue.result.other_num_total = virtue.result.other_num_total;
+            _student.virtue.result.other_num_total_percentage = virtue.result.other_num_total_percentage;
 
             // Popululate my virtue (global, cumulative)
             _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
@@ -604,6 +610,7 @@ var Student = function() {
             _student.virtue.result.amend_num_global += virtue.result.amend_num_new;
             _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
             _student.virtue.result.other_num_global += virtue.result.other_num_new;
+            _student.virtue.result.other_num_global_percentage = _student.virtue.result.other_num_global == 0 ? 0.00 : (_student.virtue.result.other_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
 
         },
         setFocus: function(element) {
@@ -939,6 +946,13 @@ var TrainingController = function () {
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
 
     // Data binding - Component: globaloverall
     new Binding({
@@ -995,6 +1009,13 @@ var TrainingController = function () {
         property: "other_num_global"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_global_percentage"
+    }).addBinding(
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
