@@ -168,12 +168,13 @@ menubutton span {
 
 topics {
     display: block;
-    text-align: center;
+    width: 66.67%;
+    margin: 0 auto;
 }
 topics label {
     display: inline-block;
     vertical-align: middle;
-    width: 22.22%;
+    width: 33.33%;
     color: #fff;
     font-family: monospace;
     font-weight: normal;
@@ -183,7 +184,7 @@ topics label {
 topics select {
     display: inline-block;
     vertical-align: middle;
-    width: 44.44%;
+    width: 66.67%;
     height: auto;
     color: #fff;
     background: transparent;
