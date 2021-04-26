@@ -222,8 +222,9 @@ unitoverall hitcounter,
 unitoverall hitpercentagecounter,
 unitoverall misscounter,
 unitoverall misspercentagecounter,
+unitoverall amendcounter,
 unitoverall amendpercentagecounter,
-unitoverall amendcounter {
+unitoverall othercounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
@@ -253,8 +254,9 @@ globaloverall misscounter,
 globaloverall misspercentagecounter,
 globaloverall amendcounter,
 globaloverall amendpercentagecounter,
+globaloverall othercounter,
 globaloverall unitcounter {
-        display: block;
+    display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
     color: #fff;

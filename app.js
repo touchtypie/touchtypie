@@ -90,6 +90,7 @@ var BubbleVirtue = function() {
             miss_num_new: 0,
             miss_num_percentage: 0.00,
             amend_num_new: 0,
+            other_num_new: 0,
 
             // Unit
             shot_num_total: 0,
@@ -99,6 +100,7 @@ var BubbleVirtue = function() {
             miss_num_total_percentage: 0.00,
             amend_num_total: 0,
             amend_num_total_percentage: 0.00,
+            other_num_total: 0,
 
             // Global
             shot_num_global: 0,
@@ -108,6 +110,7 @@ var BubbleVirtue = function() {
             miss_num_global_percentage: 0.00,
             amend_num_global: 0,
             amend_num_global_percentage: 0.00,
+            other_num_global: 0
         };
     }
     var result = newVirtue();
@@ -130,16 +133,18 @@ var BubbleVirtue = function() {
         this.result.miss_num_new = 0;
         this.result.miss_num_percentage = 0.00;
         this.result.amend_num_new = 0;
+        this.result.other_num_new = 0;
     };
     var newlife = function() {
         this.newleaf();
+        this.result.shots_num_total = 0;
         this.result.hit_num_total = 0;
         this.result.hit_num_total_percentage = 0.00;
         this.result.miss_num_total = 0;
         this.result.miss_num_total_percentage = 0.00;
-        this.result.shots_num_total = 0;
         this.result.amend_num_total = 0;
         this.result.amend_num_total_percentage = 0;
+        this.result.other_num_total = 0;
     }
 
     return {
@@ -262,6 +267,7 @@ var Bubble = function(default_value) {
         }
         virtue.result.miss_num_new = amend === false && bubble.value.length > truth.value.length ? 1 : virtue.result.miss_num_new;
         virtue.result.amend_num_new = amend === true && bubble.value.length < value_length_prev ? 1 : virtue.result.amend_num_new;
+        virtue.result.other_num_new = virtue.result.shot_num_new && bubble.value.length === value_length_prev ? 1 : virtue.result.amend_num_new;
 
         // for (var i = bubble.value.length; i < truth.value.length; i++) {
         //     // Valid
@@ -290,6 +296,7 @@ var Bubble = function(default_value) {
         virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0.00 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
         virtue.result.amend_num_total += virtue.result.amend_num_new;
         virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0.00 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.other_num_total += virtue.result.other_num_new;
 
         if (virtue.result.success && bubble.value.length == truth.value.length) {
             virtue.result.completed = true;
@@ -311,6 +318,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.miss_num: ' + virtue.result.miss_num);
             console.log('[measureVirtue] virtue.result.miss_num_percentage: ' + virtue.result.miss_num_percentage);
             console.log('[measureVirtue] virtue.result.amend_num_new: ' + virtue.result.amend_num_new);
+            console.log('[measureVirtue] virtue.result.other_num_new: ' + virtue.result.other_num_new);
 
             console.log('[measureVirtue] virtue.result.shot_num_total: ' + virtue.result.shot_num_total);
             console.log('[measureVirtue] virtue.result.hit_num_total: ' + virtue.result.hit_num_total);
@@ -319,6 +327,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.miss_num_total_percentage: ' + virtue.result.miss_num_total_percentage);
             console.log('[measureVirtue] virtue.result.amend_num_total: ' + virtue.result.amend_num_total);
             console.log('[measureVirtue] virtue.result.amend_num_total_percentage: ' + virtue.result.amend_num_total_percentage);
+            console.log('[measureVirtue] virtue.result.other_num_total: ' + virtue.result.other_num_total);
         }
         return virtue;
     };
@@ -584,6 +593,7 @@ var Student = function() {
             _student.virtue.result.miss_num_total_percentage = virtue.result.miss_num_total_percentage;
             _student.virtue.result.amend_num_total = virtue.result.amend_num_total;
             _student.virtue.result.amend_num_total_percentage = virtue.result.amend_num_total_percentage;
+            _student.virtue.result.other_num_total = virtue.result.other_num_total;
 
             // Popululate my virtue (global, cumulative)
             _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
@@ -593,6 +603,7 @@ var Student = function() {
             _student.virtue.result.miss_num_global_percentage = _student.virtue.result.miss_num_global == 0 ? 0.00 : (_student.virtue.result.miss_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
             _student.virtue.result.amend_num_global += virtue.result.amend_num_new;
             _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+            _student.virtue.result.other_num_global += virtue.result.other_num_new;
 
         },
         setFocus: function(element) {
@@ -921,6 +932,13 @@ var TrainingController = function () {
         document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_total"
+    }).addBinding(
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
 
     // Data binding - Component: globaloverall
     new Binding({
@@ -970,6 +988,13 @@ var TrainingController = function () {
         property: "amend_num_global_percentage"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_global"
+    }).addBinding(
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
