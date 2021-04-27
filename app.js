@@ -354,6 +354,17 @@ var Book = function() {
 };
 // A representation of memory: working memory, short-term memory, and long-term memory.
 var Memory = function() {
+    // Mental representation of training settings
+    var environment = {
+        state: '',
+        switches: [
+            {
+                key: 'statistics',
+                value: true
+            }
+        ]
+    };
+
     // Mental representations of books
     var bookCollectionIds = [ 'https://leojonathanoh.github.io/bible_databases/links/links.txt' ];
     var books = {};
@@ -482,6 +493,7 @@ var Memory = function() {
     };
 
     return {
+        environment: environment,
         books: books,
         bookIds: bookIds,
         bookCount: bookCount,
@@ -628,15 +640,6 @@ var Student = function() {
 };
 var Training = function() {
     var _this = this;
-    var environment = {
-        state: '',
-        switches: [
-            {
-                key: 'statistics',
-                value: true
-            }
-        ]
-    };
     var trainer = Trainer();
     var student = Student();
 
@@ -692,7 +695,6 @@ var Training = function() {
     };
 
     return {
-        environment: environment,
         trainer: trainer,
         student: student,
         next: next,
@@ -707,7 +709,7 @@ var TrainingController = function () {
 
     // Data binding - Component: menu
     Binding({
-        object: _training.environment,
+        object: _training.trainer.memory.environment,
         property: "state"
     })
     .addBinding(
@@ -717,12 +719,11 @@ var TrainingController = function () {
 
     // Event listeners - Component: menu environment
     document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        _training.environment.state = _training.environment.state === '' ? 'customize' : '';
+        _training.trainer.memory.environment.state = _training.trainer.memory.environment.state === '' ? 'customize' : '';
     });
     document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('backdrop')[0].addEventListener('click', function(element, event) {
-        _training.environment.state = _training.environment.state === '' ? 'customize' : '';
+        _training.trainer.memory.environment.state = _training.trainer.memory.environment.state === '' ? 'customize' : '';
     });
-
 
     var recreateTopicSelectOptions = function(event, _this, binding) {
         // If new topic was selected, change to that topic
@@ -786,8 +787,8 @@ var TrainingController = function () {
         if (popupElement) {
             var object;
             var menuSwitchElement, _labelElement, _switchElement;
-            for (var i = 0; i < _training.environment.switches.length; i++) {
-                object = _training.environment.switches[i];
+            for (var i = 0; i < _training.trainer.memory.environment.switches.length; i++) {
+                object = _training.trainer.memory.environment.switches[i];
 
                 menuSwitchElement = document.createElement('menuswitch');
                 _labelElement = document.createElement('label');
