@@ -166,6 +166,50 @@ menubutton span {
     line-height: 1;
 }
 
+menuswitch {
+    display: block;
+    width: 66.67%;
+    margin: 0 auto;
+    margin-top: 1vw;
+}
+menuswitch label {
+    display: inline-block;
+    vertical-align: middle;
+    width: 33.33%;
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+    text-align: center;
+    text-transform: uppercase;
+}
+menuswitch switch {
+    display: inline-block;
+    vertical-align: middle;
+}
+switch {
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 1vw;
+    width: calc( 2vw + 2px + 2px );
+    height: calc( 1vw + 2px + 2px );
+    padding: 1px;
+    border: 1px solid #fff;
+    cursor: pointer;
+}
+switch handle {
+    display: inline-block;
+    width: 1vw;
+    height: 1vw;
+    border: 1px solid #fff;
+    border-radius: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    margin-left: 0;
+}
+switch.true handle {
+    margin-left: 1vw;
+    background: rgba(255, 255, 255, 1.0);
+}
 menuselect {
     display: block;
     width: 66.67%;

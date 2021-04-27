@@ -629,7 +629,13 @@ var Student = function() {
 var Training = function() {
     var _this = this;
     var environment = {
-        state: ''
+        state: '',
+        switches: [
+            {
+                key: 'statistics',
+                value: true
+            }
+        ]
     };
     var trainer = Trainer();
     var student = Student();
@@ -748,7 +754,7 @@ var TrainingController = function () {
         }
     };
 
-    // Data binding - Component: menuselect
+    // Data binding - Component: menu environment menuselect
     Binding({
         object: _training.trainer.memory,
         property: "workingMemoryBookId"
@@ -772,6 +778,48 @@ var TrainingController = function () {
         'change',
         recreateTopicSelectOptions
     );
+
+    // Dynamically create Component: menu environment menuswitch
+    // Data binding - Component: menu environment menuswitch
+    var createmenuSwitches = (function() {
+        var popupElement = document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0];
+        if (popupElement) {
+            var object;
+            var menuSwitchElement, _labelElement, _switchElement;
+            for (var i = 0; i < _training.environment.switches.length; i++) {
+                object = _training.environment.switches[i];
+
+                menuSwitchElement = document.createElement('menuswitch');
+                _labelElement = document.createElement('label');
+                _labelElement.innerHTML = object.key;
+                menuSwitchElement.appendChild(_labelElement);
+                _switchElement = document.createElement('switch')
+                _switchElement.appendChild(document.createElement('handle'));
+                menuSwitchElement.appendChild(_switchElement);
+                popupElement.appendChild(menuSwitchElement);
+
+                // Data binding
+                Binding({
+                    object: object,
+                    property: 'value'
+                })
+                .addBinding(
+                    _switchElement,
+                    'className',
+                    'click',
+                    function(event, _this, binding) {
+                        // Toggle. JSON.parse() to cast string to boolean
+                        var newVal = !object.value;
+                        object.value = newVal;
+                        // _this.value = newVal;
+                        // _this.valueSetter(newVal);
+                        document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
+                    }
+                )
+            }
+
+        }
+    })();
 
     // Data binding - Component: truth
     Binding({
