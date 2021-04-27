@@ -354,9 +354,17 @@ var Book = function() {
 };
 // A representation of memory: working memory, short-term memory, and long-term memory.
 var Memory = function() {
+    var _this = this;
     // Mental representation of training settings
     var environment = {
         state: '',
+        selections: [
+            {
+                key: 'topics',
+                value: _this.workingMemoryBookId,
+                options: _this.bookIds
+            }
+        ],
         switches: [
             {
                 key: 'statistics',
@@ -725,60 +733,80 @@ var TrainingController = function () {
         _training.trainer.memory.environment.state = _training.trainer.memory.environment.state === '' ? 'customize' : '';
     });
 
-    var recreateTopicSelectOptions = function(event, _this, binding) {
-        // If new topic was selected, change to that topic
-        var topic = _training.trainer.getCurrentTopic();
-        var topicNew = binding.element.value;
-        if (topic !== topicNew) {
-            // On DOMContenteLoaded, the .value is empty
-            if (topicNew === '') {
-                topicNew = topic;
-            }
-            _training.trainer.setCurrentTopic(topicNew);
-            _training.start(_training.trainer.getCurrentTopicContent());
-
-            // Remove all options
-            binding.element.innerHTML = '';
-            // Recreate all options
-            var topics = _training.trainer.getTopics();
-            var optionElement;
-            for (var i = 0; i < topics.length; i++) {
-                optionElement = document.createElement('option');
-                if (topics[i] === _training.trainer.getCurrentTopic()) {
-                    optionElement.setAttribute('selected', true);
-                }
-                optionElement.setAttribute('value', topics[i]);
-                optionElement.innerHTML = decodeURIComponent(topics[i].replace(/.+\/([^\/]+)$/, '$1'));
-                binding.element.appendChild(optionElement);
-            }
-
-        }
-    };
-
+    // Dynamically create Component: menu environment menuselect
     // Data binding - Component: menu environment menuselect
-    Binding({
-        object: _training.trainer.memory,
-        property: "workingMemoryBookId"
-    })
-    .addBinding(
-        document.getElementsByTagName('menuselect')[0].getElementsByTagName('select')[0],
-        'value',
-        'DOMContentLoaded',
-        function(event, _this, binding) {
-            _training.prepare(function() {
-                recreateTopicSelectOptions(event, _this, binding);
-                // Fire the change event to populate this element with <option> elements
-                // binding.element.onchange();
-                // binding.element.dispatchEvent(new Event('change'));
-            });
+    var createmenuSelections = (function() {
+        var popupElement = document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0];
+        if (popupElement) {
+            var object;
+            var menuSelectElement, _labelElement, _selectElement;
+            for (var i = 0; i < _training.trainer.memory.environment.selections.length; i++) {
+                object = _training.trainer.memory.environment.selections[i];
+
+                menuSelectElement = document.createElement('menuselect');
+                _labelElement = document.createElement('label');
+                _labelElement.innerHTML = object.key;
+                menuSelectElement.appendChild(_labelElement);
+                _selectElement = document.createElement('select')
+                menuSelectElement.appendChild(_selectElement);
+                popupElement.appendChild(menuSelectElement);
+
+                var recreateTopicSelectOptions = function(event, _this, binding) {
+                    // If new topic was selected, change to that topic
+                    var topic = _training.trainer.getCurrentTopic();
+                    var topicNew = binding.element.value;
+                    if (topic !== topicNew) {
+                        // On DOMContenteLoaded, the .value is empty
+                        if (topicNew === '') {
+                            topicNew = topic;
+                        }
+                        _training.trainer.setCurrentTopic(topicNew);
+                        _training.start(_training.trainer.getCurrentTopicContent());
+
+                        // Remove all options
+                        binding.element.innerHTML = '';
+                        // Recreate all options
+                        var topics = _training.trainer.getTopics();
+                        var optionElement;
+                        for (var i = 0; i < topics.length; i++) {
+                            optionElement = document.createElement('option');
+                            if (topics[i] === _training.trainer.getCurrentTopic()) {
+                                optionElement.setAttribute('selected', true);
+                            }
+                            optionElement.setAttribute('value', topics[i]);
+                            optionElement.innerHTML = decodeURIComponent(topics[i].replace(/.+\/([^\/]+)$/, '$1'));
+                            binding.element.appendChild(optionElement);
+                        }
+
+                    }
+                };
+
+                Binding({
+                    object: object,
+                    property: 'value'
+                })
+                .addBinding(
+                    _selectElement,
+                    'value',
+                    'DOMContentLoaded',
+                    function(event, _this, binding) {
+                        _training.prepare(function() {
+                            recreateTopicSelectOptions(event, _this, binding);
+                            // Fire the change event to populate this element with <option> elements
+                            // binding.element.onchange();
+                            // binding.element.dispatchEvent(new Event('change'));
+                        });
+                    }
+                )
+                .addBinding(
+                    _selectElement,
+                    'innerHTML',
+                    'change',
+                    recreateTopicSelectOptions
+                );
+            }
         }
-    )
-    .addBinding(
-        document.getElementsByTagName('menuselect')[0].getElementsByTagName('select')[0],
-        'innerHTML',
-        'change',
-        recreateTopicSelectOptions
-    );
+    })();
 
     // Dynamically create Component: menu environment menuswitch
     // Data binding - Component: menu environment menuswitch
