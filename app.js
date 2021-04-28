@@ -354,15 +354,14 @@ var Book = function() {
 };
 // A representation of memory: working memory, short-term memory, and long-term memory.
 var Memory = function() {
-    var _this = this;
     // Mental representation of training settings
     var environment = {
         state: '',
         selections: [
             {
                 key: 'topics',
-                value: _this.workingMemoryBookId,
-                options: _this.bookIds
+                value: workingMemoryBookId,
+                options: bookIds
             }
         ],
         switches: [
@@ -402,7 +401,7 @@ var Memory = function() {
         xhr.onreadystatechange = function(event, event) {
             if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200 || xhr.readyState == XMLHttpRequest.DONE && xhr.status == 304) {
                 if (callback) {
-                    callback(readbody(xhr), callbackData);
+                    callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
                 }
             }
 
@@ -412,7 +411,7 @@ var Memory = function() {
                 console.log('[xhr.status] :' + xhr.status);
                 if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 0) {
                     if (callback) {
-                        callback('zzz', callbackData);
+                        callback.apply(callbackData.self, [ 'zzz', callbackData ]);
                     }
                 }
             }
@@ -423,18 +422,16 @@ var Memory = function() {
 
     // Retrieval
     var getBook = function() {
-        var _this = this;
-        return books[_this.workingMemoryBookId];
+        return books[workingMemoryBookId];
     };
 
     var getNextBook = function() {
-        var _this = this;
         var keys = Object.keys(books);
-        var nextIndex = keys.indexOf(_this.workingMemoryBookId) + 1;
+        var nextIndex = keys.indexOf(workingMemoryBookId) + 1;
         if (nextIndex !== -1) {
             var nextKey = keys[nextIndex];
-            _this.workingMemoryBookId = nextKey;
-            return _this.getBook();
+            workingMemoryBookId = nextKey;
+            return getBook();
         }else {
             return null;
         }
@@ -452,8 +449,7 @@ var Memory = function() {
 
     // Working memory
     var prepareWorkingMemory = function() {
-        var _this = this;
-        this.workingMemoryBookId = Object.keys(books)[0];
+        workingMemoryBookId = Object.keys(books)[0];
     };
 
     // Recollection
@@ -462,37 +458,40 @@ var Memory = function() {
         fetch({
             method: 'GET',
             url: bookCollectionIds[0],
-            callback: function(bookIds) {
-                recallBooks(_this, bookIds, function() {
+            callback: function(_bookIds) {
+                recallBooks(_bookIds, function() {
                     // Once all books are recalled are done, call the callback
                     if (isReady()) {
                         callback();
                     }
-                });
+                })
+            },
+            callbackData: {
+                self: _this
             }
         });
     };
 
     // Recollection of books and their content
-    var recallBooks = function(_this, bookIds, callback) {
+    var recallBooks = function(_bookIds, callback) {
+        var _this = this;
         // Recall reading the book
-        _this.bookIds = bookIds.split(/\r\n|\n/) //.slice(0,1);
-        for (var i = 0; i < _this.bookIds.length; i++) {
+        bookIds = _bookIds.split(/\r\n|\n/) //.slice(0,1);
+        for (var i = 0; i < bookIds.length; i++) {
             var book = Book();
-            book.id = _this.bookIds[i];
-            _this.books[book.id] = book;
+            book.id = bookIds[i];
+            books[book.id] = book;
         }
-        _this.bookCount = _this.bookIds.length;
+        bookCount = bookIds.length;
 
         // Refresh my memory of its content
-        for (var k in _this.books) {
+        for (var k in books) {
             fetch({
                 method: 'GET',
-                url: _this.books[k].id,
+                url: books[k].id,
                 callback: function(text, data) {
-                    var _this = data.self;
                     var key = data.key;
-                    _this.books[key].content = text;
+                    books[key].content = text;
                     callback();
                 },
                 callbackData: { self: _this, key: k }
@@ -503,9 +502,24 @@ var Memory = function() {
     return {
         environment: environment,
         books: books,
-        bookIds: bookIds,
-        bookCount: bookCount,
-        workingMemoryBookId: workingMemoryBookId,
+        get bookIds() {
+            return bookIds;
+        },
+        set bookIds(value) {
+            bookIds = value;
+        },
+        get bookCount() {
+            return bookCount;
+        },
+        set bookCount(value) {
+            bookCount = value;
+        },
+        get workingMemoryBookId() {
+            return workingMemoryBookId;
+        },
+        set workingMemoryBookId(value) {
+            workingMemoryBookId = value;
+        },
         getBook: getBook,
         getNextBook: getNextBook,
         isReady: isReady,
