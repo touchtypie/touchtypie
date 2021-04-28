@@ -1,3 +1,5 @@
+'use strict'
+
 var Helpers = function () {
     return {
         htmlEntities: function htmlEntities(str) {
@@ -398,7 +400,7 @@ var Memory = function() {
         };
 
         var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(event, event) {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200 || xhr.readyState == XMLHttpRequest.DONE && xhr.status == 304) {
                 if (callback) {
                     callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
