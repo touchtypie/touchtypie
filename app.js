@@ -23,7 +23,7 @@ var Binding = function(b) {
             binding.element[binding.attribute] = val;
         }
     };
-    var addBinding = function(element, attribute, event, callback){
+    var addBinding = function(element, attribute, event, callback, callbackThisObj){
         var _this = this;
         var binding = {
             element: element,
@@ -35,7 +35,7 @@ var Binding = function(b) {
             var ele = /DOM|ready/.test(event) ? document : element;
             if (callback) {
                 ele.addEventListener(event, function(event){
-                    callback(event, _this, binding);
+                    callback.apply(callbackThisObj, [event, _this, binding]);
                 });
             }else {
                 ele.addEventListener(event, function(event){
