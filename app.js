@@ -651,7 +651,7 @@ var Student = function() {
         }
     }
 };
-var Training = function(environment) {
+var Training = function() {
     var _this = this;
     var trainer = Trainer();
     var student = Student();
