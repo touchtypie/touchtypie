@@ -750,6 +750,7 @@ var Component = function(c) {
                                 object = object[propsPaths[_]];
                             }
                         }
+                        property = propsPaths[propsPaths.length - 1];
                     }else {
                         property = propsPaths[0];
                     }
@@ -787,6 +788,7 @@ var Component = function(c) {
                             object = object[propsPaths[_]];
                         }
                     }
+                    property = propsPaths[propsPaths.length - 1];
                 }else {
                     property = propsPaths[0];
                 }
