@@ -539,7 +539,7 @@ var Trainer = function() {
     };
 
     var getCurrentTopic = function() {
-        return memory.getBook().id;
+        return memory.workingMemoryBookId;
     };
 
     var getCurrentTopicContent = function() {
