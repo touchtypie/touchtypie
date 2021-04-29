@@ -937,8 +937,8 @@ var TrainingController = function () {
                 var c = this;
 
                 // Toggle. JSON.parse() to cast string to boolean
-                var newVal = !c.props.value;
-                c.props.value = newVal;
+                var newVal = !c.props._training.trainer.memory.environment.statistics;
+                c.props._training.trainer.memory.environment.statistics = newVal;
                 // _this.value = newVal;
                 // _this.valueSetter(newVal);
                 document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
