@@ -356,22 +356,11 @@ var Book = function() {
 };
 // A representation of memory: working memory, short-term memory, and long-term memory.
 var Memory = function() {
-    // Mental representation of training settings
+
+    // Mental representation of the physical and social environment
     var environment = {
         state: '',
-        selections: [
-            {
-                key: 'topics',
-                value: workingMemoryBookId,
-                options: bookIds
-            }
-        ],
-        switches: [
-            {
-                key: 'statistics',
-                value: true
-            }
-        ]
+        statistics: true
     };
 
     // Mental representations of books
@@ -662,7 +651,7 @@ var Student = function() {
         }
     }
 };
-var Training = function() {
+var Training = function(environment) {
     var _this = this;
     var trainer = Trainer();
     var student = Student();
@@ -727,144 +716,233 @@ var Training = function() {
     };
 };
 
+var Component = function(c) {
+
+    var rootElement, results;
+
+    var createElementFromHTML = function(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html.trim();
+
+        // Change this to div.childNodes to support multiple top-level nodes
+        return div.firstChild;
+    }
+
+    var creatingBindings = function(rootElement) {
+        var allElements = rootElement.getElementsByTagName('*');
+        var matches, propsPaths, object, property, binding, events;
+        for (var i = 0; i < allElements.length; i++) {
+            var ele = allElements[i];
+            for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
+                // Get any eventListeners
+                matches = /b-on/.exec(atts[j].name);
+                if (matches && matches.length > 0) {
+                    events = atts[j].value.split(',').filter(function (v) { return v !== ''; });
+                }
+                // Create data binding to attribute. E.g. '{{ .foo }}'
+                matches = /\{\{([^\}]+)\}\}/.exec(atts[j].value);
+                if (matches && matches.length > 0) {
+                    object = c.props;
+                    propsPaths = matches[1].trim().split('.').filter(function (v) { return v !== ''; });
+                    if (propsPaths.length > 1) {
+                        for (var _ = 0; _ < propsPaths.length - 1; _++) {
+                            if (propsPaths[_] !== '') {
+                                object = object[propsPaths[_]];
+                            }
+                        }
+                    }else {
+                        property = propsPaths[0];
+                    }
+                    binding = Binding({
+                        object: object,
+                        property: property
+                    });
+                    if (events) {
+                        for (var e = 0; e < events.length; e++) {
+                            binding.addBinding(
+                                ele,
+                                /^class$/i.test(atts[j].name) ? 'className' : atts[j].name, // e.g. 'someattr' or 'innerHTML'
+                                events[e], // e.g. 'click'
+                                c.eventsListeners[events[e]], // callback,
+                                c // callbackThisObj
+                            );
+                        }
+                    }else {
+                        binding.addBinding(
+                            ele,
+                            /^class$/i.test(atts[j].name) ? 'className' : atts[j].name, // e.g. 'someattr' or 'innerHTML'
+                        );
+                    }
+                    ele.binding = binding;
+                }
+            }
+            // Or data bind to innerHTML
+            matches = /\{\{([^\}]+)\}\}/.exec(ele.innerHTML);
+            if (matches && matches.length > 0) {
+                object = c.props;
+                propsPaths = matches[1].trim().split('.').filter(function (v) { return v !== ''; });
+                if (propsPaths.length > 1) {
+                    for (var _ = 0; _ < propsPaths.length - 1; _++) {
+                        if (propsPaths[_] !== '') {
+                            object = object[propsPaths[_]];
+                        }
+                    }
+                }else {
+                    property = propsPaths[0];
+                }
+                binding = Binding({
+                    object: object,
+                    property: property
+                });
+                if (events) {
+                    for (var e = 0; e < events.length; e++) {
+                        binding.addBinding(
+                            ele,
+                            'innerHTML', // e.g. 'someattr' or 'innerHTML'
+                            events[e],  // e.g. 'click'
+                            c.eventsListeners[events[e]], // callback,
+                            c // callbackThisObj
+                        )
+                    }
+                }else {
+                    binding.addBinding(
+                        ele,
+                        'innerHTML'
+                    );
+                }
+                ele.binding = binding;
+            }
+        }
+    }
+
+    if (/select/.test(c.name)) {
+        // Create the DOM element
+        var rootElement = createElementFromHTML(c.template);
+        // Create its <option> elemnets
+        var createSelectOptions = (function() {
+            var _selectElement = rootElement.getElementsByTagName('select')[0];
+            var optionElement;
+            for (var i = 0; i < c.props.options.length; i++) {
+                optionElement = document.createElement('option');
+                if (component.props.options[i] === component.value) {
+                    optionElement.setAttribute('selected', true);
+                }
+                optionElement.setAttribute('value', component.props.options[i]);
+                optionElement.innerHTML = decodeURIComponent(component.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                _selectElement.appendChild(optionElement);
+            }
+        })();
+        c.parentElement.appendChild(rootElement);
+
+        creatingBindings(rootElement);
+    }else {
+        // Create the DOM element
+        var rootElement = createElementFromHTML(c.template);
+        c.parentElement.appendChild(rootElement);
+
+        // Create data bindings
+        creatingBindings(rootElement);
+    }
+};
+
 // Controllers
 var TrainingController = function () {
     var _training = State.training;
 
     // Data binding - Component: menu
+    var environment = _training.trainer.memory.environment;
     Binding({
-        object: _training.trainer.memory.environment,
+        object: environment,
         property: "state"
     })
     .addBinding(
         document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0],
         'className',
-    )
-
+    );
     // Event listeners - Component: menu environment
     document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        _training.trainer.memory.environment.state = _training.trainer.memory.environment.state === '' ? 'customize' : '';
+        environment.state = environment.state === '' ? 'customize' : '';
     });
     document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('backdrop')[0].addEventListener('click', function(element, event) {
-        _training.trainer.memory.environment.state = _training.trainer.memory.environment.state === '' ? 'customize' : '';
+        environment.state = environment.state === '' ? 'customize' : '';
     });
-
-    // Dynamically create Component: menu environment menuselect
-    // Data binding - Component: menu environment menuselect
-    var createmenuSelections = (function() {
-        var popupElement = document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0];
-        if (popupElement) {
-            var object;
-            var menuSelectElement, _labelElement, _selectElement;
-            for (var i = 0; i < _training.trainer.memory.environment.selections.length; i++) {
-                object = _training.trainer.memory.environment.selections[i];
-
-                menuSelectElement = document.createElement('menuselect');
-                _labelElement = document.createElement('label');
-                _labelElement.innerHTML = object.key;
-                menuSelectElement.appendChild(_labelElement);
-                _selectElement = document.createElement('select')
-                menuSelectElement.appendChild(_selectElement);
-                popupElement.appendChild(menuSelectElement);
-
-                var recreateTopicSelectOptions = function(event, _this, binding) {
-                    // If new topic was selected, change to that topic
-                    var topic = _training.trainer.getCurrentTopic();
-                    var topicNew = binding.element.value;
-                    if (topic !== topicNew) {
-                        // On DOMContenteLoaded, the .value is empty
-                        if (topicNew === '') {
-                            topicNew = topic;
-                        }
-                        _training.trainer.setCurrentTopic(topicNew);
-                        _training.start(_training.trainer.getCurrentTopicContent());
-
-                        // Remove all options
-                        binding.element.innerHTML = '';
-                        // Recreate all options
-                        var topics = _training.trainer.getTopics();
-                        var optionElement;
-                        for (var i = 0; i < topics.length; i++) {
-                            optionElement = document.createElement('option');
-                            if (topics[i] === _training.trainer.getCurrentTopic()) {
-                                optionElement.setAttribute('selected', true);
-                            }
-                            optionElement.setAttribute('value', topics[i]);
-                            optionElement.innerHTML = decodeURIComponent(topics[i].replace(/.+\/([^\/]+)$/, '$1'));
-                            binding.element.appendChild(optionElement);
-                        }
-
+    // Components
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuselect',
+        template: `
+            <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect>
+        `,
+        props: {
+            label: 'topics',
+            _training: _training,
+            get options() {
+                return _training.trainer.memory.bookIds;
+            },
+        },
+        methods: {
+            createSelectOptions: function(c, binding) {
+                var ele = binding.element;
+                // Remove all options elements
+                ele.innerHTML = '';
+                // Recreate all options elements
+                var optionElement;
+                for (var i = 0; i < c.props.options.length; i++) {
+                    optionElement = document.createElement('option');
+                    if (c.props.options[i] === c.value) {
+                        optionElement.setAttribute('selected', true);
                     }
-                };
-
-                Binding({
-                    object: object,
-                    property: 'value'
-                })
-                .addBinding(
-                    _selectElement,
-                    'value',
-                    'DOMContentLoaded',
-                    function(event, _this, binding) {
-                        _training.prepare(function() {
-                            recreateTopicSelectOptions(event, _this, binding);
-                            // Fire the change event to populate this element with <option> elements
-                            // binding.element.onchange();
-                            // binding.element.dispatchEvent(new Event('change'));
-                        });
+                    optionElement.setAttribute('value', c.props.options[i]);
+                    optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                    ele.appendChild(optionElement);
+                }
+            }
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+                _training.prepare(function() {
+                    c.methods.createSelectOptions(c, binding);
+                });
+            },
+            change: function(event, _this, binding) {
+                var c = this;
+                // If new value was selected, do something
+                var valueNew = binding.element.value;
+                var value = c.props.value;
+                if (valueNew !== value) {
+                    // On DOMContentLoaded, the .value is empty
+                    if (valueNew === '') {
+                        valueNew = value;
                     }
-                )
-                .addBinding(
-                    _selectElement,
-                    'innerHTML',
-                    'change',
-                    recreateTopicSelectOptions
-                );
+                   c.props._training.trainer.memory.workingMemoryBookId = valueNew;
+                   c.props._training.start(_training.trainer.getCurrentTopicContent());
+                }
             }
         }
-    })();
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuswitch',
+        template: `
+            <menuswitch><label>statistics</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.statistics }}"><handle></handle></switch></menuswitch>
+        `,
+        props: {
+            _training: _training
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
 
-    // Dynamically create Component: menu environment menuswitch
-    // Data binding - Component: menu environment menuswitch
-    var createmenuSwitches = (function() {
-        var popupElement = document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0];
-        if (popupElement) {
-            var object;
-            var menuSwitchElement, _labelElement, _switchElement;
-            for (var i = 0; i < _training.trainer.memory.environment.switches.length; i++) {
-                object = _training.trainer.memory.environment.switches[i];
-
-                menuSwitchElement = document.createElement('menuswitch');
-                _labelElement = document.createElement('label');
-                _labelElement.innerHTML = object.key;
-                menuSwitchElement.appendChild(_labelElement);
-                _switchElement = document.createElement('switch')
-                _switchElement.appendChild(document.createElement('handle'));
-                menuSwitchElement.appendChild(_switchElement);
-                popupElement.appendChild(menuSwitchElement);
-
-                // Data binding
-                Binding({
-                    object: object,
-                    property: 'value'
-                })
-                .addBinding(
-                    _switchElement,
-                    'className',
-                    'click',
-                    function(event, _this, binding) {
-                        // Toggle. JSON.parse() to cast string to boolean
-                        var newVal = !object.value;
-                        object.value = newVal;
-                        // _this.value = newVal;
-                        // _this.valueSetter(newVal);
-                        document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
-                    }
-                )
+                // Toggle. JSON.parse() to cast string to boolean
+                var newVal = !c.props.value;
+                c.props.value = newVal;
+                // _this.value = newVal;
+                // _this.valueSetter(newVal);
+                document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
             }
-
         }
-    })();
+    });
 
     // Data binding - Component: truth
     Binding({
