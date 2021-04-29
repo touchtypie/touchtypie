@@ -75,6 +75,7 @@ var Binding = function(b) {
 var BubbleVirtue = function() {
     var newVirtue = function() {
         return {
+            perfection: false,
             success: false,
             completed: false,
             value: '',
@@ -120,6 +121,7 @@ var BubbleVirtue = function() {
     var result = newVirtue();
 
     var newleaf = function() {
+        this.result.perfection = false;
         this.result.success = false;
         this.result.completed = false;
 
@@ -247,7 +249,7 @@ var Bubble = function(default_value) {
     }
 
     // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
-    var measureVirtue = function(truth, key) {
+    var measureVirtue = function(truth, key, perfection) {
         var bubble = this;
         var amend = ( key == 8 || key == 46 ) ? true : false;
 
@@ -279,6 +281,7 @@ var Bubble = function(default_value) {
         // }
 
         // Populate result
+        virtue.result.perfection = perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         const peekIndices= getPeekIndices(bubble, truth);
         const startIndex = peekIndices[0];
@@ -304,7 +307,9 @@ var Bubble = function(default_value) {
         virtue.result.other_num_total += virtue.result.other_num_new;
         virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : (virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2);
 
-        if (virtue.result.success && bubble.value.length == truth.value.length) {
+        if ( (perfection && virtue.result.success && bubble.value.length == truth.value.length) ||
+             (!perfection && bubble.value.length == truth.value.length)
+            ) {
             virtue.result.completed = true;
         }
 
@@ -360,7 +365,8 @@ var Memory = function() {
     // Mental representation of the physical and social environment
     var environment = {
         state: '',
-        statistics: true
+        statistics: true,
+        perfection : true
     };
 
     // Mental representations of books
@@ -945,6 +951,23 @@ var TrainingController = function () {
             }
         }
     });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuswitch',
+        template: `
+            <menuswitch><label>perfection</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.perfection }}"><handle></handle></switch></menuswitch>
+        `,
+        props: {
+            _training: _training
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                var newVal = !c.props._training.trainer.memory.environment.perfection;
+                c.props._training.trainer.memory.environment.perfection = newVal;
+            }
+        }
+    });
 
     // Data binding - Component: truth
     Binding({
@@ -1011,7 +1034,7 @@ var TrainingController = function () {
             _training.student.response.charactersCounter = _training.student.response.value.length;
 
             // Validate student response
-            var virtue = _training.student.response.measureVirtue(_training.trainer.truth, key);
+            var virtue = _training.student.response.measureVirtue(_training.trainer.truth, key, environment.perfection);
             // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue
