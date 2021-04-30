@@ -143,7 +143,7 @@ var BubbleVirtue = function() {
     };
     var newlife = function() {
         this.newleaf();
-        this.result.shots_num_total = 0;
+        this.result.shot_num_total = 0;
         this.result.hit_num_total = 0;
         this.result.hit_num_total_percentage = 0.00;
         this.result.miss_num_total = 0;
@@ -171,7 +171,7 @@ var Bubble = function(default_value) {
     var reset = function() {
         this.value = '';
         this.charactersCounter = 0;
-        this.virtue = BubbleVirtue();
+        this.virtue.newlife();
     };
 
     // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
