@@ -439,7 +439,7 @@ var Memory = function() {
     // Mental representations of books
     var bookCollectionIds = [ 'https://leojonathanoh.github.io/bible_databases/links/links.txt' ];
     var books = {};
-    var bookCount;
+    var bookCount = 0;
     var bookIds = [];
     var workingMemoryBookId = '';
 
@@ -763,7 +763,7 @@ var Training = function() {
         // Set trainer speech value
         trainer.speech.value = virtue.result.value;
         // Set student unit num_total
-        student.units.num_total++;
+        student.units.num_total = trainer.memory.bookCount;
 
         if (State.debug) {
             console.log('[Training][start] trainer.speech.value: ' + trainer.speech.value);
