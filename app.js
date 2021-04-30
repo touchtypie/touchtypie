@@ -881,6 +881,18 @@ var Component = function(c) {
                 }
                 ele.binding = binding;
             }
+
+            // If there is no data binding, simply set up the eventListeners
+            if (typeof(ele.binding) === 'undefined') {
+                if (events) {
+                    for (var e = 0; e < events.length; e++) {
+                        var handler = c.eventsListeners[events[e]];
+                        ele.addEventListener(events[e], function(event){
+                            handler.apply(c, [event]);
+                        });
+                    }
+                }
+            }
         }
     }
 
