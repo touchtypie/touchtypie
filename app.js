@@ -419,15 +419,15 @@ var Memory = function() {
 
     // Retrieval
     var getBook = function() {
-        return books[workingMemoryBookId];
+        return books[this.workingMemoryBookId];
     };
 
     var getNextBook = function() {
         var keys = Object.keys(books);
-        var nextIndex = keys.indexOf(workingMemoryBookId) + 1;
+        var nextIndex = keys.indexOf(this.workingMemoryBookId) + 1;
         if (nextIndex !== -1) {
             var nextKey = keys[nextIndex];
-            workingMemoryBookId = nextKey;
+            this.workingMemoryBookId = nextKey;
             return getBook();
         }else {
             return null;
@@ -446,7 +446,7 @@ var Memory = function() {
 
     // Working memory
     var prepareWorkingMemory = function() {
-        workingMemoryBookId = Object.keys(books)[0];
+        this.workingMemoryBookId = Object.keys(books)[0];
     };
 
     // Recollection
@@ -511,12 +511,7 @@ var Memory = function() {
         set bookCount(value) {
             bookCount = value;
         },
-        get workingMemoryBookId() {
-            return workingMemoryBookId;
-        },
-        set workingMemoryBookId(value) {
-            workingMemoryBookId = value;
-        },
+        workingMemoryBookId: workingMemoryBookId,
         getBook: getBook,
         getNextBook: getNextBook,
         isReady: isReady,
@@ -897,7 +892,7 @@ var TrainingController = function () {
                 var optionElement;
                 for (var i = 0; i < c.props.options.length; i++) {
                     optionElement = document.createElement('option');
-                    if (c.props.options[i] === c.value) {
+                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryBookId) {
                         optionElement.setAttribute('selected', true);
                     }
                     optionElement.setAttribute('value', c.props.options[i]);
