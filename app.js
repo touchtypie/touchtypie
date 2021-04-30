@@ -157,7 +157,7 @@ var BubbleVirtue = function() {
     return {
         result: result,
         newleaf: newleaf,
-        // newlife: newlife
+        newlife: newlife
     }
 }
 var Bubble = function(default_value) {
@@ -1033,6 +1033,8 @@ var TrainingController = function () {
             if (virtue.result.completed) {
                 // Record student virtue
                 _training.student.stashVirtue(virtue);
+                // Reset student virtue
+                _training.student.virtue.newlife();
 
                 // Run the next training unit
                 _training.next();
