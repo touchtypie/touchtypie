@@ -835,8 +835,25 @@ var Training = function() {
 
         if (trainer.setNextTopic()) {
             start();
+        }else {
+            end();
         }
     };
+
+    var end = function() {
+        // Set the end message
+        trainer.truth.value = 'Training complete. You have graduated.';
+        trainer.speech.value = trainer.truth.value;
+
+        // Disable the student response
+        student.response.disabled = true;
+
+        // Validate student response
+        var virtue = student.response.virtue;
+        student.response.measureVirtue(trainer.truth);
+        // Set trainer speech value
+        trainer.speech.value = virtue.result.value;
+    }
 
     return {
         trainer: trainer,
