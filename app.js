@@ -1040,6 +1040,29 @@ var TrainingController = function () {
             }
         }
     });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuexport',
+        props: {
+            _training: _training
+        },
+        template: `
+            <menuexport><label>virtues</label><download b-on="click">download</download></menuexport>
+        `,
+        eventsListeners: {
+            click: function(event) {
+                var c = this;
+                // var ele = event.target || event.srcElement;
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(c.props._training.student.virtues));
+                var downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "virtues.json");
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+            }
+        }
+    });
 
     // Data binding - Component: truth
     Binding({
