@@ -648,7 +648,7 @@ var Trainer = function() {
 
     var getNextTopic = function() {
         var nextBook = memory.getNextBook()
-        return nextBook ? nextBook : null;
+        return nextBook ? nextBook.id : null;
     };
 
     var getNextTopicContent = function() {
@@ -679,8 +679,8 @@ var Trainer = function() {
         memory.prepareWorkingMemory();
     };
 
-    var setCurrentTopic = function(book) {
-        memory.workingMemoryBookId = book.id;
+    var setCurrentTopic = function(bookId) {
+        memory.workingMemoryBookId = bookId;
     };
 
     var setNextTopic = function() {
