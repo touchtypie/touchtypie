@@ -89,6 +89,7 @@ var BubbleVirtue = function() {
             datetime_end_iso: '',
             datetime_duration_ms: 0,
             datetime_stopwatch: '',
+            rate_hit_per_min: 0,
 
             // Unit progress
             shot_num_new: 0,
@@ -161,6 +162,7 @@ var BubbleVirtue = function() {
         this.result.datetime_end_iso = '';
         this.result.datetime_duration_ms = 0;
         this.result.datetime_stopwatch = '';
+        this.result.rate_hit_per_min = '';
 
         // Unit cumulative
         this.result.shot_num_total = 0;
@@ -324,6 +326,8 @@ var Bubble = function(default_value) {
                             _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + _virtue.result.datetime_stopwatch;
                         }
                         // _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
+
+                        _virtue.result.rate_hit_per_min = _virtue.result.datetime_duration_ms === 0 ? 0.00 : (_virtue.result.hit_num_total / (_virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2)
                     }
                 }, intervalMilliseconds)
                 if (State.debug) {
@@ -391,12 +395,14 @@ var Bubble = function(default_value) {
             virtue.result.datetime_end_epoch = now.valueOf();
             virtue.result.datetime_end_iso = now.toISOString();
             virtue.result.datetime_duration_ms = virtue.result.datetime_end_epoch - virtue.result.datetime_start_epoch;
+            virtue.result.rate_hit_per_min = virtue.result.datetime_duration_ms === 0 ? 0.00 : (virtue.result.hit_num_total / (virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2)
         }
 
         if (State.debug) {
             // Unit meta
-            console.log('[measureVirtue] result.success: ' + virtue.result.success);
-            console.log('[measureVirtue] result.completed: ' + virtue.result.completed);
+            console.log('[measureVirtue] virtue.result.id: ' + virtue.result.id);
+            console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
+            console.log('[measureVirtue] virtue.result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
             console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
             console.log('[measureVirtue] virtue.result.value_length_percentage: ' + virtue.result.value_length_percentage);
@@ -406,6 +412,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.datetime_end_iso: ' + virtue.result.datetime_end_iso);
             console.log('[measureVirtue] virtue.result.datetime_duration_ms: ' + virtue.result.datetime_duration_ms);
             console.log('[measureVirtue] virtue.result.datetime_stopwatch: ' + virtue.result.datetime_stopwatch);
+            console.log('[measureVirtue] virtue.result.rate_hit_per_min: ' + virtue.result.rate_hit_per_min);
 
             // Unit progress
             console.log('[measureVirtue] virtue.result.shot_num_new: ' + virtue.result.shot_num_new);
@@ -711,6 +718,7 @@ var Student = function() {
             _student.virtue.result.datetime_end_iso = virtue.result.datetime_end_iso;
             _student.virtue.result.datetime_duration_ms = virtue.result.datetime_duration_ms;
             _student.virtue.result.datetime_stopwatch = virtue.result.datetime_stopwatch;
+            _student.virtue.result.rate_hit_per_min = virtue.result.rate_hit_per_min;
 
             // Populate my virtue (Unit progress)
             _student.virtue.result.shot_num_new = virtue.result.shot_num_new;
@@ -1284,6 +1292,13 @@ var TrainingController = function () {
         property: "datetime_stopwatch"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "rate_hit_per_min"
+    }).addBinding(
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 
