@@ -463,9 +463,9 @@ var Memory = function() {
     // Mental representation of the physical and social environment
     var environment = {
         state: '',
-        statistics: true,
+        randomization : true,
         perfection : true,
-        randomization : true
+        statistics: true,
     };
 
     // Mental representations of books
@@ -1098,7 +1098,7 @@ var TrainingController = function () {
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuswitch',
         template: `
-            <menuswitch><label>statistics</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.statistics }}"><handle></handle></switch></menuswitch>
+            <menuswitch><label>randomization</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.randomization }}"><handle></handle></switch></menuswitch>
         `,
         props: {
             _training: _training
@@ -1106,13 +1106,8 @@ var TrainingController = function () {
         eventsListeners: {
             click: function(event, _this, binding) {
                 var c = this;
-
-                // Toggle. JSON.parse() to cast string to boolean
-                var newVal = !c.props._training.trainer.memory.environment.statistics;
-                c.props._training.trainer.memory.environment.statistics = newVal;
-                // _this.value = newVal;
-                // _this.valueSetter(newVal);
-                document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
+                var newVal = !c.props._training.trainer.memory.environment.randomization;
+                c.props._training.trainer.memory.environment.randomization = newVal;
                 event.stopPropagation()
             }
         }
@@ -1139,7 +1134,7 @@ var TrainingController = function () {
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuswitch',
         template: `
-            <menuswitch><label>randomization</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.randomization }}"><handle></handle></switch></menuswitch>
+            <menuswitch><label>statistics</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.statistics }}"><handle></handle></switch></menuswitch>
         `,
         props: {
             _training: _training
@@ -1147,8 +1142,13 @@ var TrainingController = function () {
         eventsListeners: {
             click: function(event, _this, binding) {
                 var c = this;
-                var newVal = !c.props._training.trainer.memory.environment.randomization;
-                c.props._training.trainer.memory.environment.randomization = newVal;
+
+                // Toggle. JSON.parse() to cast string to boolean
+                var newVal = !c.props._training.trainer.memory.environment.statistics;
+                c.props._training.trainer.memory.environment.statistics = newVal;
+                // _this.value = newVal;
+                // _this.valueSetter(newVal);
+                document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
                 event.stopPropagation()
             }
         }
