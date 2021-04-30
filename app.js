@@ -652,10 +652,6 @@ var Student = function() {
     return {
         response: Bubble(''),
         focusElement: null,
-        units: {
-            count: 0,
-            num_total: 0
-        },
         virtue: BubbleVirtue(),
         virtues: {
             count: 0,
@@ -763,8 +759,6 @@ var Training = function() {
         student.response.measureVirtue(trainer.truth);
         // Set trainer speech value
         trainer.speech.value = virtue.result.value;
-        // Set student unit num_total
-        student.units.num_total = trainer.memory.bookCount;
 
         if (State.debug) {
             console.log('[Training][start] trainer.speech.value: ' + trainer.speech.value);
@@ -1346,15 +1340,15 @@ var TrainingController = function () {
         'innerHTML'
     );
     new Binding({
-        object: _training.student.units,
+        object: _training.student.virtues,
         property: "count"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
-        object: _training.student.units,
-        property: "num_total"
+        object: _training.trainer.memory,
+        property: "bookCount"
     }).addBinding(
         document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
