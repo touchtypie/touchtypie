@@ -76,6 +76,7 @@ var BubbleVirtue = function() {
     var newVirtue = function() {
         return {
             // Unit meta
+            id: '',
             perfection: false,
             success: false,
             completed: false,
@@ -153,6 +154,7 @@ var BubbleVirtue = function() {
         this.newleaf();
 
         // Unit meta
+        this.result.id = '';
         this.result.datetime_start_epoch = 0;
         this.result.datetime_end_epoch = 0;
         this.result.datetime_start_iso = '';
@@ -179,6 +181,7 @@ var BubbleVirtue = function() {
     }
 }
 var Bubble = function(default_value) {
+    var id = '';
     var disabled = false;
     var value = default_value;
     var charactersCounter = 0;
@@ -187,6 +190,7 @@ var Bubble = function(default_value) {
 
     // Creates a new virtue
     var reset = function() {
+        this.id = '';
         this.value = '';
         this.charactersCounter = 0;
         this.virtue = BubbleVirtue();
@@ -347,6 +351,7 @@ var Bubble = function(default_value) {
         // }
 
         // Populate result
+        virtue.result.id = truth.id;
         virtue.result.perfection = perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         const peekIndices= getPeekIndices(bubble, truth);
@@ -425,6 +430,7 @@ var Bubble = function(default_value) {
     };
 
     return {
+        id: id,
         disabled: disabled,
         value: value,
         charactersCounter: charactersCounter,
@@ -688,6 +694,7 @@ var Student = function() {
             var _student = this;
 
             // Populate my virtue (Unit meta)
+            _student.virtue.result.id = virtue.result.id;
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
             _student.virtue.result.value = virtue.result.value;
@@ -770,7 +777,9 @@ var Training = function() {
 
     var start = function() {
         // Set truth values
-        if (trainer.getCurrentTopic()) {
+        var topic = trainer.getCurrentTopic();
+        if (topic) {
+            trainer.truth.id = topic;
             trainer.truth.value = trainer.getCurrentTopicContent();
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
