@@ -464,7 +464,8 @@ var Memory = function() {
     var environment = {
         state: '',
         statistics: true,
-        perfection : true
+        perfection : true,
+        randomization : true
     };
 
     // Mental representations of books
@@ -545,6 +546,16 @@ var Memory = function() {
         return incompleteBook ? incompleteBook : null;
     };
 
+    var getNextRandomBook = function() {
+        var incompleteBooks = [];
+        for(var k in books) {
+            if (!books[k].complete) {
+                incompleteBooks.push(books[k]);
+            }
+        }
+        return incompleteBooks.length === 0 ? null : incompleteBooks[Math.floor(Math.random() * incompleteBooks.length)];
+    };
+
     // Have I been refreshed with all books?
     var isReady = function() {
         for (var k in books) {
@@ -553,11 +564,6 @@ var Memory = function() {
             }
         }
         return Object.keys(books).length > 0 ? true : false;
-    };
-
-    // Working memory
-    var prepareWorkingMemory = function() {
-        this.workingMemoryBookId = Object.keys(books)[0];
     };
 
     // Recollection
@@ -620,8 +626,8 @@ var Memory = function() {
         workingMemoryBookId: workingMemoryBookId,
         getBook: getBook,
         getNextBook: getNextBook,
+        getNextRandomBook, getNextRandomBook,
         isReady: isReady,
-        prepareWorkingMemory: prepareWorkingMemory,
         recall: recall,
     };
 };
@@ -647,12 +653,12 @@ var Trainer = function() {
     };
 
     var getNextTopic = function() {
-        var nextBook = memory.getNextBook()
+        var nextBook = memory.environment.randomization ? memory.getNextRandomBook() : memory.getNextBook();
         return nextBook ? nextBook.id : null;
     };
 
     var getNextTopicContent = function() {
-        var nextBook = memory.getNextBook()
+        var nextBook = memory.environment.randomization ? memory.getNextRandomBook() : memory.getNextBook();
         return nextBook ? nextBook.content : null;
     };
 
@@ -676,7 +682,8 @@ var Trainer = function() {
     };
 
     var setAttention = function() {
-        memory.prepareWorkingMemory();
+        var book = memory.environment.randomization ? memory.getNextRandomBook() : memory.books[Object.keys(books)[0]]
+        setCurrentTopic(book.id);
     };
 
     var setCurrentTopic = function(bookId) {
@@ -1124,6 +1131,24 @@ var TrainingController = function () {
                 var c = this;
                 var newVal = !c.props._training.trainer.memory.environment.perfection;
                 c.props._training.trainer.memory.environment.perfection = newVal;
+                event.stopPropagation()
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuswitch',
+        template: `
+            <menuswitch><label>randomization</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.randomization }}"><handle></handle></switch></menuswitch>
+        `,
+        props: {
+            _training: _training
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                var newVal = !c.props._training.trainer.memory.environment.randomization;
+                c.props._training.trainer.memory.environment.randomization = newVal;
                 event.stopPropagation()
             }
         }
