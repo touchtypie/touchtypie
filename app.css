@@ -355,7 +355,9 @@ statistics unitprogress characterspercentagecounter,
 statistics unitprogress hitcounter,
 statistics unitprogress hitpercentagecounter,
 statistics unitprogress misscounter,
-statistics unitprogress misspercentagecounter {
+statistics unitprogress misspercentagecounter,
+statistics unitprogress datetimestart,
+statistics unitprogress datetimestopwatch {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */

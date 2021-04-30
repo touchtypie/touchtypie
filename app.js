@@ -83,6 +83,12 @@ var BubbleVirtue = function() {
             value_length_percentage: 0,
 
             // Progress
+            datetime_start_epoch: 0,
+            datetime_end_epoch: 0,
+            datetime_start_iso: '',
+            datetime_end_iso: '',
+            datetime_duration_ms: 0,
+            datetime_stopwatch: '',
             shot_num_new: 0,
             hit_indices: [],
             hit_num: 0,
@@ -124,7 +130,6 @@ var BubbleVirtue = function() {
         this.result.perfection = false;
         this.result.success = false;
         this.result.completed = false;
-
         this.result.value = '';
         this.result.value_length = 0;
         this.result.value_length_percentage = 0;
@@ -143,6 +148,14 @@ var BubbleVirtue = function() {
     };
     var newlife = function() {
         this.newleaf();
+
+        this.result.datetime_start_epoch = 0;
+        this.result.datetime_end_epoch = 0;
+        this.result.datetime_start_iso = '';
+        this.result.datetime_end_iso = '';
+        this.result.datetime_duration_ms = 0;
+        this.result.datetime_stopwatch = '';
+
         this.result.shot_num_total = 0;
         this.result.hit_num_total = 0;
         this.result.hit_num_total_percentage = 0.00;
@@ -256,6 +269,48 @@ var Bubble = function(default_value) {
         var value_length_prev = virtue.result.value_length;
         virtue.newleaf();
 
+        if (key && !virtue.result.datetime_start_epoch) {
+            var now = new Date();
+            virtue.result.datetime_start_epoch = now.valueOf() ;
+            virtue.result.datetime_start_iso = now.toISOString();
+            // Update datetime_* every interval
+            (function() {
+                // Store reference to this virtue
+                var _virtue = virtue;
+                const intervalMilliseconds = 100;
+                var intervalId = setInterval(function(){
+                    if (_virtue.result.completed) {
+                        // if (State.debug) {
+                        //     console.log('[measureVirtue][interval] delete');
+                        // }
+                        clearInterval(intervalId);
+                    }else {
+                        // if (State.debug) {
+                        //     console.log('[measureVirtue][interval] _virtue.result.datetime_duration_ms: ' + _virtue.result.datetime_duration_ms);
+                        // }
+                        var now = new Date();
+                        _virtue.result.datetime_duration_ms = now.valueOf() - virtue.result.datetime_start_epoch;
+
+                        function pad(num, size) {
+                            num = num.toString();
+                            while (num.length < size) num = "0" + num;
+                            return num;
+                        }
+
+                        var centiseconds = Math.floor(_virtue.result.datetime_duration_ms / 10 % 100);
+                        var seconds = Math.floor(_virtue.result.datetime_duration_ms / 1000 % 60);
+                        var minutes = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 % 60);
+                        var hours = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 / 60 % 24);
+                        var days = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 / 60 / 24);
+                        _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2);
+                        // _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
+                    }
+                }, intervalMilliseconds)
+                if (State.debug) {
+                    console.log('[measureVirtue][interval] create');
+                }
+            })();
+        }
         virtue.result.shot_num_new = key ? 1 : 0;
         for (var i = 0; i < bubble.value.length && i < truth.value.length; i++) {
             if (bubble.value[i] !== truth.value[i]) {
@@ -311,6 +366,10 @@ var Bubble = function(default_value) {
              (!perfection && bubble.value.length == truth.value.length)
             ) {
             virtue.result.completed = true;
+            var now = new Date();
+            virtue.result.datetime_end_epoch = now.valueOf();
+            virtue.result.datetime_end_iso = now.toISOString();
+            virtue.result.datetime_duration_ms = virtue.result.datetime_end_epoch - virtue.result.datetime_start_epoch;
         }
 
         if (State.debug) {
@@ -319,6 +378,14 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
             console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
             console.log('[measureVirtue] virtue.result.value_length_percentage: ' + virtue.result.value_length_percentage);
+
+            console.log('[measureVirtue] virtue.result.datetime_start_epoch: ' + virtue.result.datetime_start_epoch);
+            console.log('[measureVirtue] virtue.result.datetime_end_epoch: ' + virtue.result.datetime_end_epoch);
+            console.log('[measureVirtue] virtue.result.datetime_start_iso: ' + virtue.result.datetime_start_iso);
+            console.log('[measureVirtue] virtue.result.datetime_end_iso: ' + virtue.result.datetime_end_iso);
+            console.log('[measureVirtue] virtue.result.datetime_duration_ms: ' + virtue.result.datetime_duration_ms);
+            console.log('[measureVirtue] virtue.result.datetime_stopwatch: ' + virtue.result.datetime_stopwatch);
+
             console.log('[measureVirtue] virtue.result.shot_num_new: ' + virtue.result.shot_num_new);
             console.log('[measureVirtue] virtue.result.hit_indices: ' + virtue.result.hit_indices);
             console.log('[measureVirtue] virtue.result.hit_num_new: ' + virtue.result.hit_num_new);
@@ -596,10 +663,16 @@ var Student = function() {
         focus: function() {
             this.focusElement.focus();
         },
-        inheritVirtue: function(virtue) {
+        inheritVirtue: function(virtue, cumulate) {
             var _student = this;
 
             // Populate my virtue (progress, non-cumulative)
+            _student.virtue.result.datetime_start_epoch = virtue.result.datetime_start_epoch;
+            _student.virtue.result.datetime_end_epoch = virtue.result.datetime_end_epoch;
+            _student.virtue.result.datetime_start_iso = virtue.result.datetime_start_iso;
+            _student.virtue.result.datetime_end_iso = virtue.result.datetime_end_iso;
+            _student.virtue.result.datetime_duration_ms = virtue.result.datetime_duration_ms;
+            _student.virtue.result.datetime_stopwatch = virtue.result.datetime_stopwatch;
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
             _student.virtue.result.value = virtue.result.value;
@@ -628,16 +701,17 @@ var Student = function() {
             _student.virtue.result.other_num_total_percentage = virtue.result.other_num_total_percentage;
 
             // Popululate my virtue (global, cumulative)
-            _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
-            _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
-            _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : (_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
-            _student.virtue.result.miss_num_global += virtue.result.miss_num_new;
-            _student.virtue.result.miss_num_global_percentage = _student.virtue.result.miss_num_global == 0 ? 0.00 : (_student.virtue.result.miss_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
-            _student.virtue.result.amend_num_global += virtue.result.amend_num_new;
-            _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
-            _student.virtue.result.other_num_global += virtue.result.other_num_new;
-            _student.virtue.result.other_num_global_percentage = _student.virtue.result.other_num_global == 0 ? 0.00 : (_student.virtue.result.other_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
-
+            if (cumulate) {
+                _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
+                _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
+                _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : (_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.miss_num_global += virtue.result.miss_num_new;
+                _student.virtue.result.miss_num_global_percentage = _student.virtue.result.miss_num_global == 0 ? 0.00 : (_student.virtue.result.miss_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.amend_num_global += virtue.result.amend_num_new;
+                _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.other_num_global += virtue.result.other_num_new;
+                _student.virtue.result.other_num_global_percentage = _student.virtue.result.other_num_global == 0 ? 0.00 : (_student.virtue.result.other_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+            }
         },
         setFocus: function(element) {
             this.focusElement = element;
@@ -684,7 +758,8 @@ var Training = function() {
         trainer.speech.charactersCounter = trainer.speech.value.length;
 
         // Validate student response
-        var virtue = student.response.measureVirtue(trainer.truth);
+        var virtue = student.response.virtue;
+        student.response.measureVirtue(trainer.truth);
         // Set trainer speech value
         trainer.speech.value = virtue.result.value;
         // Set student unit num_total
@@ -1024,12 +1099,37 @@ var TrainingController = function () {
             // Set student response counter
             _training.student.response.charactersCounter = _training.student.response.value.length;
 
+            var virtue = _training.student.response.virtue;
+            // Update student virtue every interval
+            if (virtue.result.datetime_start_epoch === 0) {
+                (function() {
+                    // Store reference to this virtue
+                    var _virtue = virtue;
+                    const intervalMilliseconds = 100;
+                    var intervalId = setInterval(function() {
+                        if (_virtue.result.completed) {
+                            // if (State.debug) {
+                            //     console.log('[keyup][interval] delete ' + ' ');
+                            // }
+                            clearInterval(intervalId);
+                        }else {
+                            // if (State.debug) {
+                            //     console.log('[keyup][interval] ');
+                            // }
+                            _training.student.inheritVirtue(virtue, false);
+                        }
+                    }, intervalMilliseconds);
+                    if (State.debug) {
+                        console.log('[keyup][interval] create');
+                    }
+                })();
+            }
             // Validate student response
-            var virtue = _training.student.response.measureVirtue(_training.trainer.truth, key, environment.perfection);
+            _training.student.response.measureVirtue(_training.trainer.truth, key, environment.perfection);
             // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
-            // Update student virtue
-            _training.student.inheritVirtue(virtue);
+            // Update student virtue non-time-based stats
+            _training.student.inheritVirtue(virtue, true);
             if (virtue.result.completed) {
                 // Record student virtue
                 _training.student.stashVirtue(virtue);
@@ -1098,6 +1198,20 @@ var TrainingController = function () {
         property: "miss_num_percentage"
     }).addBinding(
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "datetime_start_iso"
+    }).addBinding(
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('datetimestart')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "datetime_stopwatch"
+    }).addBinding(
+        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
 
