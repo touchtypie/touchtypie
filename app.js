@@ -530,6 +530,10 @@ var Memory = function() {
                 return this.getBook();
             }
         }
+        return getNextIncompleteBook();
+    };
+
+    var getNextIncompleteBook = function() {
         // Get the first incomplete book
         var incompleteBook;
         for (var k in books) {
