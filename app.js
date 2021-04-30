@@ -529,12 +529,12 @@ var Memory = function() {
             method: 'GET',
             url: bookCollectionIds[0],
             callback: function(_bookIds) {
-                recallBooks(_bookIds, function() {
+                recallBooks.apply(this, [_bookIds, function() {
                     // Once all books are recalled are done, call the callback
                     if (isReady()) {
                         callback();
                     }
-                })
+                }])
             },
             callbackData: {
                 self: _this
@@ -552,7 +552,7 @@ var Memory = function() {
             book.id = bookIds[i];
             books[book.id] = book;
         }
-        bookCount = bookIds.length;
+        this.bookCount = bookIds.length;
 
         // Refresh my memory of its content
         for (var k in books) {
@@ -578,12 +578,7 @@ var Memory = function() {
         set bookIds(value) {
             bookIds = value;
         },
-        get bookCount() {
-            return bookCount;
-        },
-        set bookCount(value) {
-            bookCount = value;
-        },
+        bookCount: bookCount,
         workingMemoryBookId: workingMemoryBookId,
         getBook: getBook,
         getNextBook: getNextBook,
