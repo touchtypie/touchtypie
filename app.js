@@ -428,7 +428,7 @@ var Memory = function() {
         if (nextIndex !== -1) {
             var nextKey = keys[nextIndex];
             this.workingMemoryBookId = nextKey;
-            return getBook();
+            return this.getBook();
         }else {
             return null;
         }
@@ -653,21 +653,18 @@ var Student = function() {
     }
 };
 var Training = function() {
-    var _this = this;
     var trainer = Trainer();
     var student = Student();
 
     var prepare = function(callback) {
-        var _this = this;
-
         // Begin the training with a trainer's intro speech
-        _this.start();
+        start();
 
-        _this.student.response.disabled = true;
-        _this.trainer.prepareKnowledge(function() {
-            _this.student.response.disabled = false;
-            _this.start(_this.trainer.getCurrentTopicContent());
-            _this.student.focus();
+        student.response.disabled = true;
+        trainer.prepareKnowledge(function() {
+            student.response.disabled = false;
+            start(trainer.getCurrentTopicContent());
+            student.focus();
 
             if (callback) {
                 callback();
@@ -676,36 +673,35 @@ var Training = function() {
     };
 
     var start = function(text) {
-        var _this = this;
         // Set truth values
         if (text) {
-            _this.trainer.truth.value = text;
+            trainer.truth.value = text;
         }
-        _this.trainer.truth.charactersCounter = _this.trainer.truth.value.length;
+        trainer.truth.charactersCounter = trainer.truth.value.length;
 
         // Set trainer speech
-        _this.trainer.speech.value = _this.trainer.truth.value;
-        _this.trainer.speech.charactersCounter = _this.trainer.speech.value.length;
+        trainer.speech.value = trainer.truth.value;
+        trainer.speech.charactersCounter = trainer.speech.value.length;
 
         // Validate student response
-        var virtue = _this.student.response.measureVirtue(_this.trainer.truth);
+        var virtue = student.response.measureVirtue(trainer.truth);
         // Set trainer speech value
-        _this.trainer.speech.value = virtue.result.value;
+        trainer.speech.value = virtue.result.value;
         // Set student unit num_total
-        _this.student.units.num_total++;
+        student.units.num_total++;
 
         if (State.debug) {
-            console.log('[Training][start] _this.trainer.speech.value: ' + _this.trainer.speech.value);
-            console.log('[Training][start] _this.trainer.speech.charactersCounter: ' + _this.trainer.speech.charactersCounter);
+            console.log('[Training][start] trainer.speech.value: ' + trainer.speech.value);
+            console.log('[Training][start] trainer.speech.charactersCounter: ' + trainer.speech.charactersCounter);
         }
     };
 
     var next = function() {
         var _this = this;
         // Refresh the student response
-        _this.student.response.reset();
-        // _this.student.response.disabled = true;
-        start(_this.trainer.getNextTopicContent());
+        student.response.reset();
+        // student.response.disabled = true;
+        start(trainer.getNextTopicContent());
     };
 
     return {
