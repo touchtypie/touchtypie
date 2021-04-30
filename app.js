@@ -1071,6 +1071,7 @@ var TrainingController = function () {
                 // _this.value = newVal;
                 // _this.valueSetter(newVal);
                 document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
+                event.stopPropagation()
             }
         }
     });
@@ -1088,6 +1089,7 @@ var TrainingController = function () {
                 var c = this;
                 var newVal = !c.props._training.trainer.memory.environment.perfection;
                 c.props._training.trainer.memory.environment.perfection = newVal;
+                event.stopPropagation()
             }
         }
     });
@@ -1111,6 +1113,7 @@ var TrainingController = function () {
                 document.body.appendChild(downloadAnchorNode); // required for firefox
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
+                event.stopPropagation()
             }
         }
     });
