@@ -171,7 +171,7 @@ var Bubble = function(default_value) {
     var reset = function() {
         this.value = '';
         this.charactersCounter = 0;
-        this.virtue.newlife();
+        this.virtue = BubbleVirtue();
     };
 
     // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
@@ -251,8 +251,8 @@ var Bubble = function(default_value) {
     // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
     var measureVirtue = function(truth, key, perfection) {
         var bubble = this;
+        var virtue = bubble.virtue;
         var amend = ( key == 8 || key == 46 ) ? true : false;
-
         var value_length_prev = virtue.result.value_length;
         virtue.newleaf();
 
