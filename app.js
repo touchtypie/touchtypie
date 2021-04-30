@@ -302,7 +302,13 @@ var Bubble = function(default_value) {
                         var minutes = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 % 60);
                         var hours = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 / 60 % 24);
                         var days = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 / 60 / 24);
-                        _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2);
+                        _virtue.result.datetime_stopwatch = pad(minutes, 2) + ':' + pad(seconds, 2);
+                        if (hours > 0) {
+                            _virtue.result.datetime_stopwatch = pad(hours, 2) + ':' +  _virtue.result.datetime_stopwatch;
+                        }
+                        if (days > 0) {
+                            _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + _virtue.result.datetime_stopwatch;
+                        }
                         // _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
                     }
                 }, intervalMilliseconds)
