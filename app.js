@@ -172,12 +172,17 @@ var BubbleVirtue = function() {
         this.result.amend_num_total_percentage = 0;
         this.result.other_num_total = 0;
         this.result.other_num_total_percentage = 0;
-    }
+    };
+    var graduate = function() {
+        // Unit meta
+        this.result.value = '<redacted>';
+    };
 
     return {
         result: result,
         newleaf: newleaf,
-        newlife: newlife
+        newlife: newlife,
+        graduate: graduate
     }
 }
 var Bubble = function(default_value) {
@@ -750,6 +755,7 @@ var Student = function() {
             var _student = this;
 
             // Set units value
+            virtue.graduate();
             _student.virtues.values.push(virtue);
             _student.virtues.count += 1;
         }
