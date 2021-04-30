@@ -604,8 +604,14 @@ var Trainer = function() {
         return memory.getBook().content;
     };
 
+    var getNextTopic = function() {
+        var nextBook = memory.getNextBook()
+        return nextBook ? nextBook : null;
+    };
+
     var getNextTopicContent = function() {
-        return memory.getNextBook().content;
+        var nextBook = memory.getNextBook()
+        return nextBook ? nextBook.content : null;
     };
 
     var isKnowledgeReady = function() {
@@ -631,8 +637,17 @@ var Trainer = function() {
         memory.prepareWorkingMemory();
     };
 
-    var setCurrentTopic = function(bookId) {
-        memory.workingMemoryBookId = bookId;
+    var setCurrentTopic = function(book) {
+        memory.workingMemoryBookId = book.id;
+    };
+
+    var setNextTopic = function() {
+        var nextTopic = getNextTopic();
+        if (nextTopic) {
+            setCurrentTopic(nextTopic);
+            return nextTopic;
+        }
+        return null;
     };
 
     return {
@@ -642,10 +657,12 @@ var Trainer = function() {
         getTopics: getTopics,
         getCurrentTopic: getCurrentTopic,
         getCurrentTopicContent: getCurrentTopicContent,
+        getNextTopic: getNextTopic,
         getNextTopicContent: getNextTopicContent,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
         setCurrentTopic: setCurrentTopic,
+        setNextTopic: setNextTopic,
     };
 };
 var Student = function() {
@@ -733,7 +750,7 @@ var Training = function() {
         student.response.disabled = true;
         trainer.prepareKnowledge(function() {
             student.response.disabled = false;
-            start(trainer.getCurrentTopicContent());
+            start();
             student.focus();
 
             if (callback) {
@@ -742,10 +759,10 @@ var Training = function() {
         });
     };
 
-    var start = function(text) {
+    var start = function() {
         // Set truth values
-        if (text) {
-            trainer.truth.value = text;
+        if (trainer.getCurrentTopic()) {
+            trainer.truth.value = trainer.getCurrentTopicContent();
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
 
@@ -769,8 +786,10 @@ var Training = function() {
         var _this = this;
         // Refresh the student response
         student.response.reset();
-        // student.response.disabled = true;
-        start(trainer.getNextTopicContent());
+
+        if (trainer.setNextTopic()) {
+            start();
+        }
     };
 
     return {
