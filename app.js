@@ -523,13 +523,22 @@ var Memory = function() {
     var getNextBook = function() {
         var keys = Object.keys(books);
         var nextIndex = keys.indexOf(this.workingMemoryBookId) + 1;
-        if (nextIndex !== -1) {
+        if (nextIndex !== -1 && nextIndex <= keys.length - 1) {
             var nextKey = keys[nextIndex];
-            this.workingMemoryBookId = nextKey;
-            return this.getBook();
-        }else {
-            return null;
+            if (!books[nextKey].complete) {
+                this.workingMemoryBookId = nextKey;
+                return this.getBook();
+            }
         }
+        // Get the first incomplete book
+        var incompleteBook;
+        for (var k in books) {
+            if (!books[k].complete) {
+                incompleteBook = books[k];
+                break;
+            }
+        }
+        return incompleteBook ? incompleteBook : null;
     };
 
     // Have I been refreshed with all books?
@@ -617,6 +626,10 @@ var Trainer = function() {
     var truth = Bubble('Get ready...');
     var speech = Bubble('');
 
+    var completeCurrentTopic = function() {
+        return memory.getBook().complete = true;
+    };
+
     var getTopics = function() {
         return memory.bookIds;
     };
@@ -667,6 +680,7 @@ var Trainer = function() {
     };
 
     var setNextTopic = function() {
+        completeCurrentTopic();
         var nextTopic = getNextTopic();
         if (nextTopic) {
             setCurrentTopic(nextTopic);
