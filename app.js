@@ -75,20 +75,21 @@ var Binding = function(b) {
 var BubbleVirtue = function() {
     var newVirtue = function() {
         return {
+            // Unit meta
             perfection: false,
             success: false,
             completed: false,
             value: '',
             value_length: 0,
             value_length_percentage: 0,
-
-            // Progress
             datetime_start_epoch: 0,
             datetime_end_epoch: 0,
             datetime_start_iso: '',
             datetime_end_iso: '',
             datetime_duration_ms: 0,
             datetime_stopwatch: '',
+
+            // Unit progress
             shot_num_new: 0,
             hit_indices: [],
             hit_num: 0,
@@ -101,7 +102,7 @@ var BubbleVirtue = function() {
             amend_num_new: 0,
             other_num_new: 0,
 
-            // Unit
+            // Unit cumulative
             shot_num_total: 0,
             hit_num_total: 0,
             hit_num_total_percentage: 0.00,
@@ -127,6 +128,7 @@ var BubbleVirtue = function() {
     var result = newVirtue();
 
     var newleaf = function() {
+        // Unit meta
         this.result.perfection = false;
         this.result.success = false;
         this.result.completed = false;
@@ -134,6 +136,7 @@ var BubbleVirtue = function() {
         this.result.value_length = 0;
         this.result.value_length_percentage = 0;
 
+        // Unit progress
         this.result.shot_num_new = 0;
         this.result.hit_indices = [];
         this.result.hit_num = 0;
@@ -149,6 +152,7 @@ var BubbleVirtue = function() {
     var newlife = function() {
         this.newleaf();
 
+        // Unit meta
         this.result.datetime_start_epoch = 0;
         this.result.datetime_end_epoch = 0;
         this.result.datetime_start_iso = '';
@@ -156,6 +160,7 @@ var BubbleVirtue = function() {
         this.result.datetime_duration_ms = 0;
         this.result.datetime_stopwatch = '';
 
+        // Unit cumulative
         this.result.shot_num_total = 0;
         this.result.hit_num_total = 0;
         this.result.hit_num_total_percentage = 0.00;
@@ -379,12 +384,12 @@ var Bubble = function(default_value) {
         }
 
         if (State.debug) {
+            // Unit meta
             console.log('[measureVirtue] result.success: ' + virtue.result.success);
             console.log('[measureVirtue] result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
             console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
             console.log('[measureVirtue] virtue.result.value_length_percentage: ' + virtue.result.value_length_percentage);
-
             console.log('[measureVirtue] virtue.result.datetime_start_epoch: ' + virtue.result.datetime_start_epoch);
             console.log('[measureVirtue] virtue.result.datetime_end_epoch: ' + virtue.result.datetime_end_epoch);
             console.log('[measureVirtue] virtue.result.datetime_start_iso: ' + virtue.result.datetime_start_iso);
@@ -392,6 +397,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.datetime_duration_ms: ' + virtue.result.datetime_duration_ms);
             console.log('[measureVirtue] virtue.result.datetime_stopwatch: ' + virtue.result.datetime_stopwatch);
 
+            // Unit progress
             console.log('[measureVirtue] virtue.result.shot_num_new: ' + virtue.result.shot_num_new);
             console.log('[measureVirtue] virtue.result.hit_indices: ' + virtue.result.hit_indices);
             console.log('[measureVirtue] virtue.result.hit_num_new: ' + virtue.result.hit_num_new);
@@ -404,6 +410,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.amend_num_new: ' + virtue.result.amend_num_new);
             console.log('[measureVirtue] virtue.result.other_num_new: ' + virtue.result.other_num_new);
 
+            // Unit cumulative
             console.log('[measureVirtue] virtue.result.shot_num_total: ' + virtue.result.shot_num_total);
             console.log('[measureVirtue] virtue.result.hit_num_total: ' + virtue.result.hit_num_total);
             console.log('[measureVirtue] virtue.result.hit_num_total_percentage: ' + virtue.result.hit_num_total_percentage);
@@ -680,18 +687,20 @@ var Student = function() {
         inheritVirtue: function(virtue, cumulate) {
             var _student = this;
 
-            // Populate my virtue (progress, non-cumulative)
+            // Populate my virtue (Unit meta)
+            _student.virtue.result.success = virtue.result.success;
+            _student.virtue.result.completed = virtue.result.completed;
+            _student.virtue.result.value = virtue.result.value;
+            _student.virtue.result.value_length = virtue.result.value_length;
+            _student.virtue.result.value_length_percentage = virtue.result.value_length_percentage;
             _student.virtue.result.datetime_start_epoch = virtue.result.datetime_start_epoch;
             _student.virtue.result.datetime_end_epoch = virtue.result.datetime_end_epoch;
             _student.virtue.result.datetime_start_iso = virtue.result.datetime_start_iso;
             _student.virtue.result.datetime_end_iso = virtue.result.datetime_end_iso;
             _student.virtue.result.datetime_duration_ms = virtue.result.datetime_duration_ms;
             _student.virtue.result.datetime_stopwatch = virtue.result.datetime_stopwatch;
-            _student.virtue.result.success = virtue.result.success;
-            _student.virtue.result.completed = virtue.result.completed;
-            _student.virtue.result.value = virtue.result.value;
-            _student.virtue.result.value_length = virtue.result.value_length;
-            _student.virtue.result.value_length_percentage = virtue.result.value_length_percentage;
+
+            // Populate my virtue (Unit progress)
             _student.virtue.result.shot_num_new = virtue.result.shot_num_new;
             _student.virtue.result.hit_indices = virtue.result.hit_indices;
             _student.virtue.result.hit_num = virtue.result.hit_num;
@@ -703,7 +712,7 @@ var Student = function() {
             _student.virtue.result.miss_num_percentage = virtue.result.miss_num_percentage;
             _student.virtue.result.amend_num_new = virtue.result.amend_num_new;
 
-            // Populate my virtue (unit, cumulative)
+            // Populate my virtue (Unit cumulative)
             _student.virtue.result.shot_num_total = virtue.result.shot_num_total;
             _student.virtue.result.hit_num_total = virtue.result.hit_num_total;
             _student.virtue.result.hit_num_total_percentage = virtue.result.hit_num_total_percentage;
@@ -714,7 +723,7 @@ var Student = function() {
             _student.virtue.result.other_num_total = virtue.result.other_num_total;
             _student.virtue.result.other_num_total_percentage = virtue.result.other_num_total_percentage;
 
-            // Popululate my virtue (global, cumulative)
+            // Popululate my virtue (Global, cumulative)
             if (cumulate) {
                 _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
                 _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
@@ -784,7 +793,7 @@ var Training = function() {
 
     var next = function() {
         var _this = this;
-        // Refresh the student response
+        // Reset the student response
         student.response.reset();
 
         if (trainer.setNextTopic()) {
