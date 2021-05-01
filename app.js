@@ -72,6 +72,7 @@ var Binding = function(b) {
 }
 
 // Models
+// A representation of the measure of a behavior's conguence to perfect behavior
 var BubbleVirtue = function() {
     var newVirtue = function() {
         return {
@@ -189,6 +190,7 @@ var BubbleVirtue = function() {
         graduate: graduate
     }
 }
+// A representation of a behavior
 var Bubble = function(default_value) {
     var id = '';
     var disabled = false;
