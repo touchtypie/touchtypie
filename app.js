@@ -405,6 +405,7 @@ var Bubble = function(default_value) {
 
         if (State.debug) {
             // Unit meta
+            console.log('[measureVirtue] virtue.result.collectionId: ' + virtue.result.collectionId);
             console.log('[measureVirtue] virtue.result.id: ' + virtue.result.id);
             console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
             console.log('[measureVirtue] virtue.result.completed: ' + virtue.result.completed);
@@ -774,6 +775,7 @@ var Student = function() {
             var _student = this;
 
             // Populate my virtue (Unit meta)
+            _student.virtue.result.collectionId = virtue.result.collectionId;
             _student.virtue.result.id = virtue.result.id;
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
