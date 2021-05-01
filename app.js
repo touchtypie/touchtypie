@@ -475,7 +475,7 @@ var Memory = function() {
     };
 
     // Mental representations of books
-    var bookCollectionIds = [ 'https://leojonathanoh.github.io/bible_databases/links/links.txt' ];
+    var bookCollectionIds = [ 'https://leojonathanoh.github.io/typie-library/collections/bible.txt' ];
     var books = {};
     var bookCount = 0;
     var bookIds = [];
