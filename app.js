@@ -77,6 +77,7 @@ var BubbleVirtue = function() {
     var newVirtue = function() {
         return {
             // Unit meta
+            libraryId: '',
             collectionId: '',
             id: '',
             perfection: false,
@@ -157,6 +158,7 @@ var BubbleVirtue = function() {
         this.newleaf();
 
         // Unit meta
+        this.result.libraryId = '';
         this.result.collectionId = '';
         this.result.id = '';
         this.result.datetime_start_epoch = 0;
@@ -364,6 +366,7 @@ var Bubble = function(default_value) {
         // }
 
         // Populate result
+        virtue.result.libraryId = truth.libraryId;
         virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
         virtue.result.perfection = perfection;
@@ -405,6 +408,7 @@ var Bubble = function(default_value) {
 
         if (State.debug) {
             // Unit meta
+            console.log('[measureVirtue] virtue.result.libraryId: ' + virtue.result.libraryId);
             console.log('[measureVirtue] virtue.result.collectionId: ' + virtue.result.collectionId);
             console.log('[measureVirtue] virtue.result.id: ' + virtue.result.id);
             console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
@@ -459,6 +463,7 @@ var Bubble = function(default_value) {
 };
 var Book = function() {
     return {
+        libraryId: '',
         collectionId: '',
         id: '',
         content: ''
@@ -641,6 +646,7 @@ var Memory = function() {
         };
         for (var i = 0; i < _bookIds.length; i++) {
             var book = Book();
+            book.libraryId = _bookLibraryId;
             book.collectionId = _bookCollectionId;
             book.id = _bookIds[i];
             books[book.id] = book;
@@ -775,6 +781,7 @@ var Student = function() {
             var _student = this;
 
             // Populate my virtue (Unit meta)
+            _student.virtue.result.libraryId = virtue.result.libraryId;
             _student.virtue.result.collectionId = virtue.result.collectionId;
             _student.virtue.result.id = virtue.result.id;
             _student.virtue.result.success = virtue.result.success;
@@ -863,6 +870,7 @@ var Training = function() {
         // Set truth values
         var topic = trainer.getCurrentTopic();
         if (topic) {
+            trainer.truth.libraryId = topic.libraryId;
             trainer.truth.collectionId = topic.collectionId;
             trainer.truth.id = topic.id;
             trainer.truth.value = topic.content;
