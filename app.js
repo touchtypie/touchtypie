@@ -611,6 +611,7 @@ var Memory = function() {
         }
     };
 
+    // Recollection of library collections
     var recallCollections = function(_bookCollectionStr, _bookLibraryId, _bookCollectionIdsTmp, _bookIdsTmp, callback) {
         var _this = this;
         // Recall this collection
@@ -636,7 +637,7 @@ var Memory = function() {
         }
     };
 
-    // Recollection of books and their content
+    // Recollection of libary collections' books and their content
     var recallBooks = function(_bookIdsStr, _bookLibraryId, _bookCollectionId, _bookIdsTmp, callback) {
         var _this = this;
         // Recall reading the book
