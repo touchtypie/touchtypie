@@ -640,12 +640,8 @@ var Trainer = function() {
         return memory.getBook().complete = true;
     };
 
-    var getTopics = function() {
-        return memory.bookIds;
-    };
-
     var getCurrentTopic = function() {
-        return memory.workingMemoryBookId;
+        return memory.getBook();
     };
 
     var getCurrentTopicContent = function() {
@@ -654,7 +650,7 @@ var Trainer = function() {
 
     var getNextTopic = function() {
         var nextBook = memory.environment.randomization ? memory.getNextRandomBook() : memory.getNextBook();
-        return nextBook ? nextBook.id : null;
+        return nextBook ? nextBook : null;
     };
 
     var getNextTopicContent = function() {
@@ -683,11 +679,11 @@ var Trainer = function() {
 
     var setAttention = function() {
         var book = memory.environment.randomization ? memory.getNextRandomBook() : memory.books[Object.keys(books)[0]]
-        setCurrentTopic(book.id);
+        setCurrentTopic(book);
     };
 
-    var setCurrentTopic = function(bookId) {
-        memory.workingMemoryBookId = bookId;
+    var setCurrentTopic = function(book) {
+        memory.workingMemoryBookId = book.id;
     };
 
     var setNextTopic = function() {
@@ -818,8 +814,8 @@ var Training = function() {
         // Set truth values
         var topic = trainer.getCurrentTopic();
         if (topic) {
-            trainer.truth.id = topic;
-            trainer.truth.value = trainer.getCurrentTopicContent();
+            trainer.truth.id = topic.id;
+            trainer.truth.value = topic.content;
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
 
