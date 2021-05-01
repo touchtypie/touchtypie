@@ -599,7 +599,7 @@ var Memory = function() {
     var recallBooks = function(_bookCollectionId, _bookIds, callback) {
         var _this = this;
         // Recall reading the book
-        bookIds = _bookIds.split(/\r\n|\n/) //.slice(0,1);
+        bookIds = _bookIds.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
         for (var i = 0; i < bookIds.length; i++) {
             var book = Book();
             book.collectionId = _bookCollectionId;
