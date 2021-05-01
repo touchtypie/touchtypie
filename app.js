@@ -575,20 +575,24 @@ var Memory = function() {
     // Recollection
     var recall = function(callback) {
         var _this = this;
+        var _bookIdsTmp = [];
         for (var i = 0; i < bookCollectionIds.length; i++) {
             fetch({
                 method: 'GET',
                 url: bookCollectionIds[i],
                 callback: function(_bookIdsStr, data) {
-                    recallBooks.apply(data.self, [data.bookCollectionId, _bookIdsStr, function() {
+                    recallBooks.apply(data.self, [data.bookIdsTmp, data.bookCollectionId, _bookIdsStr, function() {
                         // Once all books are recalled are done, call the callback
                         if (isReady()) {
+                            data.self.bookIds = _bookIdsTmp;
+                            data.self.bookCount = _bookIdsTmp.length;
                             callback();
                         }
                     }])
                 },
                 callbackData: {
                     self: _this,
+                    bookIdsTmp: _bookIdsTmp,
                     bookCollectionId: bookCollectionIds[i]
                 }
             });
@@ -596,18 +600,19 @@ var Memory = function() {
     };
 
     // Recollection of books and their content
-    var recallBooks = function(_bookCollectionId, _bookIdsStr, callback) {
+    var recallBooks = function(_bookIdsTmp, _bookCollectionId, _bookIdsStr, callback) {
         var _this = this;
         // Recall reading the book
-        var _bookIds = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; })
-        bookIds = bookIds.concat(_bookIds); //.slice(0,1);
-        for (var i = 0; i < bookIds.length; i++) {
+        var _bookIds = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
+        for (var i = 0; i < _bookIds.length; i++) {
+            _bookIdsTmp.push(_bookIds[i])
+        };
+        for (var i = 0; i < _bookIds.length; i++) {
             var book = Book();
             book.collectionId = _bookCollectionId;
-            book.id = bookIds[i];
+            book.id = _bookIds[i];
             books[book.id] = book;
         }
-        this.bookCount = bookIds.length;
 
         // Refresh my memory of its content
         for (var k in books) {
