@@ -76,6 +76,7 @@ var BubbleVirtue = function() {
     var newVirtue = function() {
         return {
             // Unit meta
+            collectionId: '',
             id: '',
             perfection: false,
             success: false,
@@ -155,6 +156,7 @@ var BubbleVirtue = function() {
         this.newleaf();
 
         // Unit meta
+        this.result.collectionId = '';
         this.result.id = '';
         this.result.datetime_start_epoch = 0;
         this.result.datetime_end_epoch = 0;
@@ -360,6 +362,7 @@ var Bubble = function(default_value) {
         // }
 
         // Populate result
+        virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
         virtue.result.perfection = perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
@@ -453,6 +456,7 @@ var Bubble = function(default_value) {
 };
 var Book = function() {
     return {
+        collectionId: '',
         id: '',
         content: ''
     }
@@ -569,30 +573,34 @@ var Memory = function() {
     // Recollection
     var recall = function(callback) {
         var _this = this;
-        fetch({
-            method: 'GET',
-            url: bookCollectionIds[0],
-            callback: function(_bookIds) {
-                recallBooks.apply(this, [_bookIds, function() {
-                    // Once all books are recalled are done, call the callback
-                    if (isReady()) {
-                        callback();
-                    }
-                }])
-            },
-            callbackData: {
-                self: _this
-            }
-        });
+        for (var i = 0; i < bookCollectionIds.length; i++) {
+            fetch({
+                method: 'GET',
+                url: bookCollectionIds[i],
+                callback: function(_bookIds, data) {
+                    recallBooks.apply(data.self, [data.bookCollectionId, _bookIds, function() {
+                        // Once all books are recalled are done, call the callback
+                        if (isReady()) {
+                            callback();
+                        }
+                    }])
+                },
+                callbackData: {
+                    self: _this,
+                    bookCollectionId: bookCollectionIds[i]
+                }
+            });
+        }
     };
 
     // Recollection of books and their content
-    var recallBooks = function(_bookIds, callback) {
+    var recallBooks = function(_bookCollectionId, _bookIds, callback) {
         var _this = this;
         // Recall reading the book
         bookIds = _bookIds.split(/\r\n|\n/) //.slice(0,1);
         for (var i = 0; i < bookIds.length; i++) {
             var book = Book();
+            book.collectionId = _bookCollectionId;
             book.id = bookIds[i];
             books[book.id] = book;
         }
@@ -700,7 +708,6 @@ var Trainer = function() {
         truth: truth,
         speech: speech,
         memory: memory,
-        getTopics: getTopics,
         getCurrentTopic: getCurrentTopic,
         getCurrentTopicContent: getCurrentTopicContent,
         getNextTopic: getNextTopic,
@@ -814,6 +821,7 @@ var Training = function() {
         // Set truth values
         var topic = trainer.getCurrentTopic();
         if (topic) {
+            trainer.truth.collectionId = topic.collectionId;
             trainer.truth.id = topic.id;
             trainer.truth.value = topic.content;
         }
