@@ -579,8 +579,8 @@ var Memory = function() {
             fetch({
                 method: 'GET',
                 url: bookCollectionIds[i],
-                callback: function(_bookIds, data) {
-                    recallBooks.apply(data.self, [data.bookCollectionId, _bookIds, function() {
+                callback: function(_bookIdsStr, data) {
+                    recallBooks.apply(data.self, [data.bookCollectionId, _bookIdsStr, function() {
                         // Once all books are recalled are done, call the callback
                         if (isReady()) {
                             callback();
@@ -596,10 +596,11 @@ var Memory = function() {
     };
 
     // Recollection of books and their content
-    var recallBooks = function(_bookCollectionId, _bookIds, callback) {
+    var recallBooks = function(_bookCollectionId, _bookIdsStr, callback) {
         var _this = this;
         // Recall reading the book
-        bookIds = _bookIds.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
+        var _bookIds = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; })
+        bookIds = bookIds.concat(_bookIds); //.slice(0,1);
         for (var i = 0; i < bookIds.length; i++) {
             var book = Book();
             book.collectionId = _bookCollectionId;
