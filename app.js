@@ -936,6 +936,7 @@ var Component = function(c) {
 
     // Store this components in global
     Components[c.name] = c;
+    c.bindings = [];
 
     var rootElement, results;
 
@@ -994,6 +995,7 @@ var Component = function(c) {
                         );
                     }
                     ele.binding = binding;
+                    c.bindings.push(binding);
                 }
             }
             // Or data bind to innerHTML
@@ -1032,6 +1034,7 @@ var Component = function(c) {
                     );
                 }
                 ele.binding = binding;
+                c.bindings.push(binding);
             }
 
             // If there is no data binding, simply set up the eventListeners
