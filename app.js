@@ -536,6 +536,11 @@ var Memory = function() {
         return books[this.workingMemoryBookId];
     };
 
+    // Retrieval
+    var getBookOfId = function(bookId) {
+        return bookId in books ? books[bookId] : null;
+    };
+
     var getNextBook = function() {
         var keys = Object.keys(books);
         var nextIndex = keys.indexOf(this.workingMemoryBookId) + 1;
@@ -681,6 +686,7 @@ var Memory = function() {
         bookCount: bookCount,
         workingMemoryBookId: workingMemoryBookId,
         getBook: getBook,
+        getBookOfId: getBookOfId,
         getNextBook: getNextBook,
         getNextRandomBook, getNextRandomBook,
         isReady: isReady,
@@ -712,6 +718,10 @@ var Trainer = function() {
     var getNextTopicContent = function() {
         var nextBook = memory.environment.randomization ? memory.getNextRandomBook() : memory.getNextBook();
         return nextBook ? nextBook.content : null;
+    };
+
+    var getTopicOfId = function(bookId) {
+        return memory.getBookOfId(bookId);
     };
 
     var isKnowledgeReady = function() {
@@ -760,6 +770,7 @@ var Trainer = function() {
         getCurrentTopicContent: getCurrentTopicContent,
         getNextTopic: getNextTopic,
         getNextTopicContent: getNextTopicContent,
+        getTopicOfId: getTopicOfId,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
         setCurrentTopic: setCurrentTopic,
@@ -1154,9 +1165,13 @@ var TrainingController = function () {
                     // On DOMContentLoaded, the .value is empty
                     if (valueNew === '') {
                         valueNew = value;
+                    };
+
+                    var topic = _training.trainer.getTopicOfId(valueNew);
+                    if (topic) {
+                        _training.trainer.setCurrentTopic(topic);
+                        c.props._training.start(_training.trainer.getCurrentTopicContent());
                     }
-                   c.props._training.trainer.memory.workingMemoryBookId = valueNew;
-                   c.props._training.start(_training.trainer.getCurrentTopicContent());
                 }
             }
         }
