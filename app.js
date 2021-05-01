@@ -930,7 +930,12 @@ var Training = function() {
     };
 };
 
+// Global store of components
+var Components = {};
 var Component = function(c) {
+
+    // Store this components in global
+    Components[c.name] = c;
 
     var rootElement, results;
 
@@ -1043,33 +1048,37 @@ var Component = function(c) {
         }
     }
 
-    if (/select/.test(c.name)) {
-        // Create the DOM element
-        var rootElement = createElementFromHTML(c.template);
-        // Create its <option> elemnets
-        var createSelectOptions = (function() {
-            var _selectElement = rootElement.getElementsByTagName('select')[0];
-            var optionElement;
-            for (var i = 0; i < c.props.options.length; i++) {
-                optionElement = document.createElement('option');
-                if (component.props.options[i] === component.value) {
-                    optionElement.setAttribute('selected', true);
+
+    // Create the DOM element
+    var rootElement = createElementFromHTML(c.template);
+    if (rootElement) {
+        if (/select/i.test(rootElement.nodeName)) {
+            // Create its <option> elements
+            var createSelectOptions = (function() {
+                var _selectElement = rootElement.getElementsByTagName('select')[0];
+                var optionElement;
+                for (var i = 0; i < c.props.options.length; i++) {
+                    optionElement = document.createElement('option');
+                    if (component.props.options[i] === component.value) {
+                        optionElement.setAttribute('selected', true);
+                    }
+                    optionElement.setAttribute('value', component.props.options[i]);
+                    optionElement.innerHTML = decodeURIComponent(component.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                    _selectElement.appendChild(optionElement);
                 }
-                optionElement.setAttribute('value', component.props.options[i]);
-                optionElement.innerHTML = decodeURIComponent(component.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
-                _selectElement.appendChild(optionElement);
-            }
-        })();
-        c.parentElement.appendChild(rootElement);
+            })();
+            // Create the DOM element
+            c.parentElement.appendChild(rootElement);
 
-        creatingBindings(rootElement);
-    }else {
-        // Create the DOM element
-        var rootElement = createElementFromHTML(c.template);
-        c.parentElement.appendChild(rootElement);
+            // Create data bindings
+            creatingBindings(rootElement);
+        }else {
+            // Create the DOM element
+            c.parentElement.appendChild(rootElement);
 
-        // Create data bindings
-        creatingBindings(rootElement);
+            // Create data bindings
+            creatingBindings(rootElement);
+        }
     }
 };
 
