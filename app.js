@@ -475,12 +475,12 @@ var Memory = function() {
     };
 
     // Mental representations of books
-    var bookCollectionIds = [
-        'https://leojonathanoh.github.io/typie-library/collections/bible.txt',
-        'https://leojonathanoh.github.io/typie-library/collections/keyboard-qwerty.txt'
+    var bookLibraryIds = [
+        'https://leojonathanoh.github.io/typie-library/libraries/daily.txt'
     ];
     var books = {};
     var bookCount = 0;
+    var bookCollectionIds = [];
     var bookIds = [];
     var workingMemoryBookId = '';
 
@@ -575,18 +575,20 @@ var Memory = function() {
         return Object.keys(books).length > 0 ? true : false;
     };
 
-    // Recollection
+    // Recollection of libraries
     var recall = function(callback) {
         var _this = this;
+        var _bookCollectionIdsTmp = [];
         var _bookIdsTmp = [];
-        for (var i = 0; i < bookCollectionIds.length; i++) {
+        for (var i = 0; i < bookLibraryIds.length; i++) {
             fetch({
                 method: 'GET',
-                url: bookCollectionIds[i],
-                callback: function(_bookIdsStr, data) {
-                    recallBooks.apply(data.self, [data.bookIdsTmp, data.bookCollectionId, _bookIdsStr, function() {
+                url: bookLibraryIds[i],
+                callback: function(_bookCollectionStr, data) {
+                    recallCollections.apply(data.self, [_bookCollectionStr, data._bookLibraryId, data._bookCollectionIdsTmp, data._bookIdsTmp, function() {
                         // Once all books are recalled are done, call the callback
                         if (isReady()) {
+                            data.self.bookCollectionIds = _bookCollectionIdsTmp;
                             data.self.bookIds = _bookIdsTmp;
                             data.self.bookCount = _bookIdsTmp.length;
                             callback();
@@ -595,15 +597,41 @@ var Memory = function() {
                 },
                 callbackData: {
                     self: _this,
-                    bookIdsTmp: _bookIdsTmp,
-                    bookCollectionId: bookCollectionIds[i]
+                    _bookLibraryId: bookLibraryIds[i],
+                    _bookCollectionIdsTmp: _bookCollectionIdsTmp,
+                    _bookIdsTmp: _bookIdsTmp
+                }
+            });
+        }
+    };
+
+    var recallCollections = function(_bookCollectionStr, _bookLibraryId, _bookCollectionIdsTmp, _bookIdsTmp, callback) {
+        var _this = this;
+        // Recall this collection
+        var _bookCollectionIds = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
+        for (var i = 0; i < _bookCollectionIds.length; i++) {
+            _bookCollectionIdsTmp.push(_bookCollectionIds[i])
+        };
+
+        for (var i = 0; i < _bookCollectionIds.length; i++) {
+            fetch({
+                method: 'GET',
+                url: _bookCollectionIds[i],
+                callback: function(_bookIdsStr, data) {
+                    recallBooks.apply(data.self, [_bookIdsStr, data._bookLibraryId, data._bookCollectionId, data._bookIdsTmp, callback])
+                },
+                callbackData: {
+                    self: _this,
+                    _bookLibraryId: _bookLibraryId,
+                    _bookCollectionId: _bookCollectionIds[i],
+                    _bookIdsTmp: _bookIdsTmp,
                 }
             });
         }
     };
 
     // Recollection of books and their content
-    var recallBooks = function(_bookIdsTmp, _bookCollectionId, _bookIdsStr, callback) {
+    var recallBooks = function(_bookIdsStr, _bookLibraryId, _bookCollectionId, _bookIdsTmp, callback) {
         var _this = this;
         // Recall reading the book
         var _bookIds = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
@@ -635,6 +663,7 @@ var Memory = function() {
     return {
         environment: environment,
         books: books,
+        bookCollectionIds: bookCollectionIds,
         get bookIds() {
             return bookIds;
         },
