@@ -554,15 +554,11 @@ var Memory = function() {
 
     var getNextBook = function() {
         var keys = Object.keys(books);
-        var nextIndex = keys.indexOf(this.workingMemoryBookId) + 1;
-        if (nextIndex !== -1 && nextIndex <= keys.length - 1) {
-            var nextKey = keys[nextIndex];
-            if (!books[nextKey].complete) {
-                this.workingMemoryBookId = nextKey;
-                return this.getBook();
-            }
-        }
-        return getNextIncompleteBook();
+        var currIndex = keys.indexOf(this.workingMemoryBookId);
+        var nextIndex = currIndex + 1 < keys.length ? currIndex + 1 : 0;
+        var nextKey = keys[nextIndex];
+        var book = books[nextKey];
+        return !book.complete ? book : getNextIncompleteBook();
     };
 
     var getNextIncompleteBook = function() {
