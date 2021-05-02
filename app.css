@@ -210,6 +210,33 @@ switch.true handle {
     margin-left: 1vw;
     background: rgba(255, 255, 255, 1.0);
 }
+
+menumultiswitch {
+    display: block;
+    width: 66.67%;
+    margin: 0 auto;
+    margin-top: 1vw;
+}
+menumultiswitch label {
+    display: inline-block;
+    vertical-align: middle;
+    width: 33.33%;
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+    text-align: center;
+    text-transform: uppercase;
+}
+menumultiswitch symbol {
+    display: inline-block;
+    vertical-align: middle;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1.5vw;
+    cursor: pointer;
+}
+
 menuselect {
     display: block;
     width: 66.67%;

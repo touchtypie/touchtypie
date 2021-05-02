@@ -475,6 +475,13 @@ var Memory = function() {
     // Mental representation of the physical and social environment
     var environment = {
         state: '',
+        playmodes: {
+            shuffleglobal: 'shuffleglobal',
+            shuffle: 'shuffle',
+            repeat: 'repeat',
+            repeatone: 'repeatone',
+        },
+        playmode: 'shuffleglobal',
         randomization : true,
         perfection : true,
         statistics: true,
@@ -552,16 +559,18 @@ var Memory = function() {
         return bookId in books ? books[bookId] : null;
     };
 
-    var getNextBook = function() {
+    var getFollowingBook = function() {
+        var book;
+        var books = getBooksOfCollectionId(this.workingMemoryCollectionId);
         var keys = Object.keys(books);
         var currIndex = keys.indexOf(this.workingMemoryBookId);
         var nextIndex = currIndex + 1 < keys.length ? currIndex + 1 : 0;
         var nextKey = keys[nextIndex];
         var book = books[nextKey];
-        return !book.complete ? book : getNextIncompleteBook();
+        return book;
     };
 
-    var getNextIncompleteBook = function() {
+    var getFirstIncompleteBook = function() {
         // Get the first incomplete book
         var incompleteBook;
         for (var k in books) {
@@ -573,14 +582,39 @@ var Memory = function() {
         return incompleteBook ? incompleteBook : null;
     };
 
-    var getNextRandomBook = function() {
-        var incompleteBooks = [];
-        for(var k in books) {
-            if (!books[k].complete) {
-                incompleteBooks.push(books[k]);
-            }
+    var getNextBook = function() {
+        var _book, _books;
+        var availableBooks = [];
+        switch(environment.playmode) {
+            case environment.playmodes.repeatone:
+                _book = this.getBook();
+                // book = book && !book.complete ? book : null
+                break;
+            case environment.playmodes.repeat:
+                _book = getFollowingBook.call(this);
+                break;
+            case environment.playmodes.shuffle:
+                _books = getBooksOfCollectionId(this.workingMemoryCollectionId);
+                for(var k in _books) {
+                    if (!_books[k].complete) {
+                        availableBooks.push(_books[k]);
+                    }
+                }
+                _book = availableBooks.length === 0 ? null : availableBooks[Math.floor(Math.random() * availableBooks.length)];
+                break;
+            case environment.playmodes.shuffleglobal:
+                _books = books;
+                for(var k in _books) {
+                    if (!_books[k].complete) {
+                        availableBooks.push(_books[k]);
+                    }
+                }
+                _book = availableBooks.length === 0 ? null : availableBooks[Math.floor(Math.random() * availableBooks.length)];
+                break;
+            default:
+                break;
         }
-        return incompleteBooks.length === 0 ? null : incompleteBooks[Math.floor(Math.random() * incompleteBooks.length)];
+        return _book;
     };
 
     // Have I been refreshed with all books?
@@ -697,8 +731,7 @@ var Memory = function() {
         getBook: getBook,
         getBooksOfCollectionId: getBooksOfCollectionId,
         getBookOfId: getBookOfId,
-        getNextBook: getNextBook,
-        getNextRandomBook, getNextRandomBook,
+        getNextBook, getNextBook,
         isReady: isReady,
         recall: recall,
     };
@@ -721,12 +754,12 @@ var Trainer = function() {
     };
 
     var getNextTopic = function() {
-        var nextBook = memory.environment.randomization ? memory.getNextRandomBook() : memory.getNextBook();
+        var nextBook = memory.getNextBook();
         return nextBook ? nextBook : null;
     };
 
     var getNextTopicContent = function() {
-        var nextBook = memory.environment.randomization ? memory.getNextRandomBook() : memory.getNextBook();
+        var nextBook = memory.getNextBook();
         return nextBook ? nextBook.content : null;
     };
 
@@ -758,8 +791,10 @@ var Trainer = function() {
     };
 
     var setAttention = function() {
-        var book = memory.environment.randomization ? memory.getNextRandomBook() : memory.books[Object.keys(books)[0]]
-        setCurrentTopic(book);
+        var book = memory.getNextBook();
+        if (book) {
+            setCurrentTopic(book);
+        }
     };
 
     var setCurrentTopic = function(book) {
@@ -1270,18 +1305,50 @@ var TrainingController = function () {
     });
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuswitch',
+        name: 'menumultiswitch-playmode',
         template: `
-            <menuswitch><label>randomization</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.randomization }}"><handle></handle></switch></menuswitch>
+            <menumultiswitch><label>playmode</label><symbol b-on="DOMContentLoaded,click" title="{{ ._training.trainer.memory.environment.playmode }}"></symbol></menumultiswitch>
         `,
         props: {
             _training: _training
         },
+        methods: {
+            updateSymbol: function(c, binding, playMode) {
+                var html;
+                switch(playMode) {
+                    case c.props._training.trainer.memory.environment.playmodes.repeatone:
+                        html = '🔂';
+                        break;
+                    case c.props._training.trainer.memory.environment.playmodes.repeat:
+                        html = '🔁';
+                        break;
+                    case c.props._training.trainer.memory.environment.playmodes.shuffle:
+                        html = '🔀';
+                        break;
+                    case c.props._training.trainer.memory.environment.playmodes.shuffleglobal:
+                        html = '<circle style="border: 1px solid #fff; border-radius: 50%;">🔀</circle>';
+                        break;
+                    default:
+                        break;
+                }
+                binding.element.innerHTML = html;
+            }
+        },
         eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+                c.methods.updateSymbol(c, binding, c.props._training.trainer.memory.environment.playmode);
+            },
             click: function(event, _this, binding) {
                 var c = this;
-                var newVal = !c.props._training.trainer.memory.environment.randomization;
-                c.props._training.trainer.memory.environment.randomization = newVal;
+                var nextPlaymode = (function() {
+                    var keys = Object.keys(c.props._training.trainer.memory.environment.playmodes);
+                    var currIndex = keys.indexOf(c.props._training.trainer.memory.environment.playmode);
+                    var nextIndex = currIndex + 1 < keys.length ? currIndex + 1 : 0;
+                    return c.props._training.trainer.memory.environment.playmodes[keys[nextIndex]];
+                })();
+                c.props._training.trainer.memory.environment.playmode = nextPlaymode;
+                c.methods.updateSymbol(c, binding, nextPlaymode);
                 event.stopPropagation()
             }
         }
