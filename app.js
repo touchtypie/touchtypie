@@ -488,6 +488,8 @@ var Memory = function() {
     var bookCount = 0;
     var bookCollectionIds = [];
     var bookIds = [];
+    var workingMemoryLibraryId = '';
+    var workingMemoryCollectionId = '';
     var workingMemoryBookId = '';
 
     // Fetch content from long-term memory
@@ -536,7 +538,16 @@ var Memory = function() {
         return books[this.workingMemoryBookId];
     };
 
-    // Retrieval
+    var getBooksOfCollectionId = function(collectionId) {
+        var _books = {};
+        for(var k in books) {
+            if (books[k].collectionId === collectionId) {
+                _books[k] = books[k];
+            }
+        }
+        return _books;
+    };
+
     var getBookOfId = function(bookId) {
         return bookId in books ? books[bookId] : null;
     };
@@ -684,8 +695,11 @@ var Memory = function() {
             bookIds = value;
         },
         bookCount: bookCount,
+        workingMemoryLibraryId: workingMemoryLibraryId,
+        workingMemoryCollectionId: workingMemoryCollectionId,
         workingMemoryBookId: workingMemoryBookId,
         getBook: getBook,
+        getBooksOfCollectionId: getBooksOfCollectionId,
         getBookOfId: getBookOfId,
         getNextBook: getNextBook,
         getNextRandomBook, getNextRandomBook,
@@ -724,6 +738,10 @@ var Trainer = function() {
         return memory.getBookOfId(bookId);
     };
 
+    var getTopicsOfCollectionId = function(collectionId) {
+        return memory.getBooksOfCollectionId(collectionId);
+    };
+
     var isKnowledgeReady = function() {
         return memory.isReady();
     };
@@ -749,6 +767,8 @@ var Trainer = function() {
     };
 
     var setCurrentTopic = function(book) {
+        memory.workingMemoryLibraryId = book.workingMemoryLibraryId;
+        memory.workingMemoryCollectionId = book.collectionId;
         memory.workingMemoryBookId = book.id;
     };
 
@@ -770,6 +790,7 @@ var Trainer = function() {
         getCurrentTopicContent: getCurrentTopicContent,
         getNextTopic: getNextTopic,
         getNextTopicContent: getNextTopicContent,
+        getTopicsOfCollectionId: getTopicsOfCollectionId,
         getTopicOfId: getTopicOfId,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
@@ -1120,27 +1141,27 @@ var TrainingController = function () {
     // Components
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuselect',
+        name: 'menuselect_bookcollections',
         template: `
-            <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect>
+            <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
         `,
         props: {
-            label: 'topics',
+            label: 'collection',
             _training: _training,
             get options() {
-                return _training.trainer.memory.bookIds;
+                return _training.trainer.memory.bookCollectionIds;
             },
         },
         methods: {
             createSelectOptions: function(c, binding) {
-                var ele = binding.element;
+                var ele = binding ? binding.element : c.bindings[1].elementBindings[0].element;
                 // Remove all options elements
                 ele.innerHTML = '';
                 // Recreate all options elements
                 var optionElement;
                 for (var i = 0; i < c.props.options.length; i++) {
                     optionElement = document.createElement('option');
-                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryBookId) {
+                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryCollectionId) {
                         optionElement.setAttribute('selected', true);
                     }
                     optionElement.setAttribute('value', c.props.options[i]);
@@ -1154,6 +1175,8 @@ var TrainingController = function () {
                 var c = this;
                 _training.prepare(function() {
                     c.methods.createSelectOptions(c, binding);
+
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
                 });
             },
             change: function(event, _this, binding) {
@@ -1167,11 +1190,84 @@ var TrainingController = function () {
                         valueNew = value;
                     };
 
-                    var topic = _training.trainer.getTopicOfId(valueNew);
-                    if (topic) {
-                        _training.trainer.setCurrentTopic(topic);
-                        c.props._training.start(_training.trainer.getCurrentTopicContent());
+                    var topics = c.props._training.trainer.getTopicsOfCollectionId(valueNew);
+                    if (topics) {
+                        var keys = Object.keys(topics);
+                        if (keys.length > 0) {
+                            _training.trainer.setCurrentTopic(topics[keys[0]]);
+                            c.props._training.start();
+                        }
                     }
+                    // c.props._training.trainer.memory.workingMemoryCollectionId = valueNew;
+
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                }
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuselect_books',
+        template: `
+            <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
+        `,
+        props: {
+            label: 'topic',
+            _training: _training,
+            get options() {
+                var topic = this._training.trainer.getCurrentTopic();
+                if (topic) {
+                    var topics = this._training.trainer.getTopicsOfCollectionId(topic.collectionId);
+                    var topicIds = Object.keys(topics);
+                    return topicIds;
+                }
+                return [];
+            },
+        },
+        methods: {
+            createSelectOptions: function(c, binding) {
+                var ele = binding ? binding.element : c.bindings[1].elementBindings[0].element;
+                // Remove all options elements
+                ele.innerHTML = '';
+                // Recreate all options elements
+                var optionElement;
+                var topic = c.props._training.trainer.getCurrentTopic();
+                if (topic) {
+                    for (var i = 0; i < c.props.options.length; i++) {
+                        optionElement = document.createElement('option');
+                        if (c.props.options[i] === topic.id) {
+                            optionElement.setAttribute('selected', true);
+                        }
+                        optionElement.setAttribute('value', c.props.options[i]);
+                        optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                        ele.appendChild(optionElement);
+                    }
+                }
+            }
+        },
+        eventsListeners: {
+            // DOMContentLoaded: function(event, _this, binding) {
+            //     var c = this;
+            //     _training.prepare(function() {
+            //         c.methods.createSelectOptions(c, binding);
+            //     });
+            // },
+            change: function(event, _this, binding) {
+                var c = this;
+                // If new value was selected, do something
+                var valueNew = binding.element.value;
+                var value = c.props.value;
+                if (valueNew !== value) {
+                    // On DOMContentLoaded, the .value is empty
+                    if (valueNew === '') {
+                        valueNew = value;
+                    }
+                   c.props._training.trainer.memory.workingMemoryBookId = valueNew;
+                   var topic = _training.trainer.getCurrentTopic();
+                   if (topic) {
+                        _training.trainer.setCurrentTopic(topic);
+                        c.props._training.start();
+                   }
                 }
             }
         }
