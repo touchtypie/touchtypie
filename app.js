@@ -1613,34 +1613,34 @@ var TrainingController = function () {
         document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
+
+    // Data binding - Component: unitoverall
     new Binding({
         object: _training.student.virtue.result,
         property: "datetime_start_iso"
     }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('datetimestart')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestart')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _training.student.virtue.result,
         property: "datetime_stopwatch"
     }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "shot_num_total"
+    }).addBinding(
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _training.student.virtue.result,
         property: "rate_hit_per_min"
     }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-
-    // Data binding - Component: unitoverall
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "shot_num_total"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
