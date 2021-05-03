@@ -865,7 +865,7 @@ var Student = function() {
         focus: function() {
             this.focusElement.focus();
         },
-        inheritVirtue: function(virtue, populateGlobal) {
+        inheritVirtue: function(virtue, populateGlobal, cumulateGlobal) {
             var _student = this;
 
             // Populate my virtue (Unit meta)
@@ -917,6 +917,8 @@ var Student = function() {
                     rate_hit_per_min_virtues += _student.virtues.values[i].result.rate_hit_per_min;
                 }
                 _student.virtue.result.rate_hit_per_min_global = parseFloat(( ( rate_hit_per_min_virtues + virtue.result.rate_hit_per_min ) / ( _student.virtues.values.length + 1 ) ).toFixed(2));
+            }
+            if (cumulateGlobal) {
                 _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
                 _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
                 _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : parseFloat((_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2));
@@ -1531,7 +1533,7 @@ var TrainingController = function () {
                             // if (State.debug) {
                             //     console.log('[keyup][interval] ');
                             // }
-                            _training.student.inheritVirtue(virtue, true);
+                            _training.student.inheritVirtue(virtue, true, false);
                         }
                     }, intervalMilliseconds);
                     if (State.debug) {
@@ -1544,7 +1546,7 @@ var TrainingController = function () {
             // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue non-time-based stats
-            _training.student.inheritVirtue(virtue, true);
+            _training.student.inheritVirtue(virtue, true, true);
             if (virtue.result.completed) {
                 // Record student virtue
                 _training.student.stashVirtue(virtue);
