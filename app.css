@@ -416,15 +416,15 @@ statistics unitprogress heading {
     font-size: 1vw;
     text-align: center;
 }
+statistics unitprogress datetimestart,
+statistics unitprogress datetimestopwatch,
 statistics unitprogress characterscounter,
 statistics unitprogress characterspercentagecounter,
+statistics unitprogress ratehitpermincounter,
 statistics unitprogress hitcounter,
 statistics unitprogress hitpercentagecounter,
 statistics unitprogress misscounter,
-statistics unitprogress misspercentagecounter,
-statistics unitprogress datetimestart,
-statistics unitprogress datetimestopwatch,
-statistics unitprogress ratehitpermincounter {
+statistics unitprogress misspercentagecounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
@@ -496,8 +496,8 @@ statistics globaloverall heading {
     font-size: 1vw;
     text-align: center;
 }
-statistics globaloverall ratehitpermincounter,
 statistics globaloverall shotcounter,
+statistics globaloverall ratehitpermincounter,
 statistics globaloverall hitcounter,
 statistics globaloverall hitpercentagecounter,
 statistics globaloverall misscounter,
