@@ -4,6 +4,31 @@ var Helpers = function () {
     return {
         htmlEntities: function htmlEntities(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /, '&nbsp;').replace(/\s+$/, '<br/>');
+        },
+        getStopwatchValue: function getStopwatchValue(milliseconds) {
+            var stopwatch = '';
+
+            function pad(num, size) {
+                num = num.toString();
+                while (num.length < size) num = "0" + num;
+                return num;
+            }
+
+            var centiseconds = Math.floor(milliseconds / 10 % 100);
+            var seconds = Math.floor(milliseconds / 1000 % 60);
+            var minutes = Math.floor(milliseconds / 1000 / 60 % 60);
+            var hours = Math.floor(milliseconds / 1000 / 60 / 60 % 24);
+            var days = Math.floor(milliseconds / 1000 / 60 / 60 / 24);
+            stopwatch = pad(minutes, 2) + ':' + pad(seconds, 2);
+            if (hours > 0) {
+                stopwatch = pad(hours, 2) + ':' +  stopwatch;
+            }
+            if (days > 0) {
+                stopwatch = pad(days, 2) + 'd ' + stopwatch;
+            }
+            // stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
+
+            return stopwatch;
         }
     };
 }()
@@ -331,27 +356,7 @@ var Bubble = function(default_value) {
                         // }
                         var now = new Date();
                         _virtue.result.datetime_duration_ms = now.valueOf() - virtue.result.datetime_start_epoch;
-
-                        function pad(num, size) {
-                            num = num.toString();
-                            while (num.length < size) num = "0" + num;
-                            return num;
-                        }
-
-                        var centiseconds = Math.floor(_virtue.result.datetime_duration_ms / 10 % 100);
-                        var seconds = Math.floor(_virtue.result.datetime_duration_ms / 1000 % 60);
-                        var minutes = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 % 60);
-                        var hours = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 / 60 % 24);
-                        var days = Math.floor(_virtue.result.datetime_duration_ms / 1000 / 60 / 60 / 24);
-                        _virtue.result.datetime_stopwatch = pad(minutes, 2) + ':' + pad(seconds, 2);
-                        if (hours > 0) {
-                            _virtue.result.datetime_stopwatch = pad(hours, 2) + ':' +  _virtue.result.datetime_stopwatch;
-                        }
-                        if (days > 0) {
-                            _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + _virtue.result.datetime_stopwatch;
-                        }
-                        // _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
-
+                        _virtue.result.datetime_stopwatch = Helpers.getStopwatchValue(_virtue.result.datetime_duration_ms);
                         _virtue.result.rate_hit_per_min = _virtue.result.datetime_duration_ms === 0 ? 0.00 : parseFloat((_virtue.result.hit_num_total / (_virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2));
                     }
                 }, intervalMilliseconds)
