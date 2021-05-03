@@ -352,7 +352,7 @@ var Bubble = function(default_value) {
                         }
                         // _virtue.result.datetime_stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
 
-                        _virtue.result.rate_hit_per_min = _virtue.result.datetime_duration_ms === 0 ? 0.00 : (_virtue.result.hit_num_total / (_virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2)
+                        _virtue.result.rate_hit_per_min = _virtue.result.datetime_duration_ms === 0 ? 0.00 : parseFloat((_virtue.result.hit_num_total / (_virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2));
                     }
                 }, intervalMilliseconds)
                 if (State.debug) {
@@ -398,21 +398,21 @@ var Bubble = function(default_value) {
             truth.value.substring(startIndex, endIndex + 1)
         );
         virtue.result.value_length = bubble.value.length;
-        virtue.result.value_length_percentage = bubble.value.length == 0 ? 0.00 : (bubble.value.length / truth.value.length * 100).toFixed(2);
+        virtue.result.value_length_percentage = bubble.value.length == 0 ? 0.00 : parseFloat((bubble.value.length / truth.value.length * 100).toFixed(2));
         virtue.result.hit_num = virtue.result.hit_indices.length;
-        virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.hit_num / bubble.value.length * 100).toFixed(2);
+        virtue.result.hit_num_percentage = bubble.value.length == 0 ? 0.00 : parseFloat((virtue.result.hit_num / bubble.value.length * 100).toFixed(2));
         virtue.result.miss_num = virtue.result.miss_indices.length;
-        virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : (virtue.result.miss_num / bubble.value.length * 100).toFixed(2);
+        virtue.result.miss_num_percentage = bubble.value.length == 0 ? 0.00 : parseFloat((virtue.result.miss_num / bubble.value.length * 100).toFixed(2));
 
         virtue.result.shot_num_total += virtue.result.shot_num_new;
         virtue.result.hit_num_total += virtue.result.hit_num_new;
-        virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0 ? 0.00 : (virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.hit_num_total_percentage = virtue.result.hit_num_total == 0 ? 0.00 : parseFloat((virtue.result.hit_num_total / virtue.result.shot_num_total * 100).toFixed(2));
         virtue.result.miss_num_total += virtue.result.miss_num_new;
-        virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0 ? 0.00 : (virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.miss_num_total_percentage = virtue.result.miss_num_total == 0 ? 0.00 : parseFloat((virtue.result.miss_num_total / virtue.result.shot_num_total * 100).toFixed(2));
         virtue.result.amend_num_total += virtue.result.amend_num_new;
-        virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0 ? 0.00 : (virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.amend_num_total_percentage = virtue.result.amend_num_total == 0 ? 0.00 : parseFloat((virtue.result.amend_num_total / virtue.result.shot_num_total * 100).toFixed(2));
         virtue.result.other_num_total += virtue.result.other_num_new;
-        virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : (virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2);
+        virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : parseFloat((virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2));
 
         if ( (perfection && virtue.result.success && bubble.value.length == truth.value.length) ||
              (!perfection && bubble.value.length == truth.value.length)
@@ -422,7 +422,7 @@ var Bubble = function(default_value) {
             virtue.result.datetime_end_epoch = now.valueOf();
             virtue.result.datetime_end_iso = now.toISOString();
             virtue.result.datetime_duration_ms = virtue.result.datetime_end_epoch - virtue.result.datetime_start_epoch;
-            virtue.result.rate_hit_per_min = virtue.result.datetime_duration_ms === 0 ? 0.00 : (virtue.result.hit_num_total / (virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2)
+            virtue.result.rate_hit_per_min = virtue.result.datetime_duration_ms === 0 ? 0.00 : parseFloat((virtue.result.hit_num_total / (virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2));
         }
 
         if (State.debug) {
@@ -916,16 +916,16 @@ var Student = function() {
                 for (var i = 0 ; i < _student.virtues.values.length; i++) {
                     rate_hit_per_min_virtues += _student.virtues.values[i].result.rate_hit_per_min;
                 }
-                _student.virtue.result.rate_hit_per_min_global = ( ( rate_hit_per_min_virtues + virtue.result.rate_hit_per_min ) / ( _student.virtues.values.length + 1 ) ).toFixed(2);
+                _student.virtue.result.rate_hit_per_min_global = parseFloat(( ( rate_hit_per_min_virtues + virtue.result.rate_hit_per_min ) / ( _student.virtues.values.length + 1 ) ).toFixed(2));
                 _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
                 _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
-                _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : (_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : parseFloat((_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2));
                 _student.virtue.result.miss_num_global += virtue.result.miss_num_new;
-                _student.virtue.result.miss_num_global_percentage = _student.virtue.result.miss_num_global == 0 ? 0.00 : (_student.virtue.result.miss_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.miss_num_global_percentage = _student.virtue.result.miss_num_global == 0 ? 0.00 : parseFloat((_student.virtue.result.miss_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2));
                 _student.virtue.result.amend_num_global += virtue.result.amend_num_new;
-                _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : (_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.amend_num_global_percentage = _student.virtue.result.amend_num_global == 0 ? 0.00 : parseFloat((_student.virtue.result.amend_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2));
                 _student.virtue.result.other_num_global += virtue.result.other_num_new;
-                _student.virtue.result.other_num_global_percentage = _student.virtue.result.other_num_global == 0 ? 0.00 : (_student.virtue.result.other_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
+                _student.virtue.result.other_num_global_percentage = _student.virtue.result.other_num_global == 0 ? 0.00 : parseFloat((_student.virtue.result.other_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2));
             }
         },
         setFocus: function(element) {
