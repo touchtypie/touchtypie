@@ -119,20 +119,6 @@ var BubbleVirtue = function() {
             amend_num_total_percentage: 0.00,
             other_num_total: 0,
             other_num_total_percentage: 0.00,
-
-            // Global rate
-            rate_hit_per_min_global: 0,
-
-            // Global cumulative
-            shot_num_global: 0,
-            hit_num_global: 0,
-            hit_num_global_percentage: 0.00,
-            miss_num_global: 0,
-            miss_num_global_percentage: 0.00,
-            amend_num_global: 0,
-            amend_num_global_percentage: 0.00,
-            other_num_global: 0,
-            other_num_global_percentage: 0.00
         };
     }
     var result = newVirtue();
@@ -197,6 +183,34 @@ var BubbleVirtue = function() {
         graduate: graduate
     }
 }
+// A representation of the measure of a student nature's congruence to a perfect nature
+var StudentVirtue = function() {
+    var virtue = BubbleVirtue();
+
+    var globalvirtue = {
+        result: {
+            // Global rate
+            rate_hit_per_min_global: 0,
+
+            // Global cumulative
+            shot_num_global: 0,
+            hit_num_global: 0,
+            hit_num_global_percentage: 0.00,
+            miss_num_global: 0,
+            miss_num_global_percentage: 0.00,
+            amend_num_global: 0,
+            amend_num_global_percentage: 0.00,
+            other_num_global: 0,
+            other_num_global_percentage: 0.00
+        }
+    };
+
+    for (var k in globalvirtue.result) {
+        virtue.result[k] = globalvirtue.result[k];
+    }
+
+    return virtue;
+};
 // A representation of a behavior
 var Bubble = function(default_value) {
     var id = '';
@@ -838,11 +852,16 @@ var Student = function() {
     return {
         response: Bubble(''),
         focusElement: null,
-        virtue: BubbleVirtue(),
+
+        // My virtue
+        virtue: StudentVirtue(),
+
+        // My behavioral virtues
         virtues: {
             count: 0,
             values: []
         },
+
         focus: function() {
             this.focusElement.focus();
         },
