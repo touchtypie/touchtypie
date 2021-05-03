@@ -92,6 +92,8 @@ var BubbleVirtue = function() {
             datetime_end_iso: '',
             datetime_duration_ms: 0,
             datetime_stopwatch: '',
+
+            // Unit rate
             rate_hit_per_min: 0,
 
             // Unit progress
@@ -118,7 +120,10 @@ var BubbleVirtue = function() {
             other_num_total: 0,
             other_num_total_percentage: 0.00,
 
-            // Global
+            // Global rate
+            rate_hit_per_min_global: 0,
+
+            // Global cumulative
             shot_num_global: 0,
             hit_num_global: 0,
             hit_num_global_percentage: 0.00,
@@ -841,7 +846,7 @@ var Student = function() {
         focus: function() {
             this.focusElement.focus();
         },
-        inheritVirtue: function(virtue, cumulate) {
+        inheritVirtue: function(virtue, rateGlobalCount, cumulateGlobal) {
             var _student = this;
 
             // Populate my virtue (Unit meta)
@@ -859,6 +864,8 @@ var Student = function() {
             _student.virtue.result.datetime_end_iso = virtue.result.datetime_end_iso;
             _student.virtue.result.datetime_duration_ms = virtue.result.datetime_duration_ms;
             _student.virtue.result.datetime_stopwatch = virtue.result.datetime_stopwatch;
+
+            // Populate my virtue (Unit rate)
             _student.virtue.result.rate_hit_per_min = virtue.result.rate_hit_per_min;
 
             // Populate my virtue (Unit progress)
@@ -884,8 +891,11 @@ var Student = function() {
             _student.virtue.result.other_num_total = virtue.result.other_num_total;
             _student.virtue.result.other_num_total_percentage = virtue.result.other_num_total_percentage;
 
-            // Popululate my virtue (Global, cumulative)
-            if (cumulate) {
+            // Populate my virtue (Global)
+            if (typeof rateGlobalCount !== 'undefined') {
+                _student.virtue.result.rate_hit_per_min_global = ( ( (_student.virtue.result.rate_hit_per_min_global * rateGlobalCount) + virtue.result.rate_hit_per_min ) / ( rateGlobalCount + 1 ) ).toFixed(2);
+            }
+            if (cumulateGlobal) {
                 _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
                 _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
                 _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : (_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
@@ -1500,7 +1510,7 @@ var TrainingController = function () {
                             // if (State.debug) {
                             //     console.log('[keyup][interval] ');
                             // }
-                            _training.student.inheritVirtue(virtue, false);
+                            _training.student.inheritVirtue(virtue, _training.student.virtues.count);
                         }
                     }, intervalMilliseconds);
                     if (State.debug) {
@@ -1513,7 +1523,7 @@ var TrainingController = function () {
             // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue non-time-based stats
-            _training.student.inheritVirtue(virtue, true);
+            _training.student.inheritVirtue(virtue, _training.student.virtues.count, true);
             if (virtue.result.completed) {
                 // Record student virtue
                 _training.student.stashVirtue(virtue);
@@ -1672,6 +1682,13 @@ var TrainingController = function () {
     );
 
     // Data binding - Component: globaloverall
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "rate_hit_per_min_global"
+    }).addBinding(
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
     new Binding({
         object: _training.student.virtue.result,
         property: "shot_num_global"

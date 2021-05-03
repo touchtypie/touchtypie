@@ -496,6 +496,7 @@ statistics globaloverall heading {
     font-size: 1vw;
     text-align: center;
 }
+statistics globaloverall ratehitpermincounter,
 statistics globaloverall shotcounter,
 statistics globaloverall hitcounter,
 statistics globaloverall hitpercentagecounter,
