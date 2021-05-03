@@ -865,7 +865,7 @@ var Student = function() {
         focus: function() {
             this.focusElement.focus();
         },
-        inheritVirtue: function(virtue, rateGlobalCount, cumulateGlobal) {
+        inheritVirtue: function(virtue, populateGlobal) {
             var _student = this;
 
             // Populate my virtue (Unit meta)
@@ -911,10 +911,12 @@ var Student = function() {
             _student.virtue.result.other_num_total_percentage = virtue.result.other_num_total_percentage;
 
             // Populate my virtue (Global)
-            if (typeof rateGlobalCount !== 'undefined') {
-                _student.virtue.result.rate_hit_per_min_global = ( ( (_student.virtue.result.rate_hit_per_min_global * rateGlobalCount) + virtue.result.rate_hit_per_min ) / ( rateGlobalCount + 1 ) ).toFixed(2);
-            }
-            if (cumulateGlobal) {
+            if (populateGlobal) {
+                var rate_hit_per_min_virtues = 0;
+                for (var i = 0 ; i < _student.virtues.values.length; i++) {
+                    rate_hit_per_min_virtues += _student.virtues.values[i].result.rate_hit_per_min;
+                }
+                _student.virtue.result.rate_hit_per_min_global = ( ( rate_hit_per_min_virtues + virtue.result.rate_hit_per_min ) / ( _student.virtues.values.length + 1 ) ).toFixed(2);
                 _student.virtue.result.shot_num_global += virtue.result.shot_num_new;
                 _student.virtue.result.hit_num_global += virtue.result.hit_num_new;
                 _student.virtue.result.hit_num_global_percentage = _student.virtue.result.hit_num_global == 0 ? 0.00 : (_student.virtue.result.hit_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2)
@@ -1529,7 +1531,7 @@ var TrainingController = function () {
                             // if (State.debug) {
                             //     console.log('[keyup][interval] ');
                             // }
-                            _training.student.inheritVirtue(virtue, _training.student.virtues.count);
+                            _training.student.inheritVirtue(virtue, true);
                         }
                     }, intervalMilliseconds);
                     if (State.debug) {
@@ -1542,7 +1544,7 @@ var TrainingController = function () {
             // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue non-time-based stats
-            _training.student.inheritVirtue(virtue, _training.student.virtues.count, true);
+            _training.student.inheritVirtue(virtue, true);
             if (virtue.result.completed) {
                 // Record student virtue
                 _training.student.stashVirtue(virtue);
