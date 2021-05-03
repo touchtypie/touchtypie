@@ -496,6 +496,7 @@ statistics globaloverall heading {
     font-size: 1vw;
     text-align: center;
 }
+statistics globaloverall datetimestopwatch,
 statistics globaloverall shotcounter,
 statistics globaloverall ratehitpermincounter,
 statistics globaloverall hitcounter,

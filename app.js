@@ -214,6 +214,10 @@ var StudentVirtue = function() {
 
     var globalvirtue = {
         result: {
+            // Global meta
+            datetime_duration_ms_global: 0,
+            datetime_stopwatch_global: '',
+
             // Global rate
             rate_hit_per_min_global: 0,
 
@@ -917,10 +921,14 @@ var Student = function() {
 
             // Populate my virtue (Global)
             if (populateGlobal) {
+                var datetime_duration_ms_global_virtues = 0;
                 var rate_hit_per_min_virtues = 0;
                 for (var i = 0 ; i < _student.virtues.values.length; i++) {
+                    datetime_duration_ms_global_virtues += _student.virtues.values[i].result.datetime_duration_ms;
                     rate_hit_per_min_virtues += _student.virtues.values[i].result.rate_hit_per_min;
                 }
+                _student.virtue.result.datetime_duration_ms_global = Math.round( ( datetime_duration_ms_global_virtues + virtue.result.datetime_duration_ms ) );
+                _student.virtue.result.datetime_stopwatch_global = Helpers.getStopwatchValue( _student.virtue.result.datetime_duration_ms_global );
                 _student.virtue.result.rate_hit_per_min_global = parseFloat(( ( rate_hit_per_min_virtues + virtue.result.rate_hit_per_min ) / ( _student.virtues.values.length + 1 ) ).toFixed(2));
             }
             if (cumulateGlobal) {
@@ -1710,6 +1718,13 @@ var TrainingController = function () {
     );
 
     // Data binding - Component: globaloverall
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "datetime_stopwatch_global"
+    }).addBinding(
+        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
     new Binding({
         object: _training.student.virtue.result,
         property: "rate_hit_per_min_global"
