@@ -91,10 +91,10 @@ menu environment {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 menu environment.customize menubutton  {
-    background: #fff;
+    /* background: #fff; */
 }
 menu environment.customize menubutton span  {
-    color: #085078;
+    /* color: #085078; */
 }
 menu environment backdrop {
     display: none;
@@ -161,7 +161,6 @@ menubutton span {
     display: inline-block;
     vertical-align: middle;
     color: #fff;
-    width: 3vw;
     font-size: 3vw;
     line-height: 1;
 }
