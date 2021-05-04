@@ -1612,6 +1612,9 @@ var TrainingController = function () {
 
                 // Run the next training unit
                 _training.next();
+
+                // Update environment topics
+                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
             }
 
             if (State.debug) {
