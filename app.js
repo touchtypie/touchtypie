@@ -364,9 +364,9 @@ var Bubble = function(default_value) {
                 const intervalMilliseconds = 100;
                 var intervalId = setInterval(function(){
                     if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
-                        // if (State.debug) {
-                        //     console.log('[measureVirtue][interval] delete');
-                        // }
+                        if (State.debug) {
+                            console.log('[measureVirtue][interval] delete');
+                        }
                         clearInterval(intervalId);
                     }else {
                         // if (State.debug) {
@@ -1607,9 +1607,9 @@ var TrainingController = function () {
                     const intervalMilliseconds = 100;
                     var intervalId = setInterval(function() {
                         if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
-                            // if (State.debug) {
+                            if (State.debug) {
                                 console.log('[keyup][interval] delete ' + ' ');
-                            // }
+                            }
                             clearInterval(intervalId);
                         }else {
                             // if (State.debug) {
