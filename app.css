@@ -234,7 +234,12 @@ menumultiswitch symbol {
     font-family: monospace;
     font-weight: normal;
     font-size: 1.5vw;
+    line-height: 1;
     cursor: pointer;
+    border: 1px solid transparent;
+}
+menumultiswitch symbol.shuffleglobal {
+    border: 1px solid #fff;
 }
 
 menuselect {

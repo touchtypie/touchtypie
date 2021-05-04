@@ -1457,12 +1457,13 @@ var TrainingController = function () {
                         html = '🔀';
                         break;
                     case c.props._training.trainer.memory.environment.playmodes.shuffleglobal:
-                        html = '<circle style="border: 1px solid #fff; border-radius: 50%;">🔀</circle>';
+                        html = '🔀';
                         break;
                     default:
                         break;
                 }
                 binding.element.innerHTML = html;
+                binding.element.className = playMode;
             }
         },
         eventsListeners: {
