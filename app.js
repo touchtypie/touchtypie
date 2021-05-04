@@ -245,6 +245,8 @@ var StudentVirtue = function() {
 };
 // A representation of a behavior
 var Bubble = function(default_value) {
+    var libraryId = '';
+    var collectionId = '';
     var id = '';
     var disabled = false;
     var value = default_value;
@@ -498,7 +500,9 @@ var Bubble = function(default_value) {
     };
 
     return {
-        id: id,
+        libraryId: '',
+        collectionId: '',
+        id: '',
         disabled: disabled,
         value: value,
         charactersCounter: charactersCounter,
