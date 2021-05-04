@@ -335,11 +335,14 @@ var Bubble = function(default_value) {
     var measureVirtue = function(truth, key, perfection) {
         var bubble = this;
         var virtue = bubble.virtue;
+
+        var started = false;
         var amend = ( key == 8 || key == 46 ) ? true : false;
         var value_length_prev = virtue.result.value_length;
         virtue.newleaf();
 
         if (key && !virtue.result.datetime_start_epoch) {
+            started = true;
             var now = new Date();
             virtue.result.datetime_start_epoch = now.valueOf() ;
             virtue.result.datetime_start_iso = now.toISOString();
@@ -349,7 +352,7 @@ var Bubble = function(default_value) {
                 var _virtue = virtue;
                 const intervalMilliseconds = 100;
                 var intervalId = setInterval(function(){
-                    if (_virtue.result.completed) {
+                    if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
                         // if (State.debug) {
                         //     console.log('[measureVirtue][interval] delete');
                         // }
@@ -476,7 +479,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.other_num_total: ' + virtue.result.other_num_total);
             console.log('[measureVirtue] virtue.result.other_num_total_percentage: ' + virtue.result.other_num_total_percentage);
         }
-        return virtue;
+        return started;
     };
 
     return {
@@ -1530,16 +1533,19 @@ var TrainingController = function () {
             _training.student.response.charactersCounter = _training.student.response.value.length;
 
             var virtue = _training.student.response.virtue;
+            // Validate student response
+            var started = _training.student.response.measureVirtue(_training.trainer.truth, key, environment.perfection);
+
             // Update student virtue every interval
-            if (virtue.result.datetime_start_epoch === 0) {
+            if (started) {
                 (function() {
                     // Store reference to this virtue
                     var _virtue = virtue;
                     const intervalMilliseconds = 100;
                     var intervalId = setInterval(function() {
-                        if (_virtue.result.completed) {
+                        if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
                             // if (State.debug) {
-                            //     console.log('[keyup][interval] delete ' + ' ');
+                                console.log('[keyup][interval] delete ' + ' ');
                             // }
                             clearInterval(intervalId);
                         }else {
@@ -1554,9 +1560,7 @@ var TrainingController = function () {
                     }
                 })();
             }
-            // Validate student response
-            _training.student.response.measureVirtue(_training.trainer.truth, key, environment.perfection);
-            // Set trainer speech value
+                        // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue non-time-based stats
             _training.student.inheritVirtue(virtue, true, true);
