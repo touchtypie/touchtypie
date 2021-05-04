@@ -234,6 +234,7 @@ var StudentVirtue = function() {
         }
     };
 
+    // Merge
     for (var k in globalvirtue.result) {
         virtue.result[k] = globalvirtue.result[k];
     }
@@ -248,6 +249,14 @@ var Bubble = function(default_value) {
     var charactersCounter = 0;
 
     var virtue = BubbleVirtue();
+
+    // Resets the existing virtue
+    var newleaf = function() {
+        this.id = '';
+        this.value = '';
+        this.charactersCounter = 0;
+        this.virtue.newlife();
+    };
 
     // Creates a new virtue
     var newlife = function() {
@@ -488,6 +497,7 @@ var Bubble = function(default_value) {
         value: value,
         charactersCounter: charactersCounter,
         virtue: virtue,
+        newleaf: newleaf,
         newlife: newlife,
         measureVirtue: measureVirtue,
     };
@@ -867,6 +877,7 @@ var Student = function() {
 
         // My virtue
         virtue: StudentVirtue(),
+        virtueSnapshot: StudentVirtue(),
 
         // My behavioral virtues
         virtues: {
@@ -946,6 +957,24 @@ var Student = function() {
                 _student.virtue.result.other_num_global_percentage = _student.virtue.result.other_num_global == 0 ? 0.00 : parseFloat((_student.virtue.result.other_num_global / _student.virtue.result.shot_num_global * 100).toFixed(2));
             }
         },
+        newleaf: function() {
+            // Erase my last known behavior
+            this.response.newleaf();
+            // Revert to my last known virtue without behavioural natures
+            this.restoreVirtue();
+        },
+        snapshotVirtue: function() {
+            for (var k in this.virtue.result) {
+                this.virtueSnapshot.result[k] = this.virtue.result[k];
+            }
+        },
+        restoreVirtue: function() {
+            for (var k in this.virtue.result) {
+                this.virtue.result[k] = this.virtueSnapshot.result[k];
+            }
+            // Reset the behavioural nature
+            this.virtue.newlife();
+        },
         setFocus: function(element) {
             this.focusElement = element;
         },
@@ -1006,6 +1035,14 @@ var Training = function() {
         }
     };
 
+    var improvise = function(topic) {
+        // Forget my last behavior
+        student.newleaf();
+        // Set a new topic
+        trainer.setCurrentTopic(topic);
+        start();
+    };
+
     var next = function() {
         var _this = this;
         // Reset the student response
@@ -1036,6 +1073,7 @@ var Training = function() {
     return {
         trainer: trainer,
         student: student,
+        improvise: improvise,
         next: next,
         prepare: prepare,
         start: start,
@@ -1271,11 +1309,12 @@ var TrainingController = function () {
                     };
 
                     var topics = c.props._training.trainer.getTopicsOfCollectionId(valueNew);
+                    var keys, topic;
                     if (topics) {
-                        var keys = Object.keys(topics);
+                        keys = Object.keys(topics);
                         if (keys.length > 0) {
-                            _training.trainer.setCurrentTopic(topics[keys[0]]);
-                            c.props._training.start();
+                            topic = topics[keys[0]]
+                            c.props._training.improvise(topic);
                         }
                     }
                     // c.props._training.trainer.memory.workingMemoryCollectionId = valueNew;
@@ -1343,10 +1382,9 @@ var TrainingController = function () {
                         valueNew = value;
                     }
                    c.props._training.trainer.memory.workingMemoryBookId = valueNew;
-                   var topic = _training.trainer.getCurrentTopic();
+                   var topic = c.props._training.trainer.getCurrentTopic();
                    if (topic) {
-                        _training.trainer.setCurrentTopic(topic);
-                        c.props._training.start();
+                        c.props._training.improvise(topic);
                    }
                 }
             }
@@ -1565,9 +1603,11 @@ var TrainingController = function () {
             // Update student virtue non-time-based stats
             _training.student.inheritVirtue(virtue, true, true);
             if (virtue.result.completed) {
-                // Record student virtue
+                // Snapshot student virtue
+                _training.student.snapshotVirtue();
+                // Record virtue
                 _training.student.stashVirtue(virtue);
-                // Reset student virtue
+                // Reset  virtue
                 _training.student.virtue.newlife();
 
                 // Run the next training unit
