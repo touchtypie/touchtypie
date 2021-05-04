@@ -250,7 +250,7 @@ var Bubble = function(default_value) {
     var virtue = BubbleVirtue();
 
     // Creates a new virtue
-    var reset = function() {
+    var newlife = function() {
         this.id = '';
         this.value = '';
         this.charactersCounter = 0;
@@ -488,7 +488,7 @@ var Bubble = function(default_value) {
         value: value,
         charactersCounter: charactersCounter,
         virtue: virtue,
-        reset: reset,
+        newlife: newlife,
         measureVirtue: measureVirtue,
     };
 };
@@ -1009,7 +1009,7 @@ var Training = function() {
     var next = function() {
         var _this = this;
         // Reset the student response
-        student.response.reset();
+        student.response.newlife();
 
         if (trainer.setNextTopic()) {
             start();
