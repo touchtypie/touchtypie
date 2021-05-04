@@ -1515,7 +1515,11 @@ var TrainingController = function () {
             click: function(event) {
                 var c = this;
                 // var ele = event.target || event.srcElement;
-                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(c.props._training.student.virtues));
+                var data = {
+                    virtue: c.props._training.student.virtue,
+                    virtues: c.props._training.student.virtues
+                };
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
                 var downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
                 downloadAnchorNode.setAttribute("download", "virtues.json");
