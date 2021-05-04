@@ -1010,10 +1010,14 @@ var Training = function() {
     var prepare = function(callback) {
         // Begin the training with a trainer's intro speech
         start();
-
         student.response.disabled = true;
+
         trainer.prepareKnowledge(function() {
+            // Ignore the intro response virtue
+            student.response.newlife();
             student.response.disabled = false;
+
+            // Start the training
             start();
             student.focus();
 
