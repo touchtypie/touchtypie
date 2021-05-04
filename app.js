@@ -1121,20 +1121,24 @@ var Component = function(c) {
 
         // Change this to div.childNodes to support multiple top-level nodes
         return div.firstChild;
-    }
+    };
 
     var creatingBindings = function(rootElement) {
         var allElements = rootElement.getElementsByTagName('*');
         var matches, propsPaths, object, property, binding, events;
         for (var i = 0; i < allElements.length; i++) {
             var ele = allElements[i];
+
+            // Parse elements' attributes for events, and object properties specified in attribute value  '{{ .obj.someprop }}'
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
+
                 // Get any eventListeners
                 matches = /b-on/.exec(atts[j].name);
                 if (matches && matches.length > 0) {
                     events = atts[j].value.split(',').filter(function (v) { return v !== ''; });
                 }
                 // Create data binding to attribute. E.g. '{{ .foo }}'
+                binding = null;
                 matches = /\{\{([^\}]+)\}\}/.exec(atts[j].value);
                 if (matches && matches.length > 0) {
                     object = c.props;
@@ -1149,7 +1153,14 @@ var Component = function(c) {
                     }else {
                         property = propsPaths[0];
                     }
-                    binding = Binding({
+                    // Search for existing object binding
+                    for (var key in c.bindings) {
+                        if (key === matches[1].trim()) {
+                            binding = c.bindings[key];
+                            break;
+                        }
+                    }
+                    binding = binding ? binding : Binding({
                         object: object,
                         property: property
                     });
@@ -1169,10 +1180,12 @@ var Component = function(c) {
                             /^class$/i.test(atts[j].name) ? 'className' : atts[j].name, // e.g. 'someattr' or 'innerHTML'
                         );
                     }
-                    c.bindings.push(binding);
+                    // Store the binding
+                    c.bindings[matches[1].trim()] = binding;
                 }
             }
             // Or data bind to innerHTML
+            binding = null;
             matches = /\{\{([^\}]+)\}\}/.exec(ele.innerHTML);
             if (matches && matches.length > 0) {
                 object = c.props;
@@ -1187,7 +1200,14 @@ var Component = function(c) {
                 }else {
                     property = propsPaths[0];
                 }
-                binding = Binding({
+                    // Search for existing object binding
+                    for (var key in c.bindings) {
+                        if (key === matches[1].trim()) {
+                            binding = c.bindings[key];
+                            break;
+                        }
+                    }
+                binding = binding ? binding : Binding({
                     object: object,
                     property: property
                 });
@@ -1207,11 +1227,12 @@ var Component = function(c) {
                         'innerHTML'
                     );
                 }
-                c.bindings.push(binding);
+                // Store the binding
+                c.bindings[matches[1].trim()] = binding;
             }
 
             // If there is no data binding, simply set up the eventListeners
-            if (typeof(ele.binding) === 'undefined') {
+            if (Object.keys(c.bindings).length === 0) {
                 if (events) {
                     for (var e = 0; e < events.length; e++) {
                         var handler = c.eventsListeners[events[e]];
@@ -1222,7 +1243,7 @@ var Component = function(c) {
                 }
             }
         }
-    }
+    };
 
 
     // Create the DOM element
@@ -1368,7 +1389,7 @@ var TrainingController = function () {
         },
         methods: {
             createSelectOptions: function(c, binding) {
-                var ele = binding ? binding.element : c.bindings[1].elementBindings[0].element;
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryBookId'].elementBindings[0].element;
                 // Remove all options elements
                 ele.innerHTML = '';
                 // Recreate all options elements
