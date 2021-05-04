@@ -1284,7 +1284,7 @@ var TrainingController = function () {
     // Components
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuselect_bookcollections',
+        name: 'menuselect_topiccollections',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
         `,
@@ -1319,7 +1319,7 @@ var TrainingController = function () {
                 _training.prepare(function() {
                     c.methods.createSelectOptions(c, binding);
 
-                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
                 });
             },
             change: function(event, _this, binding) {
@@ -1344,14 +1344,14 @@ var TrainingController = function () {
                     }
                     // c.props._training.trainer.memory.workingMemoryCollectionId = valueNew;
 
-                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
                 }
             }
         }
     });
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuselect_books',
+        name: 'menuselect_topics',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
         `,
@@ -1637,7 +1637,7 @@ var TrainingController = function () {
                 _training.next();
 
                 // Update environment topics
-                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
             }
 
             if (State.debug) {
