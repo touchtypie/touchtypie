@@ -98,7 +98,7 @@ var Binding = function(b) {
 
 // Models
 // A representation of the measure of a behavior's conguence to perfect behavior
-var BubbleVirtue = function() {
+var BehaviorVirtue = function() {
     var newVirtue = function() {
         return {
             // Unit meta
@@ -212,7 +212,7 @@ var BubbleVirtue = function() {
 }
 // A representation of the measure of a student nature's congruence to a perfect nature
 var StudentVirtue = function() {
-    var virtue = BubbleVirtue();
+    var virtue = BehaviorVirtue();
 
     var globalvirtue = {
         result: {
@@ -250,7 +250,7 @@ var Bubble = function(default_value) {
     var value = default_value;
     var charactersCounter = 0;
 
-    var virtue = BubbleVirtue();
+    var virtue = BehaviorVirtue();
 
     // Resets the existing virtue
     var newleaf = function() {
@@ -265,7 +265,7 @@ var Bubble = function(default_value) {
         this.id = '';
         this.value = '';
         this.charactersCounter = 0;
-        this.virtue = BubbleVirtue();
+        this.virtue = BehaviorVirtue();
     };
 
     // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
@@ -342,7 +342,7 @@ var Bubble = function(default_value) {
         return characters.join('');
     }
 
-    // Populates this bubble's BubbleVirtue object, when this bubble.value is measured against truth.value
+    // Populates this bubble's BehaviorVirtue object, when this bubble.value is measured against truth.value
     var measureVirtue = function(truth, key, perfection) {
         var bubble = this;
         var virtue = bubble.virtue;
