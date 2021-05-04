@@ -109,6 +109,7 @@ var BubbleVirtue = function() {
             success: false,
             completed: false,
             value: '',
+            value_zonal: '',
             value_length: 0,
             value_length_percentage: 0,
             datetime_start_epoch: 0,
@@ -153,7 +154,7 @@ var BubbleVirtue = function() {
         this.result.perfection = false;
         this.result.success = false;
         this.result.completed = false;
-        this.result.value = '';
+        this.result.value_zonal = '';
         this.result.value_length = 0;
         this.result.value_length_percentage = 0;
 
@@ -177,6 +178,7 @@ var BubbleVirtue = function() {
         this.result.libraryId = '';
         this.result.collectionId = '';
         this.result.id = '';
+        this.result.value = '';
         this.result.datetime_start_epoch = 0;
         this.result.datetime_end_epoch = 0;
         this.result.datetime_start_iso = '';
@@ -198,7 +200,7 @@ var BubbleVirtue = function() {
     };
     var graduate = function() {
         // Unit meta
-        this.result.value = '<redacted>';
+        this.result.value_zonal = '<redacted>';
     };
 
     return {
@@ -411,10 +413,13 @@ var Bubble = function(default_value) {
         virtue.result.id = truth.id;
         virtue.result.perfection = perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
+        if (virtue.result.value === '') {
+            virtue.result.value = truth.value;
+        }
         const peekIndices= getPeekIndices(bubble, truth);
         const startIndex = peekIndices[0];
         const endIndex = peekIndices[1];
-        virtue.result.value = getFeedbackHtmlValue(
+        virtue.result.value_zonal = getFeedbackHtmlValue(
             bubble.value.length == 0 ? bubble.value : bubble.value.substring(startIndex, endIndex + 1 < bubble.value.length ? endIndex + 1: bubble.value.length ),
             truth.value.substring(startIndex, endIndex + 1)
         );
@@ -454,6 +459,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
             console.log('[measureVirtue] virtue.result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
+            console.log('[measureVirtue] virtue.result.value_zonal: ' + virtue.result.value_zonal);
             console.log('[measureVirtue] virtue.result.value_length: ' + virtue.result.value_length);
             console.log('[measureVirtue] virtue.result.value_length_percentage: ' + virtue.result.value_length_percentage);
             console.log('[measureVirtue] virtue.result.datetime_start_epoch: ' + virtue.result.datetime_start_epoch);
@@ -898,6 +904,7 @@ var Student = function() {
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
             _student.virtue.result.value = virtue.result.value;
+            _student.virtue.result.value_zonal = virtue.result.value_zonal;
             _student.virtue.result.value_length = virtue.result.value_length;
             _student.virtue.result.value_length_percentage = virtue.result.value_length_percentage;
             _student.virtue.result.datetime_start_epoch = virtue.result.datetime_start_epoch;
@@ -1027,15 +1034,13 @@ var Training = function() {
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
 
-        // Set trainer speech
-        trainer.speech.value = trainer.truth.value;
-        trainer.speech.charactersCounter = trainer.speech.value.length;
-
         // Validate student response
         var virtue = student.response.virtue;
         student.response.measureVirtue(trainer.truth);
+
         // Set trainer speech value
-        trainer.speech.value = virtue.result.value;
+        trainer.speech.value = virtue.result.value_zonal;
+        trainer.speech.charactersCounter = trainer.truth.value.length;
 
         if (State.debug) {
             console.log('[Training][start] trainer.speech.value: ' + trainer.speech.value);
@@ -1610,8 +1615,8 @@ var TrainingController = function () {
                     }
                 })();
             }
-                        // Set trainer speech value
-            _training.trainer.speech.value = virtue.result.value;
+            // Set trainer speech value
+            _training.trainer.speech.value = virtue.result.value_zonal;
             // Update student virtue non-time-based stats
             _training.student.reflectVirtue(virtue, true, true);
             if (virtue.result.completed) {
