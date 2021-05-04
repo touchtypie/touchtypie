@@ -373,7 +373,7 @@ var Bubble = function(default_value) {
                         //     console.log('[measureVirtue][interval] _virtue.result.datetime_duration_ms: ' + _virtue.result.datetime_duration_ms);
                         // }
                         var now = new Date();
-                        _virtue.result.datetime_duration_ms = now.valueOf() - virtue.result.datetime_start_epoch;
+                        _virtue.result.datetime_duration_ms = now.valueOf() - _virtue.result.datetime_start_epoch;
                         _virtue.result.datetime_stopwatch = Helpers.getStopwatchValue(_virtue.result.datetime_duration_ms);
                         _virtue.result.rate_hit_per_min = _virtue.result.datetime_duration_ms === 0 ? 0.00 : parseFloat((_virtue.result.hit_num_total / (_virtue.result.datetime_duration_ms / 1000) * 60).toFixed(2));
                     }
@@ -1611,7 +1611,7 @@ var TrainingController = function () {
                             // if (State.debug) {
                             //     console.log('[keyup][interval] ');
                             // }
-                            _training.student.reflectVirtue(virtue, true, false);
+                            _training.student.reflectVirtue(_virtue, true, false);
                         }
                     }, intervalMilliseconds);
                     if (State.debug) {
