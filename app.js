@@ -1169,7 +1169,6 @@ var Component = function(c) {
                             /^class$/i.test(atts[j].name) ? 'className' : atts[j].name, // e.g. 'someattr' or 'innerHTML'
                         );
                     }
-                    ele.binding = binding;
                     c.bindings.push(binding);
                 }
             }
@@ -1208,7 +1207,6 @@ var Component = function(c) {
                         'innerHTML'
                     );
                 }
-                ele.binding = binding;
                 c.bindings.push(binding);
             }
 
