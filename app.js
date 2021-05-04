@@ -888,7 +888,7 @@ var Student = function() {
         focus: function() {
             this.focusElement.focus();
         },
-        inheritVirtue: function(virtue, populateGlobal, cumulateGlobal) {
+        reflectVirtue: function(virtue, populateGlobal, cumulateGlobal) {
             var _student = this;
 
             // Populate my virtue (Unit meta)
@@ -1590,7 +1590,7 @@ var TrainingController = function () {
                             // if (State.debug) {
                             //     console.log('[keyup][interval] ');
                             // }
-                            _training.student.inheritVirtue(virtue, true, false);
+                            _training.student.reflectVirtue(virtue, true, false);
                         }
                     }, intervalMilliseconds);
                     if (State.debug) {
@@ -1601,7 +1601,7 @@ var TrainingController = function () {
                         // Set trainer speech value
             _training.trainer.speech.value = virtue.result.value;
             // Update student virtue non-time-based stats
-            _training.student.inheritVirtue(virtue, true, true);
+            _training.student.reflectVirtue(virtue, true, true);
             if (virtue.result.completed) {
                 // Snapshot student virtue
                 _training.student.snapshotVirtue();
