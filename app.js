@@ -1519,7 +1519,7 @@ var TrainingController = function () {
                     virtue: c.props._training.student.virtue,
                     virtues: c.props._training.student.virtues
                 };
-                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 4));
                 var downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
                 downloadAnchorNode.setAttribute("download", "virtues.json");
