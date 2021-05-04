@@ -963,6 +963,17 @@ var Student = function() {
             // Revert to my last known virtue without behavioural natures
             this.restoreVirtue();
         },
+        inheritVirtue: function(virtue) {
+            var _student = this;
+            virtue.graduate();
+            // Pocket the virtue
+            _student.stashVirtue(virtue);
+            // Reset my behavior virtue and snapshot it
+            _student.virtue.newlife();
+            _student.snapshotVirtue();
+            // Create a new behavior virtue
+            _student.response.newlife();
+        },
         snapshotVirtue: function() {
             for (var k in this.virtue.result) {
                 this.virtueSnapshot.result[k] = this.virtue.result[k];
@@ -980,9 +991,6 @@ var Student = function() {
         },
         stashVirtue: function(virtue) {
             var _student = this;
-
-            // Set units value
-            virtue.graduate();
             _student.virtues.values.push(virtue);
             _student.virtues.count += 1;
         }
@@ -1035,6 +1043,11 @@ var Training = function() {
         }
     };
 
+    var complete = function(virtue) {
+        // Pocket student virtue
+        student.inheritVirtue(virtue);
+    };
+
     var improvise = function(topic) {
         // Forget my last behavior
         student.newleaf();
@@ -1045,8 +1058,6 @@ var Training = function() {
 
     var next = function() {
         var _this = this;
-        // Reset the student response
-        student.response.newlife();
 
         if (trainer.setNextTopic()) {
             start();
@@ -1073,6 +1084,7 @@ var Training = function() {
     return {
         trainer: trainer,
         student: student,
+        complete: complete,
         improvise: improvise,
         next: next,
         prepare: prepare,
@@ -1603,14 +1615,8 @@ var TrainingController = function () {
             // Update student virtue non-time-based stats
             _training.student.reflectVirtue(virtue, true, true);
             if (virtue.result.completed) {
-                // Snapshot student virtue
-                _training.student.snapshotVirtue();
-                // Record virtue
-                _training.student.stashVirtue(virtue);
-                // Reset  virtue
-                _training.student.virtue.newlife();
-
                 // Run the next training unit
+                _training.complete(virtue);
                 _training.next();
 
                 // Update environment topics
