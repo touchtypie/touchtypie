@@ -512,17 +512,20 @@ var Bubble = function(default_value) {
         measureVirtue: measureVirtue,
     };
 };
+// A representation of a memory of books
 var BookLibrary = function() {
     return {
         id: '',
-        index: []
+        index: [],
+        recalled: false
     };
 };
 var BookCollection = function() {
     return {
         libraryId: '',
         id: '',
-        index: []
+        index: [],
+        recalled: false
     };
 };
 var Book = function() {
@@ -530,7 +533,8 @@ var Book = function() {
         libraryId: '',
         collectionId: '',
         id: '',
-        content: ''
+        content: '',
+        recalled: false
     }
 };
 // A representation of memory: working memory, short-term memory, and long-term memory.
@@ -683,37 +687,66 @@ var Memory = function() {
 
     // Have I been refreshed with all books?
     var isReady = function() {
-        for (var k in books) {
-            if (books[k].content === '') {
+        var _this = this;
+
+        // Ensure all entities are recognized
+        if (Object.keys(bookLibraries).length === 0 || Object.keys(bookCollections).length === 0 || Object.keys(books).length === 0 ) {
+            return false;
+        }
+
+        // Ensure all libraries are recalled
+        for (var k in _this.bookLibraries) {
+            if (_this.bookLibraries[k].recalled === false) {
                 return false;
             }
         }
-        return Object.keys(books).length > 0 ? true : false;
+        // Ensure all collections are recalled
+        for (var k in _this.bookCollections) {
+            if (_this.bookCollections[k].recalled === false) {
+                return false;
+            }
+        }
+
+        // Ensure all books are recalled
+        for (var k in _this.books) {
+            if (_this.books[k].recalled === false) {
+                return false;
+            }
+        }
+        return true;
     };
 
-    // Recollection
+    // Recollection of knowledge
     var recall = function(callback) {
         var _this = this;
         recallLibraries.apply(_this, [function() {
             // Once recollection is done
-            if (isReady()) {
-                _this.bookCount = Object.keys(_this.books).length;
-                callback();
-            }
+            _this.bookCount = Object.keys(_this.books).length;
+            callback();
         }]);
     };
 
-    // Recollection of knowledge
+    // Recollection of book libraries
     var recallLibraries = function(callback) {
         var _this = this;
 
-        // Recall libraries
+        // Recognize and recall libraries
         var bookLibrary;
         for (var i = 0; i < bookLibraryIds.length; i++) {
+            // Recognize
             bookLibrary = BookLibrary();
             bookLibrary.id = bookLibraryIds[i];
             _this.bookLibraries[bookLibrary.id] = bookLibrary;
-            recallLibrary.apply(_this, [bookLibrary, callback]);
+            // Recall
+            recallLibrary.apply(_this, [bookLibrary, function() {
+                // Ensure all libraries are recalled
+                for (var k in _this.bookLibraries) {
+                    if (_this.bookLibraries[k].recalled === false) {
+                        return;
+                    }
+                }
+                callback();
+            }]);
         }
     };
 
@@ -724,16 +757,34 @@ var Memory = function() {
             method: 'GET',
             url: bookLibrary.id,
             callback: function(_bookCollectionStr, data) {
-                // Recall collections
+
+                // Recognize and recall collections
                 data.bookLibrary.index = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
-                var bookCollection;
+                var k, bookCollection;
                 for (var i = 0; i < data.bookLibrary.index.length; i++) {
+                    k = data.bookLibrary.index[i];
+
+                    // Recognize
                     bookCollection = BookCollection();
                     bookCollection.libraryId = data.bookLibrary.id;
-                    bookCollection.id = data.bookLibrary.index[i];
-                    data.bookCollections[bookCollection.id] = bookCollection;
-                    recallCollection.apply(data.self, [bookCollection, data.callback]);
+                    bookCollection.id = k;
+                    data.bookCollections[k] = bookCollection;
+                    // Recall
+                    recallCollection.apply(data.self, [bookCollection, function() {
+                        // Ensure all collections are recalled
+                        var k;
+                        for (var i = 0; i < data.bookLibrary.index.length; i++) {
+                            k = data.bookLibrary.index[i];
+                            if (data.bookCollections[k].recalled === false) {
+                                return;
+                            }
+                        }
+                        // Recalled library
+                        data.bookLibrary.recalled = true;
+                        data.callback();
+                    }]);
                 };
+
             },
             callbackData: {
                 self: _this,
@@ -751,17 +802,34 @@ var Memory = function() {
             method: 'GET',
             url: bookCollection.id,
             callback: function(_bookIdsStr, data) {
-                // Recall book
                 data.bookCollection.index = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
-                var book;
+
+                // Recognize and recall books
+                var k, book;
                 for (var i = 0; i < data.bookCollection.index.length; i++) {
+                    // Recognize
+                    k = data.bookCollection.index[i];
                     book = Book();
                     book.libraryId = data.bookCollection.libraryId;
                     book.collectionId = data.bookCollection.id;
-                    book.id = data.bookCollection.index[i];
-                    data.books[book.id] = book;
-                    recallBook.apply(data.self, [book, data.callback])
+                    book.id = k;
+                    data.books[k] = book;
+
+                    // Recall
+                    recallBook.apply(data.self, [book, function() {
+                        // Ensure all books are recalled
+                        var k;
+                        for (var i = 0; i < data.bookCollection.index.length; i++) {
+                            k = data.bookCollection.index[i];
+                            if (data.books[k].recalled === false) {
+                                return;
+                            }
+                        }
+                        data.bookCollection.recalled = true;
+                        data.callback()
+                    }])
                 }
+
             },
             callbackData: {
                 self: _this,
@@ -779,7 +847,9 @@ var Memory = function() {
             method: 'GET',
             url: book.id,
             callback: function(_bookContentStr, data) {
+                // Recalled book
                 data.book.content = _bookContentStr;
+                data.book.recalled = true;
                 data.callback();
             },
             callbackData: {
