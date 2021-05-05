@@ -849,7 +849,7 @@ var Trainer = function() {
     };
 
     var setCurrentTopic = function(book) {
-        memory.workingMemoryLibraryId = book.workingMemoryLibraryId;
+        memory.workingMemoryLibraryId = book.libraryId;
         memory.workingMemoryCollectionId = book.collectionId;
         memory.workingMemoryBookId = book.id;
     };
