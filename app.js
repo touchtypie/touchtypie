@@ -1538,16 +1538,16 @@ var TrainingController = function () {
                 var html;
                 switch(playMode) {
                     case c.props._training.trainer.memory.environment.playmodes.repeatone:
-                        html = '🔂';
+                        html = '<emoji>🔂</emoji>';
                         break;
                     case c.props._training.trainer.memory.environment.playmodes.repeat:
-                        html = '🔁';
+                        html = '<emoji>🔁</emoji>';
                         break;
                     case c.props._training.trainer.memory.environment.playmodes.shuffle:
-                        html = '🔀';
+                        html = '<emoji>🔀</emoji><span>1</span>';
                         break;
                     case c.props._training.trainer.memory.environment.playmodes.shuffleglobal:
-                        html = '🔀';
+                        html = '<emoji>🔀</emoji>';
                         break;
                     default:
                         break;
