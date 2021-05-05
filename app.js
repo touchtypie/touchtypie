@@ -512,6 +512,19 @@ var Bubble = function(default_value) {
         measureVirtue: measureVirtue,
     };
 };
+var BookLibrary = function() {
+    return {
+        id: '',
+        index: []
+    };
+};
+var BookCollection = function() {
+    return {
+        libraryId: '',
+        id: '',
+        index: []
+    };
+};
 var Book = function() {
     return {
         libraryId: '',
@@ -542,10 +555,10 @@ var Memory = function() {
     var bookLibraryIds = [
         'https://leojonathanoh.github.io/typie-library/libraries/daily.txt'
     ];
+    var bookLibraries = {};
+    var bookCollections = {};
     var books = {};
     var bookCount = 0;
-    var bookCollectionIds = [];
-    var bookIds = [];
     var workingMemoryLibraryId = '';
     var workingMemoryCollectionId = '';
     var workingMemoryBookId = '';
@@ -678,103 +691,110 @@ var Memory = function() {
         return Object.keys(books).length > 0 ? true : false;
     };
 
-    // Recollection of libraries
+    // Recollection
     var recall = function(callback) {
         var _this = this;
-        var _bookCollectionIdsTmp = [];
-        var _bookIdsTmp = [];
+        recallLibraries.apply(_this, [function() {
+            // Once recollection is done
+            if (isReady()) {
+                _this.bookCount = Object.keys(_this.books).length;
+                callback();
+            }
+        }]);
+    };
+
+    // Recollection of knowledge
+    var recallLibraries = function(callback) {
+        var _this = this;
+
+        // Recall libraries
+        var bookLibrary;
         for (var i = 0; i < bookLibraryIds.length; i++) {
-            fetch({
-                method: 'GET',
-                url: bookLibraryIds[i],
-                callback: function(_bookCollectionStr, data) {
-                    recallCollections.apply(data.self, [_bookCollectionStr, data._bookLibraryId, data._bookCollectionIdsTmp, data._bookIdsTmp, function() {
-                        // Once all books are recalled are done, call the callback
-                        if (isReady()) {
-                            data.self.bookCollectionIds = _bookCollectionIdsTmp;
-                            data.self.bookIds = _bookIdsTmp;
-                            data.self.bookCount = _bookIdsTmp.length;
-                            callback();
-                        }
-                    }])
-                },
-                callbackData: {
-                    self: _this,
-                    _bookLibraryId: bookLibraryIds[i],
-                    _bookCollectionIdsTmp: _bookCollectionIdsTmp,
-                    _bookIdsTmp: _bookIdsTmp
-                }
-            });
+            bookLibrary = BookLibrary();
+            bookLibrary.id = bookLibraryIds[i];
+            _this.bookLibraries[bookLibrary.id] = bookLibrary;
+            recallLibrary.apply(_this, [bookLibrary, callback]);
         }
     };
 
-    // Recollection of library collections
-    var recallCollections = function(_bookCollectionStr, _bookLibraryId, _bookCollectionIdsTmp, _bookIdsTmp, callback) {
+    // Recollection of a book library
+    var recallLibrary = function(bookLibrary, callback) {
         var _this = this;
-        // Recall this collection
-        var _bookCollectionIds = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
-        for (var i = 0; i < _bookCollectionIds.length; i++) {
-            _bookCollectionIdsTmp.push(_bookCollectionIds[i])
-        };
-
-        for (var i = 0; i < _bookCollectionIds.length; i++) {
-            fetch({
-                method: 'GET',
-                url: _bookCollectionIds[i],
-                callback: function(_bookIdsStr, data) {
-                    recallBooks.apply(data.self, [_bookIdsStr, data._bookLibraryId, data._bookCollectionId, data._bookIdsTmp, callback])
-                },
-                callbackData: {
-                    self: _this,
-                    _bookLibraryId: _bookLibraryId,
-                    _bookCollectionId: _bookCollectionIds[i],
-                    _bookIdsTmp: _bookIdsTmp,
-                }
-            });
-        }
+        fetch({
+            method: 'GET',
+            url: bookLibrary.id,
+            callback: function(_bookCollectionStr, data) {
+                // Recall collections
+                data.bookLibrary.index = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
+                var bookCollection;
+                for (var i = 0; i < data.bookLibrary.index.length; i++) {
+                    bookCollection = BookCollection();
+                    bookCollection.libraryId = data.bookLibrary.id;
+                    bookCollection.id = data.bookLibrary.index[i];
+                    data.bookCollections[bookCollection.id] = bookCollection;
+                    recallCollection.apply(data.self, [bookCollection, data.callback]);
+                };
+            },
+            callbackData: {
+                self: _this,
+                bookLibrary: bookLibrary,
+                bookCollections: _this.bookCollections,
+                callback: callback
+            }
+        });
     };
 
-    // Recollection of libary collections' books and their content
-    var recallBooks = function(_bookIdsStr, _bookLibraryId, _bookCollectionId, _bookIdsTmp, callback) {
+    // Recollection of a library collection
+    var recallCollection = function(bookCollection, callback) {
         var _this = this;
-        // Recall reading the book
-        var _bookIds = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
-        for (var i = 0; i < _bookIds.length; i++) {
-            _bookIdsTmp.push(_bookIds[i])
-        };
-        for (var i = 0; i < _bookIds.length; i++) {
-            var book = Book();
-            book.libraryId = _bookLibraryId;
-            book.collectionId = _bookCollectionId;
-            book.id = _bookIds[i];
-            books[book.id] = book;
-        }
+        fetch({
+            method: 'GET',
+            url: bookCollection.id,
+            callback: function(_bookIdsStr, data) {
+                // Recall book
+                data.bookCollection.index = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
+                var book;
+                for (var i = 0; i < data.bookCollection.index.length; i++) {
+                    book = Book();
+                    book.libraryId = data.bookCollection.libraryId;
+                    book.collectionId = data.bookCollection.id;
+                    book.id = data.bookCollection.index[i];
+                    data.books[book.id] = book;
+                    recallBook.apply(data.self, [book, data.callback])
+                }
+            },
+            callbackData: {
+                self: _this,
+                bookCollection: bookCollection,
+                books: _this.books,
+                callback: callback
+            }
+        });
+    };
 
-        // Refresh my memory of its content
-        for (var k in books) {
-            fetch({
-                method: 'GET',
-                url: books[k].id,
-                callback: function(text, data) {
-                    var key = data.key;
-                    books[key].content = text;
-                    callback();
-                },
-                callbackData: { self: _this, key: k }
-            });
-        }
+    // Recollection of libary collection book
+    var recallBook = function(book, callback) {
+        var _this = this;
+        fetch({
+            method: 'GET',
+            url: book.id,
+            callback: function(_bookContentStr, data) {
+                data.book.content = _bookContentStr;
+                data.callback();
+            },
+            callbackData: {
+                self: _this,
+                book: book,
+                callback: callback
+            }
+        });
     };
 
     return {
         environment: environment,
+        bookLibraries: bookLibraries,
+        bookCollections, bookCollections,
         books: books,
-        bookCollectionIds: bookCollectionIds,
-        get bookIds() {
-            return bookIds;
-        },
-        set bookIds(value) {
-            bookIds = value;
-        },
         bookCount: bookCount,
         workingMemoryLibraryId: workingMemoryLibraryId,
         workingMemoryCollectionId: workingMemoryCollectionId,
@@ -1311,7 +1331,7 @@ var TrainingController = function () {
             label: 'collection',
             _training: _training,
             get options() {
-                return _training.trainer.memory.bookCollectionIds;
+                return Object.keys(_training.trainer.memory.bookCollections);
             },
         },
         methods: {
