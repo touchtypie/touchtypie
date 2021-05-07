@@ -1394,7 +1394,7 @@ var TrainingController = function () {
         },
         methods: {
             createSelectOptions: function(c, binding) {
-                var ele = binding ? binding.element : c.bindings[1].elementBindings[0].element;
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element;
                 // Remove all options elements
                 ele.innerHTML = '';
                 // Recreate all options elements
