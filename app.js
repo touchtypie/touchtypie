@@ -1439,31 +1439,23 @@ var TrainingController = function () {
                 var c = this;
                 // If new value was selected, do something
                 var valueNew = binding.element.value;
-                var value = c.props.value;
-                if (valueNew !== value) {
-                    // On DOMContentLoaded, the .value is empty
-                    if (valueNew === '') {
-                        valueNew = value;
-                    };
+                var collections = c.props._training.trainer.getCollectionsOfLibraryId(valueNew);
+                var keys, collection;
+                if (collections) {
+                    keys = Object.keys(collections);
+                    if (keys.length > 0) {
+                        collection = collections[keys[0]];
+                        Components.menuselect_topiccollections.methods.createSelectOptions(Components.menuselect_topiccollections);
 
-                    var collections = c.props._training.trainer.getCollectionsOfLibraryId(valueNew);
-                    var keys, collection;
-                    if (collections) {
-                        keys = Object.keys(collections);
-                        if (keys.length > 0) {
-                            collection = collections[keys[0]];
-                            Components.menuselect_topiccollections.methods.createSelectOptions(Components.menuselect_topiccollections);
+                        var topics = c.props._training.trainer.getTopicsOfCollectionId(collection.id);
+                        var keys, topic;
+                        if (topics) {
+                            keys = Object.keys(topics);
+                            if (keys.length > 0) {
+                                topic = topics[keys[0]]
+                                c.props._training.improvise(topic);
 
-                            var topics = c.props._training.trainer.getTopicsOfCollectionId(collection.id);
-                            var keys, topic;
-                            if (topics) {
-                                keys = Object.keys(topics);
-                                if (keys.length > 0) {
-                                    topic = topics[keys[0]]
-                                    c.props._training.improvise(topic);
-
-                                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
-                                }
+                                Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
                             }
                         }
                     }
@@ -1505,25 +1497,16 @@ var TrainingController = function () {
         eventsListeners: {
             change: function(event, _this, binding) {
                 var c = this;
-                // If new value was selected, do something
                 var valueNew = binding.element.value;
-                var value = c.props.value;
-                if (valueNew !== value) {
-                    // On DOMContentLoaded, the .value is empty
-                    if (valueNew === '') {
-                        valueNew = value;
-                    };
+                var topics = c.props._training.trainer.getTopicsOfCollectionId(valueNew);
+                var keys, topic;
+                if (topics) {
+                    keys = Object.keys(topics);
+                    if (keys.length > 0) {
+                        topic = topics[keys[0]]
+                        c.props._training.improvise(topic);
 
-                    var topics = c.props._training.trainer.getTopicsOfCollectionId(valueNew);
-                    var keys, topic;
-                    if (topics) {
-                        keys = Object.keys(topics);
-                        if (keys.length > 0) {
-                            topic = topics[keys[0]]
-                            c.props._training.improvise(topic);
-
-                            Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
-                        }
+                        Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
                     }
                 }
             }
@@ -1572,19 +1555,11 @@ var TrainingController = function () {
         eventsListeners: {
             change: function(event, _this, binding) {
                 var c = this;
-                // If new value was selected, do something
                 var valueNew = binding.element.value;
-                var value = c.props.value;
-                if (valueNew !== value) {
-                    // On DOMContentLoaded, the .value is empty
-                    if (valueNew === '') {
-                        valueNew = value;
-                    }
-                   c.props._training.trainer.memory.workingMemoryBookId = valueNew;
-                   var topic = c.props._training.trainer.getCurrentTopic();
-                   if (topic) {
-                        c.props._training.improvise(topic);
-                   }
+                c.props._training.trainer.memory.workingMemoryBookId = valueNew;
+                var topic = c.props._training.trainer.getCurrentTopic();
+                if (topic) {
+                    c.props._training.improvise(topic);
                 }
             }
         }
