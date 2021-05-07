@@ -881,7 +881,7 @@ var Trainer = function() {
     var truth = Bubble('Get ready...');
     var speech = Bubble('');
 
-    var completeCurrentTopic = function() {
+    var completeCurrentBook = function() {
         return memory.getBook().complete = true;
     };
 
@@ -889,29 +889,29 @@ var Trainer = function() {
         return memory.getCollectionsOfLibraryId(libraryId);
     };
 
-    var getCurrentTopic = function() {
+    var getCurrentBook = function() {
         return memory.getBook();
     };
 
-    var getCurrentTopicContent = function() {
+    var getCurrentBookContent = function() {
         return memory.getBook().content;
     };
 
-    var getNextTopic = function() {
+    var getNextBook = function() {
         var nextBook = memory.getNextBook();
         return nextBook ? nextBook : null;
     };
 
-    var getNextTopicContent = function() {
+    var getNextBookContent = function() {
         var nextBook = memory.getNextBook();
         return nextBook ? nextBook.content : null;
     };
 
-    var getTopicOfId = function(bookId) {
+    var getBookOfId = function(bookId) {
         return memory.getBookOfId(bookId);
     };
 
-    var getTopicsOfCollectionId = function(collectionId) {
+    var getBooksOfCollectionId = function(collectionId) {
         return memory.getBooksOfCollectionId(collectionId);
     };
 
@@ -937,22 +937,22 @@ var Trainer = function() {
     var setAttention = function() {
         var book = memory.getNextBook();
         if (book) {
-            setCurrentTopic(book);
+            setCurrentBook(book);
         }
     };
 
-    var setCurrentTopic = function(book) {
+    var setCurrentBook = function(book) {
         memory.workingMemoryLibraryId = book.libraryId;
         memory.workingMemoryCollectionId = book.collectionId;
         memory.workingMemoryBookId = book.id;
     };
 
-    var setNextTopic = function() {
-        completeCurrentTopic();
-        var nextTopic = getNextTopic();
-        if (nextTopic) {
-            setCurrentTopic(nextTopic);
-            return nextTopic;
+    var setNextBook = function() {
+        completeCurrentBook();
+        var nextBook = getNextBook();
+        if (nextBook) {
+            setCurrentBook(nextBook);
+            return nextBook;
         }
         return null;
     };
@@ -962,16 +962,16 @@ var Trainer = function() {
         speech: speech,
         memory: memory,
         getCollectionsOfLibraryId: getCollectionsOfLibraryId,
-        getCurrentTopic: getCurrentTopic,
-        getCurrentTopicContent: getCurrentTopicContent,
-        getNextTopic: getNextTopic,
-        getNextTopicContent: getNextTopicContent,
-        getTopicsOfCollectionId: getTopicsOfCollectionId,
-        getTopicOfId: getTopicOfId,
+        getCurrentBook: getCurrentBook,
+        getCurrentBookContent: getCurrentBookContent,
+        getNextBook: getNextBook,
+        getNextBookContent: getNextBookContent,
+        getBooksOfCollectionId: getBooksOfCollectionId,
+        getBookOfId: getBookOfId,
         isKnowledgeReady: isKnowledgeReady,
         prepareKnowledge: prepareKnowledge,
-        setCurrentTopic: setCurrentTopic,
-        setNextTopic: setNextTopic,
+        setCurrentBook: setCurrentBook,
+        setNextBook: setNextBook,
     };
 };
 var Student = function() {
@@ -1127,12 +1127,12 @@ var Training = function() {
 
     var start = function() {
         // Set truth values
-        var topic = trainer.getCurrentTopic();
-        if (topic) {
-            trainer.truth.libraryId = topic.libraryId;
-            trainer.truth.collectionId = topic.collectionId;
-            trainer.truth.id = topic.id;
-            trainer.truth.value = topic.content;
+        var book = trainer.getCurrentBook();
+        if (book) {
+            trainer.truth.libraryId = book.libraryId;
+            trainer.truth.collectionId = book.collectionId;
+            trainer.truth.id = book.id;
+            trainer.truth.value = book.content;
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
 
@@ -1155,18 +1155,18 @@ var Training = function() {
         student.inheritVirtue(virtue);
     };
 
-    var improvise = function(topic) {
+    var improvise = function(book) {
         // Forget my last behavior
         student.newleaf();
-        // Set a new topic
-        trainer.setCurrentTopic(topic);
+        // Set a new book
+        trainer.setCurrentBook(book);
         start();
     };
 
     var next = function() {
         var _this = this;
 
-        if (trainer.setNextTopic()) {
+        if (trainer.setNextBook()) {
             start();
         }else {
             end();
@@ -1397,7 +1397,7 @@ var TrainingController = function () {
     // Components
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuselect_topiclibraries',
+        name: 'menuselect_booklibraries',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select></menuselect><br />
         `,
@@ -1431,8 +1431,8 @@ var TrainingController = function () {
                 var c = this;
                 _training.prepare(function() {
                     c.methods.createSelectOptions(c, binding);
-                    Components.menuselect_topiccollections.methods.createSelectOptions(Components.menuselect_topiccollections);
-                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
+                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
                 });
             },
             change: function(event, _this, binding) {
@@ -1445,17 +1445,17 @@ var TrainingController = function () {
                     keys = Object.keys(collections);
                     if (keys.length > 0) {
                         collection = collections[keys[0]];
-                        Components.menuselect_topiccollections.methods.createSelectOptions(Components.menuselect_topiccollections);
+                        Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
 
-                        var topics = c.props._training.trainer.getTopicsOfCollectionId(collection.id);
-                        var keys, topic;
-                        if (topics) {
-                            keys = Object.keys(topics);
+                        var books = c.props._training.trainer.getBooksOfCollectionId(collection.id);
+                        var keys, book;
+                        if (books) {
+                            keys = Object.keys(books);
                             if (keys.length > 0) {
-                                topic = topics[keys[0]]
-                                c.props._training.improvise(topic);
+                                book = books[keys[0]]
+                                c.props._training.improvise(book);
 
-                                Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
+                                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
                             }
                         }
                     }
@@ -1465,7 +1465,7 @@ var TrainingController = function () {
     });
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuselect_topiccollections',
+        name: 'menuselect_bookcollections',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
         `,
@@ -1498,15 +1498,15 @@ var TrainingController = function () {
             change: function(event, _this, binding) {
                 var c = this;
                 var valueNew = binding.element.value;
-                var topics = c.props._training.trainer.getTopicsOfCollectionId(valueNew);
-                var keys, topic;
-                if (topics) {
-                    keys = Object.keys(topics);
+                var books = c.props._training.trainer.getBooksOfCollectionId(valueNew);
+                var keys, book;
+                if (books) {
+                    keys = Object.keys(books);
                     if (keys.length > 0) {
-                        topic = topics[keys[0]]
-                        c.props._training.improvise(topic);
+                        book = books[keys[0]]
+                        c.props._training.improvise(book);
 
-                        Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
+                        Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
                     }
                 }
             }
@@ -1514,19 +1514,19 @@ var TrainingController = function () {
     });
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuselect_topics',
+        name: 'menuselect_books',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
         `,
         props: {
-            label: 'topic',
+            label: 'book',
             _training: _training,
             get options() {
-                var topic = this._training.trainer.getCurrentTopic();
-                if (topic) {
-                    var topics = this._training.trainer.getTopicsOfCollectionId(topic.collectionId);
-                    var topicIds = Object.keys(topics);
-                    return topicIds;
+                var book = this._training.trainer.getCurrentBook();
+                if (book) {
+                    var books = this._training.trainer.getBooksOfCollectionId(book.collectionId);
+                    var bookIds = Object.keys(books);
+                    return bookIds;
                 }
                 return [];
             },
@@ -1538,11 +1538,11 @@ var TrainingController = function () {
                 ele.innerHTML = '';
                 // Recreate all options elements
                 var optionElement;
-                var topic = c.props._training.trainer.getCurrentTopic();
-                if (topic) {
+                var book = c.props._training.trainer.getCurrentBook();
+                if (book) {
                     for (var i = 0; i < c.props.options.length; i++) {
                         optionElement = document.createElement('option');
-                        if (c.props.options[i] === topic.id) {
+                        if (c.props.options[i] === book.id) {
                             optionElement.setAttribute('selected', true);
                         }
                         optionElement.setAttribute('value', c.props.options[i]);
@@ -1557,9 +1557,9 @@ var TrainingController = function () {
                 var c = this;
                 var valueNew = binding.element.value;
                 c.props._training.trainer.memory.workingMemoryBookId = valueNew;
-                var topic = c.props._training.trainer.getCurrentTopic();
-                if (topic) {
-                    c.props._training.improvise(topic);
+                var book = c.props._training.trainer.getCurrentBook();
+                if (book) {
+                    c.props._training.improvise(book);
                 }
             }
         }
@@ -1786,8 +1786,8 @@ var TrainingController = function () {
                 _training.complete(virtue);
                 _training.next();
 
-                // Update environment topics
-                Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
+                // Update environment books
+                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
             }
 
             if (State.debug) {
