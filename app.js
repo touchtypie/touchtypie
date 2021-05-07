@@ -627,6 +627,16 @@ var Memory = function() {
         return bookId in books ? books[bookId] : null;
     };
 
+    var getCollectionsOfLibraryId = function(libraryId) {
+        var _collections = {};
+        for(var k in bookCollections) {
+            if (bookCollections[k].libraryId === libraryId) {
+                _collections[k] = bookCollections[k];
+            }
+        }
+        return _collections;
+    }
+
     var getFollowingBook = function() {
         var book;
         var books = getBooksOfCollectionId(this.workingMemoryCollectionId);
@@ -860,6 +870,7 @@ var Memory = function() {
         getBook: getBook,
         getBooksOfCollectionId: getBooksOfCollectionId,
         getBookOfId: getBookOfId,
+        getCollectionsOfLibraryId: getCollectionsOfLibraryId,
         getNextBook, getNextBook,
         isReady: isReady,
         recall: recall,
@@ -872,6 +883,10 @@ var Trainer = function() {
 
     var completeCurrentTopic = function() {
         return memory.getBook().complete = true;
+    };
+
+    var getCollectionsOfLibraryId = function(libraryId) {
+        return memory.getCollectionsOfLibraryId(libraryId);
     };
 
     var getCurrentTopic = function() {
@@ -946,6 +961,7 @@ var Trainer = function() {
         truth: truth,
         speech: speech,
         memory: memory,
+        getCollectionsOfLibraryId: getCollectionsOfLibraryId,
         getCurrentTopic: getCurrentTopic,
         getCurrentTopicContent: getCurrentTopicContent,
         getNextTopic: getNextTopic,
@@ -1381,9 +1397,85 @@ var TrainingController = function () {
     // Components
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuselect_topiclibraries',
+        template: `
+            <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select></menuselect><br />
+        `,
+        props: {
+            label: 'library',
+            _training: _training,
+            get options() {
+                return Object.keys(_training.trainer.memory.bookLibraries);
+            },
+        },
+        methods: {
+            createSelectOptions: function(c, binding) {
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element;
+                // Remove all options elements
+                ele.innerHTML = '';
+                // Recreate all options elements
+                var optionElement;
+                for (var i = 0; i < c.props.options.length; i++) {
+                    optionElement = document.createElement('option');
+                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryCollectionId) {
+                        optionElement.setAttribute('selected', true);
+                    }
+                    optionElement.setAttribute('value', c.props.options[i]);
+                    optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                    ele.appendChild(optionElement);
+                }
+            }
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+                _training.prepare(function() {
+                    c.methods.createSelectOptions(c, binding);
+                    Components.menuselect_topiccollections.methods.createSelectOptions(Components.menuselect_topiccollections);
+                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
+                });
+            },
+            change: function(event, _this, binding) {
+                var c = this;
+                // If new value was selected, do something
+                var valueNew = binding.element.value;
+                var value = c.props.value;
+                if (valueNew !== value) {
+                    // On DOMContentLoaded, the .value is empty
+                    if (valueNew === '') {
+                        valueNew = value;
+                    };
+
+                    var collections = c.props._training.trainer.getCollectionsOfLibraryId(valueNew);
+                    var keys, collection;
+                    if (collections) {
+                        keys = Object.keys(collections);
+                        if (keys.length > 0) {
+                            collection = collections[keys[0]];
+                            Components.menuselect_topiccollections.methods.createSelectOptions(Components.menuselect_topiccollections);
+
+                            var topics = c.props._training.trainer.getTopicsOfCollectionId(collection.id);
+                            var keys, topic;
+                            if (topics) {
+                                keys = Object.keys(topics);
+                                if (keys.length > 0) {
+                                    topic = topics[keys[0]]
+                                    c.props._training.improvise(topic);
+
+                                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_topiccollections',
         template: `
-            <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
+            <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
         `,
         props: {
             label: 'collection',
@@ -1411,14 +1503,6 @@ var TrainingController = function () {
             }
         },
         eventsListeners: {
-            DOMContentLoaded: function(event, _this, binding) {
-                var c = this;
-                _training.prepare(function() {
-                    c.methods.createSelectOptions(c, binding);
-
-                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
-                });
-            },
             change: function(event, _this, binding) {
                 var c = this;
                 // If new value was selected, do something
@@ -1437,11 +1521,10 @@ var TrainingController = function () {
                         if (keys.length > 0) {
                             topic = topics[keys[0]]
                             c.props._training.improvise(topic);
+
+                            Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
                         }
                     }
-                    // c.props._training.trainer.memory.workingMemoryCollectionId = valueNew;
-
-                    Components.menuselect_topics.methods.createSelectOptions(Components.menuselect_topics);
                 }
             }
         }
@@ -1487,12 +1570,6 @@ var TrainingController = function () {
             }
         },
         eventsListeners: {
-            // DOMContentLoaded: function(event, _this, binding) {
-            //     var c = this;
-            //     _training.prepare(function() {
-            //         c.methods.createSelectOptions(c, binding);
-            //     });
-            // },
             change: function(event, _this, binding) {
                 var c = this;
                 // If new value was selected, do something
