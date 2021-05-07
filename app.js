@@ -556,9 +556,6 @@ var Memory = function() {
     };
 
     // Mental representations of books
-    var bookLibraryIds = [
-        'https://leojonathanoh.github.io/typie-library/libraries/daily.txt'
-    ];
     var bookLibraries = {};
     var bookCollections = {};
     var books = {};
@@ -715,9 +712,9 @@ var Memory = function() {
     };
 
     // Recollection of knowledge
-    var recall = function(callback) {
+    var recall = function(bookLibraryIds, callback) {
         var _this = this;
-        recallLibraries.apply(_this, [function() {
+        recallLibraries.apply(_this, [bookLibraryIds, function() {
             // Once recollection is done
             _this.bookCount = Object.keys(_this.books).length;
             callback();
@@ -725,7 +722,7 @@ var Memory = function() {
     };
 
     // Recollection of book libraries
-    var recallLibraries = function(callback) {
+    var recallLibraries = function(bookLibraryIds, callback) {
         var _this = this;
 
         // Recognize and recall libraries
@@ -919,17 +916,15 @@ var Trainer = function() {
         return memory.isReady();
     };
 
-    var prepareKnowledge = function(callback) {
-        if (!isKnowledgeReady()) {
-            recallKnowledge(function() {
-                setAttention();
-                callback();
-            });
-        }
+    var prepareKnowledge = function(bookLibraryIds, callback) {
+        recallKnowledge(bookLibraryIds, function() {
+            setAttention();
+            callback();
+        });
     };
 
-    var recallKnowledge = function(callback) {
-        memory.recall(function() {
+    var recallKnowledge = function(bookLibraryIds, callback) {
+        memory.recall(bookLibraryIds, function() {
             callback();
         });
     };
@@ -1105,12 +1100,12 @@ var Training = function() {
     var trainer = Trainer();
     var student = Student();
 
-    var prepare = function(callback) {
+    var prepare = function(bookLibraryIds, callback) {
         // Begin the training with a trainer's intro speech
         start();
         student.response.disabled = true;
 
-        trainer.prepareKnowledge(function() {
+        trainer.prepareKnowledge(bookLibraryIds, function() {
             // Ignore the intro response virtue
             student.response.newlife();
             student.response.disabled = false;
@@ -1452,7 +1447,7 @@ var TrainingController = function () {
         eventsListeners: {
             DOMContentLoaded: function(event, _this, binding) {
                 var c = this;
-                _training.prepare(function() {
+                _training.prepare(State.bookLibraryIds, function() {
                     c.methods.createSelectOptions(c, binding);
                     Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
                     Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
@@ -2036,6 +2031,9 @@ var TrainingController = function () {
 // App state
 var State = function() {
     return {
+        bookLibraryIds: [
+            'https://leojonathanoh.github.io/typie-library/libraries/daily.txt'
+        ],
         debug: true,
         training: Training()
     }
