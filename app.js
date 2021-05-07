@@ -1424,22 +1424,9 @@ var TrainingController = function () {
                     optionElement.innerHTML = decodeURIComponent(c.props.options[i]);
                     ele.appendChild(optionElement);
                 }
-            }
-        },
-        eventsListeners: {
-            DOMContentLoaded: function(event, _this, binding) {
-                var c = this;
-                _training.prepare(function() {
-                    c.methods.createSelectOptions(c, binding);
-                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
-                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
-                });
             },
-            change: function(event, _this, binding) {
-                var c = this;
-                // If new value was selected, do something
-                var valueNew = binding.element.value;
-                var collections = c.props._training.trainer.getCollectionsOfLibraryId(valueNew);
+            updateCollectionsAndBooks: function(c, libraryId) {
+                var collections = c.props._training.trainer.getCollectionsOfLibraryId(libraryId);
                 var keys, collection;
                 if (collections) {
                     keys = Object.keys(collections);
@@ -1460,6 +1447,21 @@ var TrainingController = function () {
                         }
                     }
                 }
+            }
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+                _training.prepare(function() {
+                    c.methods.createSelectOptions(c, binding);
+                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                });
+            },
+            change: function(event, _this, binding) {
+                var c = this;
+                var valueNew = binding.element.value;
+                c.methods.updateCollectionsAndBooks(c, valueNew);
             }
         }
     });
