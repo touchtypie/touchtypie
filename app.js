@@ -638,18 +638,6 @@ var Memory = function() {
         return book;
     };
 
-    var getFirstIncompleteBook = function() {
-        // Get the first incomplete book
-        var incompleteBook;
-        for (var k in books) {
-            if (!books[k].complete) {
-                incompleteBook = books[k];
-                break;
-            }
-        }
-        return incompleteBook ? incompleteBook : null;
-    };
-
     var getNextBook = function() {
         var _book, _books;
         var availableBooks = [];
