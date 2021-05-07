@@ -1421,7 +1421,7 @@ var TrainingController = function () {
                         optionElement.setAttribute('selected', true);
                     }
                     optionElement.setAttribute('value', c.props.options[i]);
-                    optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                    optionElement.innerHTML = decodeURIComponent(c.props.options[i]);
                     ele.appendChild(optionElement);
                 }
             }
