@@ -1405,14 +1405,14 @@ var TrainingController = function () {
         },
         methods: {
             createSelectOptions: function(c, binding) {
-                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element;
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element;
                 // Remove all options elements
                 ele.innerHTML = '';
                 // Recreate all options elements
                 var optionElement;
                 for (var i = 0; i < c.props.options.length; i++) {
                     optionElement = document.createElement('option');
-                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryCollectionId) {
+                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryLibraryId) {
                         optionElement.setAttribute('selected', true);
                     }
                     optionElement.setAttribute('value', c.props.options[i]);
