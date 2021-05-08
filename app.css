@@ -292,14 +292,15 @@ menuselect select {
     background: transparent;
     border: 1px solid #fff;
     border-radius: 5vw;
+    font-family: monospace;
     font-size: 1vw;
     line-height: 1vw;
     text-align: center;
 }
 menuselect select option {
     color: #f00;
-    font-size: 1vw;
     font-family: monospace;
+    font-size: 1vw;
     line-height: 1vw;
 }
 menuexport {
