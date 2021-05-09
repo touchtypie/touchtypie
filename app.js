@@ -550,7 +550,6 @@ var Memory = function() {
             repeatone: 'repeatone',
         },
         playmode: 'shuffleglobal',
-        randomization : true,
         perfection : true,
         statistics: true,
     };
