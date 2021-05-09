@@ -949,8 +949,8 @@ var Trainer = function() {
         recallKnowledge(bookLibraryIds, function() {
             if (bookLibraryIds) {
                 var collections = getCollectionsOfLibraryId(bookLibraryIds[0]);
-                var books = getBooksOfCollectionId(collections[0]);
-                setAttention(books[0]);
+                var books = getBooksOfCollectionId(Object.keys(collections)[0]);
+                setAttention(books[Object.keys(books)[0]]);
             }else {
                 setAttention();
             }
