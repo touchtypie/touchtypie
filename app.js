@@ -2178,7 +2178,7 @@ var State = function() {
         bookLibraryIds: [
             'https://leojonathanoh.github.io/typie-library/libraries/daily.txt'
         ],
-        debug: true,
+        debug: false,
         training: Training()
     }
 }();
