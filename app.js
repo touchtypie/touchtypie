@@ -345,7 +345,7 @@ var Bubble = function(default_value) {
     }
 
     // Populates this bubble's BehaviorVirtue object, when this bubble.value is measured against truth.value
-    var measureVirtue = function(truth, key, perfection) {
+    var measureVirtue = function(truth, environment, key) {
         var bubble = this;
         var virtue = bubble.virtue;
 
@@ -413,7 +413,7 @@ var Bubble = function(default_value) {
         virtue.result.libraryId = truth.libraryId;
         virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
-        virtue.result.perfection = perfection;
+        virtue.result.perfection = environment.perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (virtue.result.value === '') {
             virtue.result.value = truth.value;
@@ -442,8 +442,8 @@ var Bubble = function(default_value) {
         virtue.result.other_num_total += virtue.result.other_num_new;
         virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : parseFloat((virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2));
 
-        if ( (perfection && virtue.result.success && bubble.value.length == truth.value.length) ||
-             (!perfection && bubble.value.length == truth.value.length)
+        if ( (environment.perfection && virtue.result.success && bubble.value.length == truth.value.length) ||
+             (!environment.perfection && bubble.value.length == truth.value.length)
             ) {
             virtue.result.completed = true;
             var now = new Date();
@@ -1143,7 +1143,7 @@ var Training = function() {
 
         // Validate student response
         var virtue = student.response.virtue;
-        student.response.measureVirtue(trainer.truth);
+        student.response.measureVirtue(trainer.truth, trainer.memory.environment);
 
         // Set trainer speech value
         trainer.speech.value = virtue.result.value_zonal;
@@ -1188,7 +1188,7 @@ var Training = function() {
 
         // Validate student response
         var virtue = student.response.virtue;
-        student.response.measureVirtue(trainer.truth);
+        student.response.measureVirtue(trainer.truth, trainer.memory.environment);
         // Set trainer speech value
         trainer.speech.value = virtue.result.value;
     }
@@ -1848,7 +1848,7 @@ var TrainingController = function () {
 
             var virtue = _training.student.response.virtue;
             // Validate student response
-            var started = _training.student.response.measureVirtue(_training.trainer.truth, key, environment.perfection);
+            var started = _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.memory.environment, key);
 
             // Update student virtue every interval
             if (started) {
