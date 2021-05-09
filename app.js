@@ -29,6 +29,19 @@ var Helpers = function () {
             // stopwatch = pad(days, 2) + 'd ' + pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2) + '.' + pad(centiseconds, 2);
 
             return stopwatch;
+        },
+        scrambleText: function scrambleText(text) {
+            var textScrambled = [];
+            var textSplit = text.split('');
+            var pos;
+            while (textScrambled.length < text.length) {
+                pos = Math.floor(Math.random() * textSplit.length);
+                // Append
+                textScrambled.push(textSplit[pos]);
+                // Remove
+                textSplit.splice(pos, 1);
+            }
+            return textScrambled.join('');
         }
     };
 }()
@@ -105,6 +118,7 @@ var BehaviorVirtue = function() {
             libraryId: '',
             collectionId: '',
             id: '',
+            scramble: false,
             perfection: false,
             success: false,
             completed: false,
@@ -151,6 +165,7 @@ var BehaviorVirtue = function() {
 
     var newleaf = function() {
         // Unit meta
+        this.result.scramble = false;
         this.result.perfection = false;
         this.result.success = false;
         this.result.completed = false;
@@ -419,6 +434,7 @@ var Bubble = function(default_value) {
         virtue.result.libraryId = truth.libraryId;
         virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
+        virtue.result.scramble = environment.scramble;
         virtue.result.perfection = environment.perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (virtue.result.value === '') {
@@ -556,6 +572,7 @@ var Memory = function() {
             repeatone: 'repeatone',
         },
         playmode: 'shuffleglobal',
+        scramble : false,
         perfection : true,
         statistics: true,
     };
@@ -1143,7 +1160,7 @@ var Training = function() {
             trainer.truth.libraryId = book.libraryId;
             trainer.truth.collectionId = book.collectionId;
             trainer.truth.id = book.id;
-            trainer.truth.value = book.content;
+            trainer.truth.value = trainer.memory.environment.scramble ? Helpers.scrambleText(book.content) : book.content;
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
 
@@ -1733,6 +1750,27 @@ var TrainingController = function () {
                 var newVal = !c.props._training.trainer.memory.environment.perfection;
                 c.props._training.trainer.memory.environment.perfection = newVal;
                 event.stopPropagation()
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuswitch',
+        template: `
+            <menuswitch><label>scramble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.scramble }}"><handle></handle></switch></menuswitch>
+        `,
+        props: {
+            _training: _training
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                var newVal = !c.props._training.trainer.memory.environment.scramble;
+                c.props._training.trainer.memory.environment.scramble = newVal;
+                event.stopPropagation()
+
+                // Start the scrambled text
+                c.props._training.improvise(_training.trainer.getCurrentBook());
             }
         }
     });
