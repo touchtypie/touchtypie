@@ -569,6 +569,7 @@ var Memory = function() {
         var method = params.method;
         var url = params.url;
         var callback = params.callback;
+        var callbackOnError = params.callbackOnError;
         var callbackData = typeof(params.callbackData) !== 'undefined' ? params.callbackData : null;
         var readbody = function(xhr) {
             var data;
@@ -595,8 +596,8 @@ var Memory = function() {
                 console.log('[xhr.onreadystatechange] :' + xhr.readyState);
                 console.log('[xhr.status] :' + xhr.status);
                 if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 0) {
-                    if (callback) {
-                        callback.apply(callbackData.self, [ 'zzz', callbackData ]);
+                    if (callbackOnError) {
+                        callbackOnError.apply(callbackData.self, [ callbackData ]);
                     }
                 }
             }
@@ -712,17 +713,20 @@ var Memory = function() {
     };
 
     // Recollection of knowledge
-    var recall = function(bookLibraryIds, callback) {
+    var recall = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
         var _this = this;
         recallLibraries.apply(_this, [bookLibraryIds, function() {
             // Once recollection is done
             _this.bookCount = Object.keys(_this.books).length;
-            callback();
+            callbackOnSuccess();
+        }, function() {
+            // Recollection failed
+            callbackOnError();
         }]);
     };
 
     // Recollection of book libraries
-    var recallLibraries = function(bookLibraryIds, callback) {
+    var recallLibraries = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
         var _this = this;
 
         // Recognize and recall libraries
@@ -740,19 +744,18 @@ var Memory = function() {
                         return;
                     }
                 }
-                callback();
-            }]);
+                callbackOnSuccess();
+            }, callbackOnError]);
         }
     };
 
     // Recollection of a book library
-    var recallLibrary = function(bookLibrary, callback) {
+    var recallLibrary = function(bookLibrary, callbackOnSuccess, callbackOnError) {
         var _this = this;
         fetch({
             method: 'GET',
             url: bookLibrary.id,
             callback: function(_bookCollectionStr, data) {
-
                 // Recognize and recall collections
                 data.bookLibrary.index = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
                 var k, bookCollection;
@@ -776,16 +779,16 @@ var Memory = function() {
                         }
                         // Recalled library
                         data.bookLibrary.recalled = true;
-                        data.callback();
+                        data.callbackOnSuccess();
                     }]);
                 };
-
             },
+            callbackOnError: callbackOnError,
             callbackData: {
                 self: _this,
                 bookLibrary: bookLibrary,
                 bookCollections: _this.bookCollections,
-                callback: callback
+                callbackOnSuccess: callbackOnSuccess
             }
         });
     };
@@ -824,7 +827,6 @@ var Memory = function() {
                         data.callback()
                     }])
                 }
-
             },
             callbackData: {
                 self: _this,
@@ -916,21 +918,25 @@ var Trainer = function() {
         return memory.isReady();
     };
 
-    var prepareKnowledge = function(bookLibraryIds, callback) {
+    var prepareKnowledge = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
         recallKnowledge(bookLibraryIds, function() {
-            setAttention();
-            callback();
-        });
+            if (bookLibraryIds) {
+                var collections = getCollectionsOfLibraryId(bookLibraryIds[0]);
+                var books = getBooksOfCollectionId(collections[0]);
+                setAttention(books[0]);
+            }else {
+                setAttention();
+            }
+            callbackOnSuccess();
+        }, callbackOnError);
     };
 
-    var recallKnowledge = function(bookLibraryIds, callback) {
-        memory.recall(bookLibraryIds, function() {
-            callback();
-        });
+    var recallKnowledge = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
+        memory.recall(bookLibraryIds, callbackOnSuccess, callbackOnError);
     };
 
-    var setAttention = function() {
-        var book = memory.getNextBook();
+    var setAttention = function(book) {
+        var book = book ? book : memory.getNextBook();
         if (book) {
             setCurrentBook(book);
         }
@@ -1100,8 +1106,9 @@ var Training = function() {
     var trainer = Trainer();
     var student = Student();
 
-    var prepare = function(bookLibraryIds, callback) {
+    var prepare = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
         // Begin the training with a trainer's intro speech
+        student.response.newlife();
         start();
         student.response.disabled = true;
 
@@ -1114,8 +1121,12 @@ var Training = function() {
             start();
             student.focus();
 
-            if (callback) {
-                callback();
+            if (callbackOnSuccess) {
+                callbackOnSuccess();
+            }
+        }, function() {
+            if (callbackOnError) {
+                callbackOnError();
             }
         });
     };
@@ -1394,11 +1405,18 @@ var TrainingController = function () {
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_booklibraries',
         template: `
-            <menuselect><label>{{ .label }}</label><select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select></menuselect><br />
+            <menuselect>
+                <label>{{ .label }}</label>
+                <select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
+                <input class="hidden" b-on="keyup" type="text" placeholder="enter url of library..." value="{{ .customBookLibraryId }}" />
+                <add b-on="click" title="Add a library">{{ .addStatus }}</add>
+            </menuselect><br />
         `,
         props: {
             label: 'library',
+            addStatus: '+',
             _training: _training,
+            customBookLibraryId: '',
             get options() {
                 return Object.keys(_training.trainer.memory.bookLibraries);
             },
@@ -1419,6 +1437,19 @@ var TrainingController = function () {
                     optionElement.innerHTML = decodeURIComponent(c.props.options[i]);
                     ele.appendChild(optionElement);
                 }
+            },
+            loadBookLibrary: function(c, binding, bookLibraryId) {
+                var bookLibraryIds = [bookLibraryId];
+                c.methods.toggleAddStatus(c, '.');
+                c.props._training.prepare(bookLibraryIds, function() {
+                    c.methods.toggleAddStatus(c, '+');
+                    c.methods.createSelectOptions(c);
+                    c.methods.updateCollectionsAndBooks(c, bookLibraryId);
+                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                }, function() {
+                    c.methods.toggleAddStatus(c, '!');
+                });
             },
             updateCollectionsAndBooks: function(c, libraryId) {
                 var collections = c.props._training.trainer.getCollectionsOfLibraryId(libraryId);
@@ -1442,6 +1473,62 @@ var TrainingController = function () {
                         }
                     }
                 }
+            },
+            toggleAddStatus: function(c, statusNew) {
+               var status = c.props.addStatus;
+
+                // No status provided. Dynamically determine the new status based on existing status.
+                if (typeof(statusNew) === 'undefined') {
+                    switch(status) {
+                        case '+':
+                            statusNew = '-'
+                            break;
+                        case '-':
+                        case '!':
+                            statusNew = '+'
+                            break;
+                        case '.':
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                switch(statusNew) {
+                    // default
+                    case '+':
+                        c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.removeAttribute('class');
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.className = 'hidden';
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.disabled = true;
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.value = '';
+                        // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                        break;
+                    // adding
+                    case '-':
+                        c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('class');
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('disabled');
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.focus();
+                        // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                        break;
+                    // loading
+                    case '.':
+                        c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.className = 'loading';
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('disabled');
+                        // c.bindings['.addStatus'].elementBindings[0].element.className = 'adding';
+                        break;
+                    // loading error
+                    case '!':
+                        c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.className = 'error';
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('disabled');
+                        c.bindings['.customBookLibraryId'].elementBindings[0].element.focus();
+                        // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                        break;
+                    default:
+                        break;
+                }
+                c.props.addStatus = statusNew;
             }
         },
         eventsListeners: {
@@ -1456,7 +1543,21 @@ var TrainingController = function () {
             change: function(event, _this, binding) {
                 var c = this;
                 var valueNew = binding.element.value;
+                c.props._training.trainer.memory.workingMemoryLibraryId = valueNew;
                 c.methods.updateCollectionsAndBooks(c, valueNew);
+            },
+            keyup: function(event, _this, binding) {
+                var c = this;
+                var key = event.keyCode || event.charCode;
+                var value = binding.element.value;
+                // ENTER key
+                if (key === 13) {
+                    c.methods.loadBookLibrary(c, binding, value)
+                }
+            },
+            click: function(event, _this, binding) {
+                var c = this;
+                c.methods.toggleAddStatus(c);
             }
         }
     });
@@ -1470,7 +1571,7 @@ var TrainingController = function () {
             label: 'collection',
             _training: _training,
             get options() {
-                return Object.keys(_training.trainer.memory.bookCollections);
+                return Object.keys(_training.trainer.getCollectionsOfLibraryId(_training.trainer.memory.workingMemoryLibraryId));
             },
         },
         methods: {

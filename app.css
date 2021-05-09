@@ -272,6 +272,9 @@ menuselect {
     margin: 0 auto;
     margin-top: 1vw;
 }
+menuselect .hidden {
+    display: none;
+}
 menuselect label {
     display: inline-block;
     vertical-align: middle;
@@ -286,7 +289,7 @@ menuselect label {
 menuselect select {
     display: inline-block;
     vertical-align: middle;
-    width: 66.67%;
+    width: 60.67%;
     height: auto;
     color: #fff;
     background: transparent;
@@ -303,6 +306,64 @@ menuselect select option {
     font-size: 1vw;
     line-height: 1vw;
 }
+menuselect input {
+    display: inline-block;
+    vertical-align: middle;
+    width: 60.67%;
+    height: auto;
+    color: #fff;
+    background: transparent;
+    border: 1px solid #fff;
+    border-radius: 5vw;
+    font-family: monospace;
+    font-size: 1vw;
+    line-height: 1vw;
+    text-align: center;
+}
+menuselect input.loading {
+    /* background: #rgba(255, 255, 255, 1.0); */
+    background: rgba(255, 255, 255, 0.5);
+    animation: pulse 0.77s linear infinite;
+}
+menuselect input.error {
+    background: rgba(255, 100, 100, 1.0);
+}
+@keyframes pulse {
+    0% {
+        background: rgba(255, 255, 255, 0.5);
+    }
+    25% {
+        background: rgba(255, 255, 255, 0.25);
+    }
+    50% {
+        background: rgba(255, 255, 255, 0.0);
+    }
+    75% {
+        background: rgba(255, 255, 255, 0.25);
+    }
+    100% {
+        background: rgba(255, 255, 255, 0.5);
+    }
+}
+menuselect add {
+    margin-left: 1%;
+    display: inline-block;
+    vertical-align: middle;
+    /* width: 6.00%; */
+    width: calc(1vw + 2px + 2px);
+    height: calc(1vw + 2px + 2px);
+    border: 1px solid #fff;
+    border-radius: 50%;
+    padding: 1px;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    font-weight: bold;
+    line-height: 1vw;
+    text-align: center;
+    cursor: pointer;
+}
+
 menuexport {
     display: block;
     width: 66.67%;
@@ -324,7 +385,7 @@ menuexport label {
 menuexport download {
     display: inline-block;
     vertical-align: middle;
-    height: calc( 1vw + 2px + 2px );
+    height: calc(1vw + 2px + 2px);
     padding: 2px 1vw;
     border: 1px solid #fff;
     border-radius: 999px;
