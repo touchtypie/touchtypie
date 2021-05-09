@@ -612,8 +612,14 @@ var Memory = function() {
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200 || xhr.readyState == XMLHttpRequest.DONE && xhr.status == 304) {
+                // Success
                 if (callback) {
                     callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
+                }
+            }else {
+                // Error
+                if (callbackOnError) {
+                    callbackOnError.apply(callbackData.self, [ callbackData ]);
                 }
             }
 
@@ -621,11 +627,6 @@ var Memory = function() {
             if (State.debug) {
                 console.log('[xhr.onreadystatechange] :' + xhr.readyState);
                 console.log('[xhr.status] :' + xhr.status);
-                if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 0) {
-                    if (callbackOnError) {
-                        callbackOnError.apply(callbackData.self, [ callbackData ]);
-                    }
-                }
             }
         };
         xhr.open(method, url);
