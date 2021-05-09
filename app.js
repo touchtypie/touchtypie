@@ -270,47 +270,53 @@ var Bubble = function(default_value) {
         this.virtue = BehaviorVirtue();
     };
 
-    // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
-    var getPeekIndices = function(bubble, truth) {
+     // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
+     var getPeekIndices = function(bubble, truth) {
         const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1: 0;
 
         // By default the peak (substring) around the cursor is x maximum characters
         const maxLength = 100;
-        var startIndex = cursorIndex - ((maxLength / 2) - 1) > 0 ? cursorIndex - ((maxLength / 2) - 1) : 0
-        var endIndex = cursorIndex + ((maxLength / 2) - 1) < maxLength ? cursorIndex + ((maxLength / 2) - 1) : maxLength;
-        // return truth.value.substr(startIndex, endIndex - startIndex);
+        var startIndex, endIndex;
+        if (truth.value.length <= maxLength) {
+            startIndex = 0;
+            endIndex = truth.value.length - 1;
+        }else {
+            startIndex = cursorIndex - ((maxLength / 2) - 1) > 0 ? cursorIndex - ((maxLength / 2) - 1) : 0
+            endIndex = cursorIndex + ((maxLength / 2) - 1) < maxLength ? cursorIndex + ((maxLength / 2) - 1) : maxLength;
+            // return truth.value.substr(startIndex, endIndex - startIndex);
 
-        // From this point, determine if the truth value is multiline.
-        // Determine all LF indices of truth value. Consider the start of string as a LF
-        var lfIndices = [0];
-        if (lfIndices.length > 0) {
-            for (var i = 0; i < truth.value.length; i++) {
-                if (/\n/.test(truth.value[i])) {
-                    lfIndices.push(i);
+            // From this point, determine if the truth value is multiline.
+            // Determine all LF indices of truth value. Consider the start of string as a LF
+            var lfIndices = [0];
+            if (lfIndices.length > 0) {
+                for (var i = 0; i < truth.value.length; i++) {
+                    if (/\n/.test(truth.value[i])) {
+                        lfIndices.push(i);
+                    }
                 }
-            }
 
-            // Find nearest LF index relative to cursor
-            var nearestLfIndicesIndex = 0;
-            for(var i = 0; i < lfIndices.length; i++) {
-                // Look +1 characters ahead of the cursor
-                if (lfIndices[i] <= cursorIndex + 1) {
-                    nearestLfIndicesIndex = i;
-                }else {
-                    break;
+                // Find nearest LF index relative to cursor
+                var nearestLfIndicesIndex = 0;
+                for(var i = 0; i < lfIndices.length; i++) {
+                    // Look +1 characters ahead of the cursor
+                    if (lfIndices[i] <= cursorIndex + 1) {
+                        nearestLfIndicesIndex = i;
+                    }else {
+                        break;
+                    }
                 }
-            }
-            // Get characters between x LFs before cursor and x+1 LFs after cursor
-            const padLfMax = 5;
-            const padLfBefore = 2;
-            const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
-            const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
-            // If there are enough LF characters following the cursor, set our new peek indices to the LF positions
-            if (lfIndices[endLfIndicesIdx] > 0) {
-                startIndex = lfIndices[startLfIndicesIdx];
-                endIndex = lfIndices[endLfIndicesIdx];
-                console.log('startIndex: ' + startIndex);
-                console.log('endIndex: ' + endIndex);
+                // Get characters between x LFs before cursor and x+1 LFs after cursor
+                const padLfMax = 5;
+                const padLfBefore = 2;
+                const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
+                const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
+                // If there are enough LF characters following the cursor, set our new peek indices to the LF positions
+                if (lfIndices[endLfIndicesIdx] > 0) {
+                    startIndex = lfIndices[startLfIndicesIdx];
+                    endIndex = lfIndices[endLfIndicesIdx];
+                    console.log('startIndex: ' + startIndex);
+                    console.log('endIndex: ' + endIndex);
+                }
             }
         }
         return [startIndex, endIndex];
