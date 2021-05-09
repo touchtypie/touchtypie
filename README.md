@@ -10,4 +10,4 @@ In contrast to reading alone, typing while reading engages the visual, linguisti
 
 ## Development
 
-The started out simple, but grew just enough to require a custom frontend framework. Most parts of are is still in pure HTML, CSS, JS.
+It started out simple, but grew just enough to require a custom frontend framework. Most parts of are is still in pure HTML, CSS, JS.
