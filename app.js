@@ -118,8 +118,8 @@ var BehaviorVirtue = function() {
             libraryId: '',
             collectionId: '',
             id: '',
-            scramble: false,
             perfection: false,
+            scramble: false,
             success: false,
             completed: false,
             value: '',
@@ -482,6 +482,8 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.libraryId: ' + virtue.result.libraryId);
             console.log('[measureVirtue] virtue.result.collectionId: ' + virtue.result.collectionId);
             console.log('[measureVirtue] virtue.result.id: ' + virtue.result.id);
+            console.log('[measureVirtue] virtue.result.perfection: ' + virtue.result.perfection);
+            console.log('[measureVirtue] virtue.result.scramble: ' + virtue.result.scramble);
             console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
             console.log('[measureVirtue] virtue.result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
@@ -1024,6 +1026,8 @@ var Student = function() {
             _student.virtue.result.libraryId = virtue.result.libraryId;
             _student.virtue.result.collectionId = virtue.result.collectionId;
             _student.virtue.result.id = virtue.result.id;
+            _student.virtue.result.perfection = virtue.result.perfection;
+            _student.virtue.result.scramble = virtue.result.scramble;
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
             _student.virtue.result.value = virtue.result.value;
