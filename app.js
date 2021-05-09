@@ -2185,7 +2185,7 @@ var TrainingController = function () {
 var State = function() {
     return {
         bookLibraryIds: [
-            'https://leojonathanoh.github.io/typie-library/libraries/daily.txt'
+            'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
         ],
         debug: false,
         training: Training()
