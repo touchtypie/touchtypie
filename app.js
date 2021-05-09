@@ -329,8 +329,10 @@ var Bubble = function(default_value) {
                 if (lfIndices[endLfIndicesIdx] > 0) {
                     startIndex = lfIndices[startLfIndicesIdx];
                     endIndex = lfIndices[endLfIndicesIdx];
-                    console.log('startIndex: ' + startIndex);
-                    console.log('endIndex: ' + endIndex);
+                    if (status.debug) {
+                        console.log('startIndex: ' + startIndex);
+                        console.log('endIndex: ' + endIndex);
+                    }
                 }
             }
         }
@@ -1850,7 +1852,9 @@ var TrainingController = function () {
         'innerHTML',
         "DOMContentLoaded",
         function(event, _this, binding) {
-            console.log('[DOMContentLoaded]');
+            if (State.debug) {
+                console.log('[DOMContentLoaded]');
+            }
 
             // _training.prepare();
 
