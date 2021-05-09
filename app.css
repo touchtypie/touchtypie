@@ -129,7 +129,7 @@ menu environment popup {
     right: 10vw;
     bottom: 10vw;
     left: 10vw;
-    padding: 3vw;
+    padding: 3vw 9vw;
 }
 menu environment.customize popup {
     display: block;
@@ -175,7 +175,6 @@ menubutton span {
 
 menuswitch {
     display: block;
-    width: 66.67%;
     margin: 0 auto;
     margin-top: 1vw;
 }
@@ -220,7 +219,6 @@ switch.true handle {
 
 menumultiswitch {
     display: block;
-    width: 66.67%;
     margin: 0 auto;
     margin-top: 1vw;
 }
@@ -268,7 +266,6 @@ menumultiswitch symbol.shuffle span {
 
 menuselect {
     display: block;
-    width: 66.67%;
     margin: 0 auto;
     margin-top: 1vw;
 }
@@ -366,7 +363,6 @@ menuselect add {
 
 menuexport {
     display: block;
-    width: 66.67%;
     margin: 0 auto;
     margin-top: 1vw;
 }
