@@ -71,6 +71,7 @@ header>banner span {
     margin: 0 auto;
     text-align: center;
     color: #fff;
+    font-family: monospace;
     font-size: 2vw;
     text-transform: uppercase;
 }
@@ -478,7 +479,6 @@ response textarea {
 statistics {
     display: block;
     text-align: center;
-    margin-bottom: 2vw;
 }
 statistics progressbar {
     display: block;
@@ -612,4 +612,25 @@ statistics globaloverall span {
     font-family: monospace;
     font-weight: normal;
     font-size: 1vw;
+}
+
+footer {
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+}
+
+footer icons {
+    display: block;
+    text-align: center;
+}
+footer icons > a {
+    display: inline-block;
+    border: 1px solid #fff;
+    border-radius: 0.5vw;
+    padding: 0.1vw;
+    font-size: 0;
+}
+footer icons > a > svg {
+    width: 3vw;
+    fill: #fff;
 }
