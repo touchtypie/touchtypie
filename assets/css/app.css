@@ -474,6 +474,7 @@ response textarea {
     font-family: monospace;
     font-size: 1.5vw;
     text-align: left;
+    outline: none;
     /* border: none; */
     /* letter-spacing: 0.25vw; */
 }
