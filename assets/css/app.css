@@ -319,6 +319,7 @@ menuselect input {
     font-size: 1vw;
     line-height: 1vw;
     text-align: center;
+    outline: none;
 }
 menuselect input.loading {
     /* background: #rgba(255, 255, 255, 1.0); */
