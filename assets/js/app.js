@@ -611,15 +611,18 @@ var Memory = function() {
 
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200 || xhr.readyState == XMLHttpRequest.DONE && xhr.status == 304) {
-                // Success
-                if (callback) {
-                    callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
-                }
-            }else {
-                // Error
-                if (callbackOnError) {
-                    callbackOnError.apply(callbackData.self, [ callbackData ]);
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                var status = xhr.status;
+                if (status === 0 || (status >= 200 && status < 400)) {
+                    // Success
+                    if (callback) {
+                        callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
+                    }
+                }else {
+                    // Error
+                    if (callbackOnError) {
+                        callbackOnError.apply(callbackData.self, [ callbackData ]);
+                    }
                 }
             }
 
