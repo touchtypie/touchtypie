@@ -3,22 +3,31 @@
 
 <head>
   <meta charset="utf-8">
-  <title>t o u c h t y p i e: touch-type trainering</title>
-  <meta name="description" content="t o u c h t y p i e: touch-type trainering">
+  <title>t o u c h t y p i e: touch-typing training</title>
+  <meta name="description" content="t o u c h t y p i e: touch-typing training">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="t o u c h t y p i e: touch-typing training">
+    <meta property="og:description" content="t o u c h t y p i e: touch-typing training">
+    <meta property="og:url" content="https://touchtypie.github.io/touchtypie">
+    <meta property="og:site_name" content="t o u c h t y p i e">
+    <meta property="og:image" content="https://touchtypie.github.io/touchtypie/assets/images/logo/touchtypie-logo-og-1200-630.png">
+    <meta property="og:image:secure_url" content="https://touchtypie.github.io/touchtypie/assets/images/logo/touchtypie-logo-og-1200-630.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
 
-  <!-- <link rel="manifest" href="site.webmanifest"> -->
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@theohbrothers">
+    <meta name="twitter:creator" content="@theohbrothers">
+    <meta name="twitter:title" content="t o u c h t y p i e: touch-typing training">
+    <meta name="twitter:description" content="t o u c h t y p i e: touch-typing training">
+    <meta name="twitter:image" content="https://touchtypie.github.io/touchtypie/assets/images/logo/touchtypie-logo-og-1200-630.png">
 
-  <!-- <link rel="stylesheet" href="css/normalize.css"> -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="app.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="assets/css/app.css">
 
   <meta name="theme-color" content="#fafafa">
 </head>
@@ -27,11 +36,22 @@
   <wrapper>
     <header>
       <banner>
-      <span>t o u c h t y p i e</span><br />
-      <!-- <span>Hello world. Let's practice touch typing.</span> -->
+        <span>t o u c h t y p i e</span>
       </banner>
     </header>
+
+    <menu>
+      <environment>
+          <menubutton><span>⚙️</span></menubutton>
+          <backdrop></backdrop>
+          <popup>
+            <heading>E N V I R O N M E N T</heading>
+          </popup>
+      </environment>
+    </menu>
+
     <main>
+
       <truth>
         <value></value>
       </truth>
@@ -44,30 +64,160 @@
         <textarea placeholder="Start typing . . ."></textarea>
       </response>
 
-      <homeworkcounters>
-        <characterscounter>
-          <label>Typed:</label>
-          <span><value></value>&nbsp;/&nbsp;<total></total></span>
-        </characterscounter>
-        <errorscounter>
-          <label>Errors:</label>
-          <span><value></value></span>
-        </errorscounter>
-      </homeworkcounters>
-      <globalcounters>
-        <totalerrorscounter>
-          <label>Total errors:</label>
-          <span><value></value></span>
-        </totalerrorscounter>
-        <totalhomeworkcounter>
-          <label>Total Homework:</label>
-          <span><value></value></span>
-        </totalhomeworkcounter>
-      </globalcounters>
+      <statistics>
+        <unitprogress>
+          <heading>P R O G R E S S</heading>
+          <characterscounter>
+              <label>Characters:</label>
+              <value></value><span>&nbsp;/&nbsp;</span><total></total>
+            </characterscounter>
+          <characterspercentagecounter>
+              <label>Characters (%):</label>
+            <value></value>
+          </characterspercentagecounter>
+          <hitcounter>
+            <label>Hits:</label>
+            <value></value>
+          </hitcounter>
+          <hitpercentagecounter>
+            <label>Hits (%):</label>
+            <value></value>
+          </hitpercentagecounter>
+          <misscounter>
+            <label>Misses:</label>
+            <value></value>
+          </misscounter>
+          <misspercentagecounter>
+            <label>Misses (%):</label>
+            <value></value>
+          </misspercentagecounter>
+        </unitprogress>
+
+        <unitoverall>
+          <heading>U N I T</heading>
+          <datetimestart>
+            <label>Date:</label>
+            <value></value>
+          </datetimestart>
+          <datetimestopwatch>
+            <label>Duration:</label>
+            <value></value>
+          </datetimestopwatch>
+          <shotcounter>
+            <label>Shots:</label>
+            <value></value>
+          </shotcounter>
+          <ratehitpermincounter>
+            <label>Hits / min:</label>
+            <value></value>
+          </ratehitpermincounter>
+          <hitcounter>
+            <label>Hits:</label>
+            <value></value>
+          </hitcounter>
+          <hitpercentagecounter>
+            <label>Hits (%):</label>
+            <value></value>
+          </hitpercentagecounter>
+          <misscounter>
+            <label>Misses:</label>
+            <value></value>
+          </misscounter>
+          <misspercentagecounter>
+            <label>Misses (%):</label>
+            <value></value>
+          </misspercentagecounter>
+          <amendcounter>
+            <label>Amends:</label>
+            <value></value>
+          </amendcounter>
+          <amendpercentagecounter>
+            <label>Amends (%):</label>
+            <value></value>
+          </amendpercentagecounter>
+          <othercounter>
+            <label>Other:</label>
+            <value></value>
+          </othercounter>
+          <otherpercentagecounter>
+            <label>Other (%):</label>
+            <value></value>
+          </otherpercentagecounter>
+        </unitoverall>
+
+        <globaloverall>
+          <heading>G L O B A L</heading>
+          <datetimestopwatch>
+            <label>Duration:</label>
+            <value></value>
+          </datetimestopwatch>
+          <shotcounter>
+            <label>Shots:</label>
+            <value></value>
+          </shotcounter>
+          <ratehitpermincounter>
+            <label>Hit / min:</label>
+            <value></value>
+          </ratehitpermincounter>
+          <hitcounter>
+            <label>Hits:</label>
+            <value></value>
+          </hitcounter>
+          <hitpercentagecounter>
+            <label>Hits (%):</label>
+            <value></value>
+          </hitpercentagecounter>
+          <misscounter>
+            <label>Misses:</label>
+            <value></value>
+          </misscounter>
+          <misspercentagecounter>
+            <label>Misses (%):</label>
+            <value></value>
+          </misspercentagecounter>
+          <amendcounter>
+            <label>Amends:</label>
+            <value></value>
+          </amendcounter>
+          <amendpercentagecounter>
+            <label>Amends (%):</label>
+            <value></value>
+          </amendpercentagecounter>
+          <othercounter>
+            <label>Other:</label>
+            <value></value>
+          </othercounter>
+          <otherpercentagecounter>
+            <label>Other (%):</label>
+            <value></value>
+          </otherpercentagecounter>
+          <unitcounter>
+            <label>Units:</label>
+            <value></value><span>&nbsp;/&nbsp;</span><total></total>
+          </unitcounter>
+        </globaloverall>
+
+        <!-- <progressbar>
+          <characterscounter>
+              <label></label>
+              <value></value><span>&nbsp;/&nbsp;</span><total></total>
+          </characterscounter>
+        </progressbar> -->
+
+      </statistics>
 
     </main>
+
+    <footer>
+      <icons>
+        <a href="https://github.com/touchtypie/touchtypie" title="Github">
+          <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256"><path d="M 155.68,218.64 C 155.68,214.68 155.83,201.56 155.83,185.23 155.83,173.81 151.86,166.32 147.59,162.66 174.74,159.66 203.26,149.35 203.26,102.48 203.26,89.16 198.53,78.28 190.75,69.74 191.97,66.66 196.09,54.26 189.53,37.45 189.53,37.45 179.31,34.18 156.13,49.96 146.37,47.24 136.00,45.90 125.63,45.84 115.26,45.90 104.89,47.24 95.13,49.96 71.80,34.18 61.58,37.45 61.58,37.45 55.03,54.26 59.14,66.66 60.52,69.74 52.69,78.28 47.96,89.16 47.96,102.48 47.96,149.22 76.44,159.72 103.53,162.77 100.05,165.82 96.90,171.19 95.81,179.08 88.83,182.20 71.15,187.59 60.27,168.94 60.27,168.94 53.84,157.22 41.59,156.37 41.59,156.37 29.68,156.22 40.73,163.78 40.73,163.78 48.75,167.54 54.31,181.62 54.31,181.62 61.46,205.35 95.40,197.99 95.45,208.16 95.55,215.84 95.55,218.73 95.55,218.73 155.68,218.64 155.68,218.64 Z" /></svg>
+        </a>
+      </icons>
+    </footer>
+
   </wrapper>
-  <script src="app.js"></script>
+  <script src="assets/js/app.js"></script>
 </body>
 
 </html>
