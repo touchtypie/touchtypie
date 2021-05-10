@@ -1254,12 +1254,14 @@ var Component = function(c) {
 
     var creatingBindings = function(rootElement) {
         var allElements = rootElement.getElementsByTagName('*');
-        var matches, propsPaths, object, property, binding, events;
+        var matches, propsPaths, object, property, binding, events, addedBinding;
         for (var i = 0; i < allElements.length; i++) {
             var ele = allElements[i];
 
             // Parse elements' attributes for events, and object properties specified in attribute value  '{{ .obj.someprop }}'
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
+
+                addedBinding = false;
 
                 // Get any eventListeners
                 matches = /b-on/.exec(atts[j].name);
@@ -1311,6 +1313,7 @@ var Component = function(c) {
                     }
                     // Store the binding
                     c.bindings[matches[1].trim()] = binding;
+                    addedBinding = true;
                 }
             }
             // Or data bind to innerHTML
@@ -1358,14 +1361,17 @@ var Component = function(c) {
                 }
                 // Store the binding
                 c.bindings[matches[1].trim()] = binding;
+                addedBinding = true;
             }
 
             // If there is no data binding, simply set up the eventListeners
-            if (Object.keys(c.bindings).length === 0) {
+            if (!addedBinding) {
                 if (events) {
+                    var _ele, handler;
                     for (var e = 0; e < events.length; e++) {
-                        var handler = c.eventsListeners[events[e]];
-                        ele.addEventListener(events[e], function(event){
+                        _ele = /DOM|ready/.test(events[e]) ? document : ele;
+                         handler = c.eventsListeners[events[e]];
+                        _ele.addEventListener(events[e], function(event){
                             handler.apply(c, [event]);
                         });
                     }
