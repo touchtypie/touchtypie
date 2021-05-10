@@ -1442,7 +1442,7 @@ var TrainingController = function () {
         template: `
             <menuselect>
                 <label>{{ .label }}</label>
-                <select b-on="DOMContentLoaded,change" value="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
+                <select b-on="DOMContentLoaded,change" title="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
                 <input class="hidden" b-on="keyup" type="text" placeholder="enter url of library..." value="{{ .customBookLibraryId }}" />
                 <add b-on="click" title="Add a library">{{ .addStatus }}</add>
             </menuselect><br />
@@ -1600,7 +1600,7 @@ var TrainingController = function () {
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_bookcollections',
         template: `
-            <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
+        <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
         `,
         props: {
             label: 'collection',
@@ -1649,7 +1649,7 @@ var TrainingController = function () {
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_books',
         template: `
-            <menuselect><label>{{ .label }}</label><select b-on="change" value="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
+            <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
         `,
         props: {
             label: 'book',
