@@ -1588,7 +1588,7 @@ var TrainingController = function () {
                 var c = this;
                 var ele = ele = event.target || event.srcElement;
                 var key = event.keyCode || event.charCode;
-                var value = ele.value;
+                var value = ele.value.trim();
                 // ENTER key
                 if (key === 13) {
                     c.methods.loadBookLibrary(c, value)
