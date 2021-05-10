@@ -1443,7 +1443,7 @@ var TrainingController = function () {
             <menuselect>
                 <label>{{ .label }}</label>
                 <select b-on="DOMContentLoaded,change" title="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
-                <input class="hidden" b-on="keyup" type="text" placeholder="enter url of library..." value="{{ .customBookLibraryId }}" />
+                <input class="hidden" b-on="keyup" type="text" placeholder="enter url of library..." />
                 <add b-on="click" title="Add a library">{{ .addStatus }}</add>
             </menuselect><br />
         `,
@@ -1473,7 +1473,7 @@ var TrainingController = function () {
                     ele.appendChild(optionElement);
                 }
             },
-            loadBookLibrary: function(c, binding, bookLibraryId) {
+            loadBookLibrary: function(c, bookLibraryId) {
                 var bookLibraryIds = [bookLibraryId];
                 c.methods.toggleAddStatus(c, '.');
                 c.props._training.prepare(bookLibraryIds, function() {
@@ -1532,32 +1532,32 @@ var TrainingController = function () {
                     // default
                     case '+':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.removeAttribute('class');
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.disabled = true;
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.value = '';
+                        c.parentElement.getElementsByTagName('input')[0].className = 'hidden';
+                        c.parentElement.getElementsByTagName('input')[0].disabled = true;
+                        c.parentElement.getElementsByTagName('input')[0].value = '';
                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
                         break;
                     // adding
                     case '-':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('class');
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('disabled');
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.focus();
+                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('class');
+                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.parentElement.getElementsByTagName('input')[0].focus();
                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
                         break;
                     // loading
                     case '.':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.className = 'loading';
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('disabled');
+                        c.parentElement.getElementsByTagName('input')[0].className = 'loading';
+                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('disabled');
                         // c.bindings['.addStatus'].elementBindings[0].element.className = 'adding';
                         break;
                     // loading error
                     case '!':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.className = 'error';
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.removeAttribute('disabled');
-                        c.bindings['.customBookLibraryId'].elementBindings[0].element.focus();
+                        c.parentElement.getElementsByTagName('input')[0].className = 'error';
+                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.parentElement.getElementsByTagName('input')[0].focus();
                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
                         break;
                     default:
@@ -1583,11 +1583,12 @@ var TrainingController = function () {
             },
             keyup: function(event, _this, binding) {
                 var c = this;
+                var ele = ele = event.target || event.srcElement;
                 var key = event.keyCode || event.charCode;
-                var value = binding.element.value;
+                var value = ele.value;
                 // ENTER key
                 if (key === 13) {
-                    c.methods.loadBookLibrary(c, binding, value)
+                    c.methods.loadBookLibrary(c, value)
                 }
             },
             click: function(event, _this, binding) {
