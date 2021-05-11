@@ -145,6 +145,7 @@ var BehaviorVirtue = function() {
             perfection: false,
             jumble: false,
             scramble: false,
+            ambience: '',
             success: false,
             completed: false,
             value: '',
@@ -193,6 +194,7 @@ var BehaviorVirtue = function() {
         this.result.perfection = false;
         this.result.jumble = false;
         this.result.scramble = false;
+        this.result.ambience = '';
         this.result.success = false;
         this.result.completed = false;
         this.result.value_zonal = '';
@@ -462,9 +464,10 @@ var Bubble = function(default_value) {
         virtue.result.libraryId = truth.libraryId;
         virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
+        virtue.result.perfection = environment.perfection;
         virtue.result.jumble = environment.jumble;
         virtue.result.scramble = environment.scramble;
-        virtue.result.perfection = environment.perfection;
+        virtue.result.ambience = environment.ambience;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
         if (virtue.result.value === '') {
             virtue.result.value = truth.value;
@@ -512,6 +515,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.perfection: ' + virtue.result.perfection);
             console.log('[measureVirtue] virtue.result.jumble: ' + virtue.result.jumble);
             console.log('[measureVirtue] virtue.result.scramble: ' + virtue.result.scramble);
+            console.log('[measureVirtue] virtue.result.ambience: ' + virtue.result.ambience);
             console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
             console.log('[measureVirtue] virtue.result.completed: ' + virtue.result.completed);
             console.log('[measureVirtue] virtue.result.value: ' + virtue.result.value);
@@ -607,6 +611,7 @@ var Memory = function() {
         perfection : true,
         jumble : false,
         scramble : false,
+        ambience: 'sky',
         statistics: true,
     };
 
@@ -1062,6 +1067,7 @@ var Student = function() {
             _student.virtue.result.perfection = virtue.result.perfection;
             _student.virtue.result.jumble = virtue.result.jumble;
             _student.virtue.result.scramble = virtue.result.scramble;
+            _student.virtue.result.ambience = virtue.result.ambience;
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
             _student.virtue.result.value = virtue.result.value;
@@ -1885,6 +1891,90 @@ var TrainingController = function () {
                 // _this.valueSetter(newVal);
                 document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
                 event.stopPropagation()
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuambienceswitch',
+        template: `
+            <menuambienceswitch>
+                <label>ambience</label>
+                <ambiences b-on="DOMContentLoaded">
+                </ambiences>
+            </menuambienceswitch>
+        `,
+        props: {
+            _training: _training,
+            ambiences: {
+                // CSS styles
+                sky: 'linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%)',
+                sea: 'linear-gradient(45deg, rgb(46, 99, 157) 10%, rgb(0, 46, 106) 80%, rgb(28, 124, 153) 100%)',
+                ocean: 'linear-gradient(45deg, rgb(0, 73, 108) 10%, rgb(0, 22, 51) 80%, rgb(1, 47, 119) 100%)',
+                dawn: 'linear-gradient(45deg, rgb(49, 19, 8) 10%, rgb(0, 0, 0) 80%, rgb(91, 69, 52) 100%)',
+                sunrise: 'linear-gradient(45deg, rgb(170, 88, 0) 10%, rgb(196, 172, 154) 80%, rgb(183, 119, 88) 100%)',
+                noon: 'linear-gradient(45deg, rgb(147, 183, 255) 10%, rgb(32, 105, 217) 80%, rgb(255, 253, 229) 100%)',
+                dusk: 'linear-gradient(45deg, rgb(115, 70, 0) 10%, rgb(0, 72, 117) 80%, rgb(255, 225, 153) 100%)',
+                midnight: 'linear-gradient(45deg, rgb(38, 18, 9) 10%, rgb(0, 0, 0) 80%, rgb(104, 100, 84) 100%)',
+                nebula: 'linear-gradient(45deg, rgb(60, 89, 69) 10%, rgb(10, 1, 49) 80%, rgb(149, 125, 103) 100%)',
+                stars: 'linear-gradient(45deg, rgb(151, 123, 106) 10%, rgb(33, 18, 104) 80%, rgb(111, 83, 69) 100%)',
+                heaven: 'linear-gradient(45deg, rgb(255, 131, 218) 10%, rgb(0, 158, 217) 80%, rgb(251, 246, 201) 100%)',
+                dark: 'linear-gradient(45deg, rgb(0, 0, 0) 10%, rgb(0, 0, 0) 80%, rgb(0, 0, 0) 100%)',
+                get random() {
+                    var getRandomColor = function() {
+                        return [
+                            Math.floor(Math.random() * 255),
+                            Math.floor(Math.random() * 255),
+                            Math.floor(Math.random() * 255)
+                        ].join(',');
+                    }
+                    var css
+                    return 'linear-gradient(45deg, rgb(' + getRandomColor() + ') 10%, rgb(' + getRandomColor() + ') 80%, rgb(' + getRandomColor() + ') 100%)'
+                }
+            }
+        },
+        methods: {
+            updateChoices: function(c) {
+                var choiceElements = c.parentElement.getElementsByTagName('ambiences')[0].getElementsByTagName('choice');
+                for (var i = 0; i < choiceElements.length; i++ ) {
+                    if (choiceElements[i].name === c.props._training.trainer.memory.environment.ambience) {
+                        choiceElements[i].className = 'active';
+                    }else {
+                        choiceElements[i].className = '';
+                    }
+                }
+            }
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+
+                var ambiencesEle = c.parentElement.getElementsByTagName('ambiences')[0];
+                // Create all choice elements
+                var ambienceEle;
+                for (var ambience in c.props.ambiences) {
+                    ambienceEle = document.createElement('choice');
+                    ambienceEle.name = ambience;
+                    ambienceEle.title = ambience;
+                    if (ambience === 'random') {
+                        ambienceEle.innerHTML = '?';
+                    }
+                    ambienceEle.style.backgroundImage = c.props.ambiences[ambience];
+                    ambienceEle.addEventListener('click', function(event) {
+                        var ele = event.target || event.srcElement;
+                        // Set the environment ambience to this ambience
+                        c.props._training.trainer.memory.environment.ambience = ele.name;
+                        // Set backgrounds on UI
+                        var backgroundImage = c.props.ambiences[ele.name];
+                        document.body.style.backgroundImage = backgroundImage;
+                        document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0].style.backgroundImage = backgroundImage;
+                        // Update choices
+                        c.methods.updateChoices(c);
+                    });
+                    ambiencesEle.appendChild(ambienceEle);
+                }
+                // update choices
+                c.methods.updateChoices(c);
             }
         }
     });

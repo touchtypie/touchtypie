@@ -366,6 +366,43 @@ menuselect add {
     cursor: pointer;
 }
 
+menuambienceswitch {
+    display: block;
+    margin: 0 auto;
+    margin-top: 1vw;
+}
+menuambienceswitch label {
+    display: inline-block;
+    vertical-align: middle;
+    width: 33.33%;
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1;
+}
+menuambienceswitch choice {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 1vw;
+    width: calc( 1vw + 2px + 2px );
+    height: calc( 1vw + 2px + 2px );
+    border: 1px solid rgba(255, 255, 255, 1.0);
+    border-radius: 1vw;
+    padding: 1px;
+    font-family: monospace;
+    font-size: 1vw;
+    line-height: 1vw;
+    text-align: center;
+    cursor: pointer;
+}
+menuambienceswitch choice.active {
+    border: 1px solid rgba(255, 255, 255, 1.0);
+    box-shadow: 0 0 0.3vw 0.1vw #fff;
+}
+
 menuexport {
     display: block;
     margin: 0 auto;
