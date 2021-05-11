@@ -42,6 +42,30 @@ var Helpers = function () {
                 textSplit.splice(pos, 1);
             }
             return textScrambled.join('');
+        },
+        jumbleText: function jumbleText(text) {
+            var textJumbled = [];
+            var nonWhitespaces = text.split(/\s+/).filter(function (v) { return v !== ''; });
+            var whitespaces = text.split(/[^\s]+/).filter(function (v) { return v !== ''; });
+
+            var longerLength = nonWhitespaces.length > whitespaces.length ? nonWhitespaces.length : whitespaces.length;
+            var pos;
+            for (var i = 0; i < longerLength; i++) {
+                // Add non-whitespace
+                if (nonWhitespaces.length > 0) {
+                    pos = Math.floor(Math.random() * nonWhitespaces.length);
+                    textJumbled.push(nonWhitespaces[pos]);
+                    nonWhitespaces.splice(pos, 1);
+                }
+
+                // Add whitespace
+                if (whitespaces.length > 0) {
+                    pos = Math.floor(Math.random() * whitespaces.length);
+                    textJumbled.push(whitespaces[pos]);
+                    whitespaces.splice(pos, 1);
+                }
+            }
+            return textJumbled.join('');
         }
     };
 }()
@@ -119,6 +143,7 @@ var BehaviorVirtue = function() {
             collectionId: '',
             id: '',
             perfection: false,
+            jumble: false,
             scramble: false,
             success: false,
             completed: false,
@@ -165,8 +190,9 @@ var BehaviorVirtue = function() {
 
     var newleaf = function() {
         // Unit meta
-        this.result.scramble = false;
         this.result.perfection = false;
+        this.result.jumble = false;
+        this.result.scramble = false;
         this.result.success = false;
         this.result.completed = false;
         this.result.value_zonal = '';
@@ -436,6 +462,7 @@ var Bubble = function(default_value) {
         virtue.result.libraryId = truth.libraryId;
         virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
+        virtue.result.jumble = environment.jumble;
         virtue.result.scramble = environment.scramble;
         virtue.result.perfection = environment.perfection;
         virtue.result.success = virtue.result.miss_indices.length == 0 ? true : false;
@@ -483,6 +510,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.collectionId: ' + virtue.result.collectionId);
             console.log('[measureVirtue] virtue.result.id: ' + virtue.result.id);
             console.log('[measureVirtue] virtue.result.perfection: ' + virtue.result.perfection);
+            console.log('[measureVirtue] virtue.result.jumble: ' + virtue.result.jumble);
             console.log('[measureVirtue] virtue.result.scramble: ' + virtue.result.scramble);
             console.log('[measureVirtue] virtue.result.success: ' + virtue.result.success);
             console.log('[measureVirtue] virtue.result.completed: ' + virtue.result.completed);
@@ -576,8 +604,9 @@ var Memory = function() {
             repeatone: 'repeatone',
         },
         playmode: 'shuffleglobal',
-        scramble : false,
         perfection : true,
+        jumble : false,
+        scramble : false,
         statistics: true,
     };
 
@@ -1031,6 +1060,7 @@ var Student = function() {
             _student.virtue.result.collectionId = virtue.result.collectionId;
             _student.virtue.result.id = virtue.result.id;
             _student.virtue.result.perfection = virtue.result.perfection;
+            _student.virtue.result.jumble = virtue.result.jumble;
             _student.virtue.result.scramble = virtue.result.scramble;
             _student.virtue.result.success = virtue.result.success;
             _student.virtue.result.completed = virtue.result.completed;
@@ -1170,7 +1200,15 @@ var Training = function() {
             trainer.truth.libraryId = book.libraryId;
             trainer.truth.collectionId = book.collectionId;
             trainer.truth.id = book.id;
-            trainer.truth.value = trainer.memory.environment.scramble ? Helpers.scrambleText(book.content) : book.content;
+            trainer.truth.value = (function() {
+                if (trainer.memory.environment.jumble) {
+                    return Helpers.jumbleText(book.content);
+                }else if (trainer.memory.environment.scramble) {
+                    return Helpers.scrambleText(book.content);
+                }else {
+                    return book.content;
+                }
+            })();
         }
         trainer.truth.charactersCounter = trainer.truth.value.length;
 
@@ -1772,7 +1810,35 @@ var TrainingController = function () {
     });
     Component({
         parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
-        name: 'menuswitch',
+        name: 'menuswitch_jumble',
+        template: `
+            <menuswitch><label>jumble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.jumble }}"><handle></handle></switch></menuswitch>
+        `,
+        props: {
+            _training: _training
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                var newVal = !c.props._training.trainer.memory.environment.jumble;
+                c.props._training.trainer.memory.environment.jumble = newVal;
+                event.stopPropagation();
+
+                // If scramble is on, turn it off
+                if (newVal === true) {
+                    if (c.props._training.trainer.memory.environment.scramble === true) {
+                        c.props._training.trainer.memory.environment.scramble = false;
+                    }
+                }
+
+                // Start the jumbled text
+                c.props._training.improvise(_training.trainer.getCurrentBook());
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        name: 'menuswitch_scramble',
         template: `
             <menuswitch><label>scramble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.scramble }}"><handle></handle></switch></menuswitch>
         `,
@@ -1785,6 +1851,14 @@ var TrainingController = function () {
                 var newVal = !c.props._training.trainer.memory.environment.scramble;
                 c.props._training.trainer.memory.environment.scramble = newVal;
                 event.stopPropagation()
+
+
+                // If jumble is on, turn it off
+                if (newVal === true) {
+                    if (c.props._training.trainer.memory.environment.jumble === true) {
+                        c.props._training.trainer.memory.environment.jumble = false;
+                    }
+                }
 
                 // Start the scrambled text
                 c.props._training.improvise(_training.trainer.getCurrentBook());
