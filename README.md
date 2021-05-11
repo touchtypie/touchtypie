@@ -1,6 +1,11 @@
 # t o u c h t y p i e
 
+[![github-actions](https://github.com/touchtypie/touchtypie/workflows/ci-master-pr/badge.svg)](https://github.com/touchtypie/touchtypie/actions)
+[![github-release](https://img.shields.io/github/v/release/touchtypie/touchtypie?style=flat-square)](https://github.com/touchtypie/touchtypie/releases/)
+
 A touch-typing trainer.
+
+![touchtypie](assets/images/logo/logo-v1.0-blue.svg)
 
 ## Philosophy
 
