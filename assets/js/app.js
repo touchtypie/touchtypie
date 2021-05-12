@@ -313,49 +313,119 @@ var Bubble = function(default_value) {
         this.virtue = BehaviorVirtue();
     };
 
-    // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
+    // Returns two indices representing a peek (substring) in truth proximal to the current cursor
     var getPeekIndices = function(bubble, truth) {
-        const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1: 0;
+        // The cursor is one character ahead of the bubble value
+        const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1 + 1: 0;
 
-        // By default the peak (substring) around the cursor is x maximum characters
-        const maxLength = 100;
-        var startIndex = cursorIndex - ((maxLength / 2) - 1) > 0 ? cursorIndex - ((maxLength / 2) - 1) : 0
-        var endIndex = cursorIndex + ((maxLength / 2) - 1) < maxLength ? cursorIndex + ((maxLength / 2) - 1) : maxLength;
+        // By default the peek (substring) around the cursor is x maximum characters. Length includes cursor.
+        const maxLength = 101;
+        const padCharacters = Math.floor(maxLength / 2);
+        var startIndex, endIndex;
         // return truth.value.substr(startIndex, endIndex - startIndex);
 
-        // From this point, determine if the truth value is multiline.
-        // Determine all LF indices of truth value. Consider the start of string as a LF
-        var lfIndices = [0];
-        if (lfIndices.length > 0) {
-            for (var i = 0; i < truth.value.length; i++) {
-                if (/\n/.test(truth.value[i])) {
-                    lfIndices.push(i);
-                }
+        // Determine if the truth value is multiline.
+        var lfIndices = [];
+        for (var i = 0; i < truth.value.length; i++) {
+            if (/\n/.test(truth.value[i])) {
+                lfIndices.push(i);
+            }
+        }
+
+        var isMultiline = lfIndices.length === 0 ? false : true;
+        if (isMultiline) {
+            // Truth value is is multiline
+
+            // Treat the beginning of truth value as an LF
+            lfIndices.unshift(0);
+            // Treat the end of truth value as an LF only if it isn't
+            if (!/\n/.test(truth.value[truth.value.length - 1]) ){
+                lfIndices.push(truth.value.length - 1);
             }
 
-            // Find nearest LF index relative to cursor
-            var nearestLfIndicesIndex = 0;
+            // Find nearest previous LF index relative to cursor
+            var nearestLfIndicesIndex = -1;
             for(var i = 0; i < lfIndices.length; i++) {
-                // Look +1 characters ahead of the cursor
-                if (lfIndices[i] <= cursorIndex + 1) {
+                if (lfIndices[i] <= cursorIndex) {
                     nearestLfIndicesIndex = i;
                 }else {
                     break;
                 }
             }
-            // Get characters between x LFs before cursor and x+1 LFs after cursor
-            const padLfMax = 5;
+
+            // We want ideally 2 lines before and 2 after the cursor's line, if not at most 5 lines including the cursor's line.
+            // We need 2 LFs before and 3 LFs after (1 extra LF)
+            // i.e.
+            // <LF>
+            // <LF>
+            // <nearestLF>...<cursor>
+            // <LF>
+            // <LF>
+            // <LF>
+            const maxLf = 6; // Includes nearest LF
             const padLfBefore = 2;
-            const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
-            const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
-            // If there are enough LF characters following the cursor, set our new peek indices to the LF positions
-            if (lfIndices[endLfIndicesIdx] > 0) {
-                startIndex = lfIndices[startLfIndicesIdx];
-                endIndex = lfIndices[endLfIndicesIdx];
-                console.log('startIndex: ' + startIndex);
-                console.log('endIndex: ' + endIndex);
+            const padLfAfter = 3;
+            var startLfIndicesIdx, endLfIndicesIdx;
+            if (nearestLfIndicesIndex - padLfBefore < 0) {
+                // Not enough LF to pad before nearest LF
+                startLfIndicesIdx = 0;
+                // Pad leftover LF after nearest LF
+                endLfIndicesIdx = startLfIndicesIdx + maxLf - 1 > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + maxLf - 1;
+            }else if (nearestLfIndicesIndex + padLfAfter > lfIndices.length - 1) {
+                // Not enough LF to pad after nearest LF
+                endLfIndicesIdx = lfIndices.length - 1;
+                // Pad leftover LF before nearest LF
+                startLfIndicesIdx = endLfIndicesIdx - maxLf + 1 < 0 ? 0 : endLfIndicesIdx - maxLf + 1;
+            }else {
+                // Pad desired number of LF before and after nearest LF
+                startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore;
+                endLfIndicesIdx = nearestLfIndicesIndex + padLfAfter;
+            }
+
+            startIndex = lfIndices[startLfIndicesIdx];
+            endIndex = lfIndices[endLfIndicesIdx];
+
+            // Exclude the finalmost LF character if not near the end
+            if (endLfIndicesIdx < lfIndices.length - 1) {
+                endIndex = lfIndices[endLfIndicesIdx] - 1;
+            }
+
+            // Always trim down to a maximum length (But this breaks legibility, since text physically moves)
+            // if (endIndex > startIndex + maxLength - 1) {
+            //     isMultiline = false;
+            // }
+        }
+
+        if (!isMultiline) {
+            // Truth value is single line
+
+            if (truth.value.length <= maxLength) {
+                // Keep the entire string
+                startIndex = 0;
+                endIndex = truth.value.length - 1;
+            }else {
+                // Trim the string
+                if (cursorIndex - padCharacters < 0) {
+                    // Not enough characters to pad before cursor
+                    startIndex = 0;
+                    // Pad leftover characters after cursor
+                    endIndex = startIndex + maxLength - 1 > truth.value.length - 1 ? truth.value.length - 1 : startIndex + maxLength - 1;
+                }else if (cursorIndex + padCharacters > truth.value.length - 1) {
+                    // Not enough characters to pad after cursor
+                    endIndex = truth.value.length - 1;
+                    // Pad leftover characters before cursor
+                    startIndex = endIndex - maxLength + 1 < 0 ? 0 : endIndex - maxLength + 1;
+                }else {
+                    // Pad equal number of characters before and after cursor
+                    startIndex = cursorIndex - padCharacters;
+                    endIndex = cursorIndex + padCharacters;
+                }
             }
         }
+        // if (State.debug) {
+            console.log('startIndex: ' + startIndex);
+            console.log('endIndex: ' + endIndex);
+        // }
         return [startIndex, endIndex];
     }
 
