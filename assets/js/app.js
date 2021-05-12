@@ -558,7 +558,7 @@ var Bubble = function(default_value) {
         virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : parseFloat((virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2));
 
         if ( (environment.perfection && virtue.result.success && bubble.value.length == truth.value.length) ||
-             (!environment.perfection && bubble.value.length == truth.value.length)
+             (!environment.perfection && bubble.value.length >= truth.value.length)
             ) {
             virtue.result.completed = true;
             var now = new Date();
@@ -669,7 +669,7 @@ var Memory = function() {
             repeatone: 'repeatone',
         },
         playmode: 'shuffleglobal',
-        perfection : true,
+        perfection : false,
         jumble : false,
         scramble : false,
         ambience: 'sky',
