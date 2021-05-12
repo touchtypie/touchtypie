@@ -1266,8 +1266,9 @@ var Training = function() {
         // Validate student response
         var virtue = student.response.virtue;
         student.response.measureVirtue(trainer.truth, trainer.memory.environment);
+
         // Set trainer speech value
-        trainer.speech.value = virtue.result.value;
+        trainer.speech.value = virtue.result.value_zonal;
     }
 
     return {
