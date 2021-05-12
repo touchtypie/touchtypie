@@ -468,6 +468,9 @@ speech value character {
     font-size: 1.5vw;
     line-height: 1.5vw;
 }
+speech value character.line-feed-placeholder {
+    border: 1px solid transparent;
+}
 speech value character.line-feed {
     border: 1px solid transparent;
 }
