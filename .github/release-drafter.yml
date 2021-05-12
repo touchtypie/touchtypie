@@ -43,6 +43,7 @@ version-resolver:
       - 'style'
       - 'docs'
       - 'documentation'
+      - 'chore'
   default: patch
 sort-by: title
 template: |
