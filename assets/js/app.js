@@ -313,48 +313,87 @@ var Bubble = function(default_value) {
         this.virtue = BehaviorVirtue();
     };
 
-    // Returns two indices representing a peek (substring) in truth proximal to the current bubble cursor
+    // Returns two indices representing a peek (substring) in truth proximal to the current cursor
     var getPeekIndices = function(bubble, truth) {
-        const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1: 0;
+        // THe cursor is one character ahead of the bubble value
+        const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1 + 1: 0;
 
-        // By default the peak (substring) around the cursor is x maximum characters
-        const maxLength = 100;
-        var startIndex = cursorIndex - ((maxLength / 2) - 1) > 0 ? cursorIndex - ((maxLength / 2) - 1) : 0
-        var endIndex = cursorIndex + ((maxLength / 2) - 1) < maxLength ? cursorIndex + ((maxLength / 2) - 1) : maxLength;
+        // By default the peak (substring) around the cursor is x maximum characters. Length includes cursor.
+        const maxLength = 101;
+        var startIndex, endIndex;
         // return truth.value.substr(startIndex, endIndex - startIndex);
 
         // From this point, determine if the truth value is multiline.
-        // Determine all LF indices of truth value. Consider the start of string as a LF
-        var lfIndices = [0];
-        if (lfIndices.length > 0) {
-            for (var i = 0; i < truth.value.length; i++) {
-                if (/\n/.test(truth.value[i])) {
-                    lfIndices.push(i);
-                }
+        // Determine all LF indices of truth value.
+        var lfIndices = [];
+        for (var i = 0; i < truth.value.length; i++) {
+            if (/\n/.test(truth.value[i])) {
+                lfIndices.push(i);
             }
+        }
 
-            // Find nearest LF index relative to cursor
-            var nearestLfIndicesIndex = 0;
+        if (lfIndices.length > 0) {
+            // Truth value is is multiline
+
+            // Consider the beginning and end of truth value as LFs.
+            lfIndices.unshift(0);
+            lfIndices.push(truth.value.length - 1);
+
+            // Find nearest previous LF index relative to cursor
+            var nearestLfIndicesIndex = -1;
             for(var i = 0; i < lfIndices.length; i++) {
-                // Look +1 characters ahead of the cursor
-                if (lfIndices[i] <= cursorIndex + 1) {
+                if (lfIndices[i] <= cursorIndex) {
                     nearestLfIndicesIndex = i;
                 }else {
                     break;
                 }
             }
-            // Get characters between x LFs before cursor and x+1 LFs after cursor
+
+            // We want ideally 2 lines before and 2 after the cursor's line, if not at most 5 lines including the cursor's line.
             const padLfMax = 5;
             const padLfBefore = 2;
+            // Begin at two LF before the current line ideally
             const startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore < 0 ? 0 : nearestLfIndicesIndex - padLfBefore;
+            // Until two LFs after the current line ideally
             const endLfIndicesIdx = startLfIndicesIdx + padLfMax > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + padLfMax;
-            // If there are enough LF characters following the cursor, set our new peek indices to the LF positions
-            if (lfIndices[endLfIndicesIdx] > 0) {
-                startIndex = lfIndices[startLfIndicesIdx];
-                endIndex = lfIndices[endLfIndicesIdx];
-                console.log('startIndex: ' + startIndex);
-                console.log('endIndex: ' + endIndex);
+
+            startIndex = lfIndices[startLfIndicesIdx];
+            endIndex = lfIndices[endLfIndicesIdx];
+
+            // Always trim down to a maximum length
+            if (endIndex > startIndex + maxLength - 1) {
+                endIndex = startIndex + maxLength - 1;
             }
+        }else {
+            // Truth value is single line
+
+            const padCharactersMax = Math.floor(maxLength / 2);
+            if (truth.value.length <= maxLength) {
+                // Begin at start of string
+                startIndex = 0;
+                // Until the end of string
+                endIndex = truth.value.length - 1;
+            }else {
+                if (cursorIndex - padCharactersMax < 0) {
+                    // Not enough characters to pad before cursor
+                    startIndex = 0;
+                    // Pad leftover characters after cursor
+                    endIndex = startIndex + maxLength - 1 > truth.value.length - 1 ? truth.value.length - 1 : startIndex + maxLength - 1;
+                }else if (cursorIndex + padCharactersMax > truth.value.length - 1) {
+                    // Not enough characters to pad after cursor
+                    endIndex = truth.value.length - 1;
+                    // Pad leftover characters before cursor
+                    startIndex = endIndex - maxLength + 1 < 0 ? 0 : endIndex - maxLength + 1;
+                }else {
+                    // Pad equal number of characters before and after cursor
+                    startIndex = cursorIndex - padCharactersMax;
+                    endIndex = cursorIndex + padCharactersMax;
+                }
+            }
+        }
+        if (State.debug) {
+            console.log('startIndex: ' + startIndex);
+            console.log('endIndex: ' + endIndex);
         }
         return [startIndex, endIndex];
     }
@@ -2352,7 +2391,7 @@ var TrainingController = function () {
 var State = function() {
     return {
         bookLibraryIds: [
-            'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
+            '.dev/books/library.txt'
         ],
         debug: false,
         training: Training()
