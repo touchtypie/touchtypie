@@ -76,6 +76,17 @@ header>banner span {
     font-size: 2vw;
     text-transform: uppercase;
 }
+@media screen and (max-aspect-ratio: 13/10) {
+    header {
+        padding: 4vw;
+        /* border-bottom: 1px solid #000; */
+    }
+    header>banner span {
+        width: 100%;
+        font-size: 4vw;
+    }
+}
+
 main {
     display: block;
     text-align: center;
@@ -150,6 +161,15 @@ menu environment popup heading {
 menu environment.customize popup heading {
     display: block;
 }
+@media screen and (max-aspect-ratio: 13/10) {
+    menu environment popup {
+        padding: 4.5vw;
+    }
+    menu environment popup heading {
+        font-size: 4vw;
+        margin-bottom: 3vw;
+    }
+}
 
 menubutton {
     display: inline-block;
@@ -175,6 +195,14 @@ menubutton span {
     color: #fff;
     font-size: 3vw;
     line-height: 1;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    menubutton {
+        padding: 1vw;
+    }
+    menubutton span {
+        font-size: 6vw;
+    }
 }
 
 menuswitch {
@@ -219,6 +247,27 @@ switch handle {
 switch.true handle {
     margin-left: 1vw;
     background: rgba(255, 255, 255, 1.0);
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    menuswitch {
+        margin-top: 2vw;
+    }
+    menuswitch label {
+        font-size: 2vw;
+    }
+    switch {
+        border-radius: 2vw;
+        padding: 2px;
+        width: calc( 4vw + 4px + 2px );
+        height: calc( 2vw + 4px + 2px );
+    }
+    switch handle {
+        width: 2vw;
+        height: 2vw;
+    }
+    switch.true handle {
+        margin-left: 2vw;
+    }
 }
 
 menumultiswitch {
@@ -266,6 +315,23 @@ menumultiswitch symbol.shuffle span {
     font-family: monospace;
     color: #085078;
     text-align: center;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    menumultiswitch {
+        margin-top: 2vw;
+    }
+    menumultiswitch label {
+        font-size: 2vw;
+    }
+    menumultiswitch symbol emoji {
+        font-size: 3vw;
+        height: 3vw;
+    }
+    menumultiswitch symbol.shuffle span {
+        width: 2vw;
+        height: 2vw;
+        font-size: 2vw;
+    }
 }
 
 menuselect {
@@ -318,7 +384,7 @@ menuselect input {
     border-radius: 5vw;
     font-family: monospace;
     font-size: 1vw;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
     outline: none;
 }
@@ -361,9 +427,33 @@ menuselect add {
     font-family: monospace;
     font-size: 1vw;
     font-weight: bold;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
     cursor: pointer;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    menuselect {
+        margin-top: 2vw;
+    }
+    menuselect label {
+        font-size: 2vw;
+    }
+
+    menuselect select {
+        font-size: 2vw;
+    }
+    menuselect select option {
+        font-size: 2vw;
+    }
+    menuselect input {
+        font-size: 2vw;
+    }
+    menuselect add {
+        width: calc(2vw + 4px + 2px);
+        height: calc(2vw + 4px + 2px);
+        padding: 1px;
+        font-size: 2vw;
+    }
 }
 
 menuambienceswitch {
@@ -383,6 +473,11 @@ menuambienceswitch label {
     text-transform: uppercase;
     line-height: 1;
 }
+menuambienceswitch ambiences {
+    display: inline-block;
+    width: 66.67%;
+    vertical-align: middle;
+}
 menuambienceswitch choice {
     display: inline-block;
     vertical-align: middle;
@@ -394,13 +489,34 @@ menuambienceswitch choice {
     padding: 1px;
     font-family: monospace;
     font-size: 1vw;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
     cursor: pointer;
 }
 menuambienceswitch choice.active {
     border: 1px solid rgba(255, 255, 255, 1.0);
     box-shadow: 0 0 0.3vw 0.1vw #fff;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    menuambienceswitch {
+        margin-top: 2vw;
+        /* Account for choice's margin-top and margin-bottom */
+        margin-bottom: -1vw;
+    }
+    menuambienceswitch label {
+        font-size: 2vw;
+    }
+    menuambienceswitch choice {
+        width: calc( 2vw + 4px + 2px );
+        height: calc( 2vw + 4px + 2px );
+        border-radius: 2vw;
+        padding: 2px;
+        font-size: 2vw;
+        margin-bottom: 1vw;
+    }
+    menuambienceswitch choice.active {
+        box-shadow: 0 0 0.6vw 0.2vw #fff;
+    }
 }
 
 menuexport {
@@ -439,6 +555,19 @@ menuexport download {
 menuexport download:hover {
     background: #fff;
     color: #085078;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    menuexport {
+        margin-top: 2vw;
+    }
+    menuexport label {
+        font-size: 2vw;
+    }
+    menuexport download {
+        height: calc(2vw + 8px + 2px);
+        padding: 4px 2vw;
+        font-size: 2vw;
+    }
 }
 
 truth {
@@ -496,12 +625,24 @@ speech value character.invalid {
 speech value character.valid {
     border: 1px solid transparent;
 }
+@media screen and (max-aspect-ratio: 13/10) {
+    speech {
+        margin-top: 2vw;
+    }
+    speech value {
+        width: 83.33%;
+    }
+    speech value character {
+        height: calc(3vw + 2px);
+        font-size: 3vw;
+        line-height: 1;
+    }
+}
 
 response {
     display: block;
     margin-top: 2vw;
 }
-
 response textarea {
     display: block;
     margin: 0 auto;
@@ -518,6 +659,15 @@ response textarea {
     outline: none;
     /* border: none; */
     /* letter-spacing: 0.25vw; */
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    response {
+        margin-top: 3vw;
+    }
+    response textarea {
+        width: 83.33%;
+        font-size: 3vw;
+    }
 }
 
 statistics {
@@ -657,12 +807,97 @@ statistics globaloverall span {
     font-weight: normal;
     font-size: 1vw;
 }
+@media screen and (max-aspect-ratio: 13/10) {
+    statistics unitprogress {
+        display: block;
+        width: 83.33%;
+        margin: 0 auto;
+    }
+    statistics unitprogress heading {
+        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
+        font-size: 3vw;
+    }
+    statistics unitprogress characterscounter,
+    statistics unitprogress characterspercentagecounter,
+    statistics unitprogress hitcounter,
+    statistics unitprogress hitpercentagecounter,
+    statistics unitprogress misscounter,
+    statistics unitprogress misspercentagecounter {
+        font-size: 3vw;
+    }
+    statistics unitprogress label,
+    statistics unitprogress value,
+    statistics unitprogress total,
+    statistics unitprogress span {
+        font-size: 3vw;
+    }
+
+    statistics unitoverall {
+        display: block;
+        width: 83.33%;
+        margin: 0 auto;
+    }
+    statistics unitoverall heading {
+        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
+        font-size: 3vw;
+    }
+    statistics unitoverall datetimestart,
+    statistics unitoverall datetimestopwatch,
+    statistics unitoverall ratehitpermincounter,
+    statistics unitoverall shotcounter,
+    statistics unitoverall hitcounter,
+    statistics unitoverall hitpercentagecounter,
+    statistics unitoverall misscounter,
+    statistics unitoverall misspercentagecounter,
+    statistics unitoverall amendcounter,
+    statistics unitoverall amendpercentagecounter,
+    statistics unitoverall othercounter,
+    statistics unitoverall otherpercentagecounter {
+        font-size: 3vw;
+    }
+    statistics unitoverall label,
+    statistics unitoverall value,
+    statistics unitoverall total,
+    statistics unitoverall span {
+        font-size: 3vw;
+    }
+
+
+    statistics globaloverall {
+        display: block;
+        width: 83.33%;
+        margin: 0 auto;
+    }
+    statistics globaloverall heading {
+        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
+        font-size: 3vw;
+    }
+    statistics globaloverall datetimestopwatch,
+    statistics globaloverall shotcounter,
+    statistics globaloverall ratehitpermincounter,
+    statistics globaloverall hitcounter,
+    statistics globaloverall hitpercentagecounter,
+    statistics globaloverall misscounter,
+    statistics globaloverall misspercentagecounter,
+    statistics globaloverall amendcounter,
+    statistics globaloverall amendpercentagecounter,
+    statistics globaloverall othercounter,
+    statistics globaloverall otherpercentagecounter,
+    statistics globaloverall unitcounter {
+        font-size: 3vw;
+    }
+    statistics globaloverall label,
+    statistics globaloverall value,
+    statistics globaloverall total,
+    statistics globaloverall span {
+        font-size: 3vw;
+    }
+}
 
 footer {
     margin-top: 2vw;
     margin-bottom: 2vw;
 }
-
 footer icons {
     display: block;
     text-align: center;
@@ -677,4 +912,18 @@ footer icons > a {
 footer icons > a > svg {
     width: 3vw;
     fill: #fff;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    footer {
+        margin-top: 6vw;
+        margin-bottom: 4vw;
+    }
+    footer icons > a {
+        border-radius: 1vw;
+        padding: 0.2vw;
+    }
+    footer icons > a > svg {
+        width: 6vw;
+        fill: #fff;
+    }
 }
