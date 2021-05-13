@@ -173,6 +173,7 @@ menubutton span {
     display: inline-block;
     vertical-align: middle;
     color: #fff;
+    font-family: monospace;
     font-size: 3vw;
     line-height: 1;
 }
@@ -203,8 +204,8 @@ switch {
     border-radius: 1vw;
     width: calc( 2vw + 2px + 2px );
     height: calc( 1vw + 2px + 2px );
-    padding: 1px;
     border: 1px solid #fff;
+    padding: 1px;
     cursor: pointer;
 }
 switch handle {
@@ -249,22 +250,23 @@ menumultiswitch symbol {
 menumultiswitch symbol emoji {
     display: inline-block;
     vertical-align: middle;
-    line-height: 1;
-    font-size: 1.5vw;
     height: 1.5vw;
+    font-family: monospace;
+    font-size: 1.5vw;
+    line-height: 1;
 }
 menumultiswitch symbol.shuffle span {
     display: inline-block;
     vertical-align: middle;
-    font-size: 1vw;
-    line-height: 1;
     width: 1vw;
     height: 1vw;
     border: 1px solid #fff;
     border-radius: 50%;
     background: #fff;
-    font-family: monospace;
     color: #085078;
+    font-family: monospace;
+    font-size: 1vw;
+    line-height: 1;
     text-align: center;
 }
 
@@ -284,6 +286,7 @@ menuselect label {
     font-family: monospace;
     font-weight: normal;
     font-size: 1vw;
+    line-height: 1;
     text-align: center;
     text-transform: uppercase;
 }
@@ -298,27 +301,27 @@ menuselect select {
     border-radius: 5vw;
     font-family: monospace;
     font-size: 1vw;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
 }
 menuselect select option {
     color: #f00;
     font-family: monospace;
     font-size: 1vw;
-    line-height: 1vw;
+    line-height: 1;
 }
 menuselect input {
     display: inline-block;
     vertical-align: middle;
     width: 60.67%;
     height: auto;
-    color: #fff;
-    background: transparent;
     border: 1px solid #fff;
     border-radius: 5vw;
+    background: transparent;
+    color: #fff;
     font-family: monospace;
     font-size: 1vw;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
     outline: none;
 }
@@ -361,7 +364,7 @@ menuselect add {
     font-family: monospace;
     font-size: 1vw;
     font-weight: bold;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
     cursor: pointer;
 }
@@ -379,9 +382,14 @@ menuambienceswitch label {
     font-family: monospace;
     font-weight: normal;
     font-size: 1vw;
+    line-height: 1;
     text-align: center;
     text-transform: uppercase;
-    line-height: 1;
+}
+menuambienceswitch ambiences {
+    display: inline-block;
+    width: 66.67%;
+    vertical-align: middle;
 }
 menuambienceswitch choice {
     display: inline-block;
@@ -394,7 +402,7 @@ menuambienceswitch choice {
     padding: 1px;
     font-family: monospace;
     font-size: 1vw;
-    line-height: 1vw;
+    line-height: 1;
     text-align: center;
     cursor: pointer;
 }
@@ -416,9 +424,9 @@ menuexport label {
     font-family: monospace;
     font-weight: normal;
     font-size: 1vw;
+    line-height: 1;
     text-align: center;
     text-transform: uppercase;
-    line-height: 1;
 }
 menuexport download {
     display: inline-block;
@@ -432,8 +440,8 @@ menuexport download {
     font-family: monospace;
     font-weight: normal;
     font-size: 1vw;
-    text-transform: uppercase;
     line-height: 1;
+    text-transform: uppercase;
     cursor: pointer;
 }
 menuexport download:hover {
@@ -466,7 +474,7 @@ speech value character {
     color: #fff;
     font-family: monospace;
     font-size: 1.5vw;
-    line-height: 1.5vw;
+    line-height: 1;
 }
 speech value character.line-feed-placeholder {
     border: 1px solid transparent;
@@ -501,7 +509,6 @@ response {
     display: block;
     margin-top: 2vw;
 }
-
 response textarea {
     display: block;
     margin: 0 auto;
@@ -662,7 +669,6 @@ footer {
     margin-top: 2vw;
     margin-bottom: 2vw;
 }
-
 footer icons {
     display: block;
     text-align: center;
