@@ -1525,6 +1525,7 @@ var Component = function(c) {
 
 // Controllers
 var HomeController = function () {
+    const id = 'home';
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
@@ -1879,9 +1880,14 @@ var HomeController = function () {
         document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
-}
+
+    return {
+        id: 'home'
+    }
+};
 
 var EnvironmentController = function() {
+    const id = 'environment';
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
@@ -2383,7 +2389,6 @@ var EnvironmentController = function() {
                         // Set backgrounds on UI
                         var backgroundImage = c.props.ambiences[ele.name];
                         document.body.style.backgroundImage = backgroundImage;
-                        document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0].style.backgroundImage = backgroundImage;
                         // Update choices
                         c.methods.updateChoices(c);
                     });
@@ -2422,7 +2427,11 @@ var EnvironmentController = function() {
             }
         }
     });
-}
+
+    return {
+        id: id
+    };
+};
 
 // App state
 var State = function() {
@@ -2431,10 +2440,36 @@ var State = function() {
             'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
         ],
         debug: false,
+        scene: 'home',
+        scenes: [],
         training: Training()
     }
 }();
+var SceneController = function() {
+    var scene = '';
+
+    // Create a setter that shows active scene while hiding inactive scenes
+    Object.defineProperty(State, 'scene', {
+        get: function() {
+            return scene;
+        },
+        set: function(newScene) {
+            for (var i = 0; i < State.scenes.length; i++ ) {
+                var sceneParentEle = document.getElementsByTagName(State.scenes[i].id)[0];
+                if (State.scenes[i].id === newScene) {
+                    sceneParentEle.style.display = 'block';
+                }else {
+                    sceneParentEle.style.display = 'none';
+                }
+            }
+            scene = newScene;
+        }
+    });
+}
 var myApp = function () {
-    HomeController();
-    EnvironmentController();
+    State.scenes.push(
+        HomeController(),
+        EnvironmentController()
+    );
+    SceneController();
 }();
