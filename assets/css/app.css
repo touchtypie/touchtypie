@@ -103,20 +103,24 @@ menu {
     left: 2.5vw;
     padding: 0;
 }
-
-menubutton {
+menu menubutton {
     display: inline-block;
     cursor: pointer;
 }
-menubutton icon {
+menu menubutton icon {
     display: block;
+    width: 3vw;
+    height: 3vw;
     color: #fff;
     font-family: monospace;
     font-size: 3vw;
     line-height: 1;
+    text-align: center;
 }
 @media screen and (max-aspect-ratio: 13/10) {
-    menubutton icon {
+    menu menubutton icon {
+        width: 6vw;
+        height: 6vw;
         font-size: 6vw;
     }
 }
@@ -861,56 +865,12 @@ environment {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
-environment.customize {
+environment main {
     display: block;
-}
-environment.customize menubutton  {
-    /* background: #fff; */
-}
-environment.customize menubutton icon  {
-    /* color: #085078; */
-}
-environment backdrop {
-    display: block;
-    position: fixed;
-    z-index: 2;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.7);
-}
-environment popup {
-    display: block;
-    position: fixed;
-    z-index: 3;
-    border: 1px solid #fff;
-    border-radius: 1vw;
-    background: linear-gradient(45deg, rgb(0, 158, 217) 0%, rgb(0, 186, 255) 50%);
-    background: linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
-    background-attachment:fixed;
-    color: #fff;
-    top: 10vw;
-    right: 10vw;
-    bottom: 10vw;
-    left: 10vw;
-    padding: 3vw 9vw;
-}
-environment popup heading {
-    display: block;
-    color: #fff;
-    font-family: monospace;
-    font-weight: normal;
-    font-size: 2vw;
-    text-align: center;
-    margin-bottom: 2vw;
+    padding: 0 16.67%;
 }
 @media screen and (max-aspect-ratio: 13/10) {
-    environment popup {
-        padding: 4.5vw;
-    }
-    environment popup heading {
+    environment header heading {
         font-size: 4vw;
-        margin-bottom: 3vw;
     }
 }
