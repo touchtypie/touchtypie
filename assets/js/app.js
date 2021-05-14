@@ -1531,7 +1531,7 @@ var HomeController = function () {
 
     // Event listeners - Component: menu
     document.getElementsByTagName('home')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        environment.state = environment.state === '' ? 'customize' : '';
+        State.scene = 'environment';
     });
 
     // Data binding - Component: truth
@@ -1891,22 +1891,14 @@ var EnvironmentController = function() {
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
-    // Data binding - Component: menu
-    Binding({
-        object: environment,
-        property: "state"
-    })
-    .addBinding(
-        document.getElementsByTagName('environment')[0],
-        'className',
-    );
-    document.getElementsByTagName('environment')[0].getElementsByTagName('backdrop')[0].addEventListener('click', function(element, event) {
-        environment.state = environment.state === '' ? 'customize' : '';
+    // Event listeners - Component: menu
+    document.getElementsByTagName('environment')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
+        State.scene = 'home';
     });
 
     // Components
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_booklibraries',
         template: `
             <menuselect>
@@ -2067,7 +2059,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_bookcollections',
         template: `
         <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
@@ -2116,7 +2108,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_books',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
@@ -2168,7 +2160,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menumultiswitch-playmode',
         template: `
             <menumultiswitch><label>playmode</label><symbol b-on="DOMContentLoaded,click" title="{{ ._training.trainer.memory.environment.playmode }}"></symbol></menumultiswitch>
@@ -2219,7 +2211,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch',
         template: `
             <menuswitch><label>perfection</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.perfection }}"><handle></handle></switch></menuswitch>
@@ -2237,7 +2229,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch_jumble',
         template: `
             <menuswitch><label>jumble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.jumble }}"><handle></handle></switch></menuswitch>
@@ -2265,7 +2257,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch_scramble',
         template: `
             <menuswitch><label>scramble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.scramble }}"><handle></handle></switch></menuswitch>
@@ -2294,7 +2286,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch',
         template: `
             <menuswitch><label>statistics</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.statistics }}"><handle></handle></switch></menuswitch>
@@ -2317,7 +2309,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuambienceswitch',
         template: `
             <menuambienceswitch>
@@ -2389,7 +2381,6 @@ var EnvironmentController = function() {
                         // Set backgrounds on UI
                         var backgroundImage = c.props.ambiences[ele.name];
                         document.body.style.backgroundImage = backgroundImage;
-                        document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0].style.backgroundImage = backgroundImage;
                         // Update choices
                         c.methods.updateChoices(c);
                     });
@@ -2401,7 +2392,7 @@ var EnvironmentController = function() {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuexport',
         props: {
             _training: _training
