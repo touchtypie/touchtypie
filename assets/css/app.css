@@ -873,7 +873,7 @@ footer icons > a > svg {
 }
 
 environment {
-    display: block;
+    display: none;
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -882,6 +882,9 @@ environment {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
+environment.customize {
+    display: block;
+}
 environment.customize menubutton  {
     /* background: #fff; */
 }
@@ -889,7 +892,7 @@ environment.customize menubutton span  {
     /* color: #085078; */
 }
 environment backdrop {
-    display: none;
+    display: block;
     position: fixed;
     z-index: 2;
     top: 0;
@@ -898,11 +901,8 @@ environment backdrop {
     left: 0;
     background: rgba(255, 255, 255, 0.7);
 }
-environment.customize backdrop {
-    display: block;
-}
 environment popup {
-    display: none;
+    display: block;
     position: fixed;
     z-index: 3;
     border: 1px solid #fff;
@@ -917,20 +917,14 @@ environment popup {
     left: 10vw;
     padding: 3vw 9vw;
 }
-environment.customize popup {
-    display: block;
-}
 environment popup heading {
-    display: none;
+    display: block;
     color: #fff;
     font-family: monospace;
     font-weight: normal;
     font-size: 2vw;
     text-align: center;
     margin-bottom: 2vw;
-}
-environment.customize popup heading {
-    display: block;
 }
 @media screen and (max-aspect-ratio: 13/10) {
     environment popup {
