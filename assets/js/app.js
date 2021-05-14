@@ -1552,21 +1552,6 @@ var HomeController = function () {
     .addBinding(
         document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
         'innerHTML'
-    )
-    .addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
-        'innerHTML',
-        "DOMContentLoaded",
-        function(event, _this, binding) {
-            if (State.debug) {
-                console.log('[DOMContentLoaded]');
-            }
-
-            // _training.prepare();
-
-            // Might want to get data on init
-            // _training.next()
-        }
     );
 
     // Data binding - Component: response
@@ -1586,7 +1571,6 @@ var HomeController = function () {
         "DOMContentLoaded",
         function(event, _this, binding) {
             _training.student.setFocus(binding.element);
-            _training.student.focus();
         }
     ).addBinding(
         document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
@@ -2030,11 +2014,16 @@ var EnvironmentController = function() {
         eventsListeners: {
             DOMContentLoaded: function(event, _this, binding) {
                 var c = this;
-                _training.prepare(State.bookLibraryIds, function() {
-                    c.methods.createSelectOptions(c, binding);
-                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
-                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
-                });
+                State.onLoadHandlers.push(
+                    {
+                        context: c,
+                        callback:  function() {
+                            c.methods.createSelectOptions(c, binding);
+                            Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                            Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                        }
+                    }
+                );
             },
             change: function(event, _this, binding) {
                 var c = this;
@@ -2432,6 +2421,7 @@ var State = function() {
             'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
         ],
         debug: false,
+        onLoadHandlers: [],
         scene: 'home',
         scenes: [],
         training: Training()
@@ -2459,9 +2449,23 @@ var SceneController = function() {
     });
 }
 var myApp = function () {
+    // Initialize scenes
     State.scenes.push(
         HomeController(),
         EnvironmentController()
     );
     SceneController();
+
+    // Initialize the training
+    window.addEventListener('load', function(event) {
+        State.training.prepare(State.bookLibraryIds, function() {
+            // Perform all load handlers
+            var context, callback;
+            for (var i = 0; i < State.onLoadHandlers.length; i++) {
+                context = State.onLoadHandlers[i].context;
+                callback = State.onLoadHandlers[i].callback;
+                callback.apply(context);
+            }
+        });
+    });
 }();
