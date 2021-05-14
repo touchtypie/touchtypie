@@ -1524,29 +1524,383 @@ var Component = function(c) {
 };
 
 // Controllers
-var TrainingController = function () {
+var HomeController = function () {
     var _training = State.training;
+    var environment = _training.trainer.memory.environment;
+
+    // Event listeners - Component: menu
+    document.getElementsByTagName('home')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
+        environment.state = environment.state === '' ? 'customize' : '';
+    });
+
+    // Data binding - Component: truth
+    Binding({
+        object: _training.trainer.truth,
+        property: "value"
+    })
+    .addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('truth')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+
+    // Data binding - Component: speech
+    Binding({
+        object: _training.trainer.speech,
+        property: "value"
+    })
+    .addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    )
+    .addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
+        'innerHTML',
+        "DOMContentLoaded",
+        function(event, _this, binding) {
+            if (State.debug) {
+                console.log('[DOMContentLoaded]');
+            }
+
+            // _training.prepare();
+
+            // Might want to get data on init
+            // _training.next()
+        }
+    );
+
+    // Data binding - Component: response
+    new Binding({
+        object: _training.student.response,
+        property: "disabled"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        'disabled'    // textarea
+    )
+    new Binding({
+        object: _training.student.response,
+        property: "value"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        'value',    // textarea
+        "DOMContentLoaded",
+        function(event, _this, binding) {
+            _training.student.setFocus(binding.element);
+            _training.student.focus();
+        }
+    ).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        'value',    // textarea
+        "keyup",
+        function(event, _this, binding) {
+            var key = event.keyCode || event.charCode;
+
+            // Set student response. Remove all CRs
+            _this.valueSetter(binding.element[binding.attribute].replace(/\r/g, ''));
+            // Set student response counter
+            _training.student.response.charactersCounter = _training.student.response.value.length;
+
+            var virtue = _training.student.response.virtue;
+            // Validate student response
+            var started = _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.memory.environment, key);
+
+            // Update student virtue every interval
+            if (started) {
+                (function() {
+                    // Store reference to this virtue
+                    var _virtue = virtue;
+                    const intervalMilliseconds = 100;
+                    var intervalId = setInterval(function() {
+                        if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
+                            if (State.debug) {
+                                console.log('[keyup][interval] delete ' + ' ');
+                            }
+                            clearInterval(intervalId);
+                        }else {
+                            // if (State.debug) {
+                            //     console.log('[keyup][interval] ');
+                            // }
+                            _training.student.reflectVirtue(_virtue, true, false);
+                        }
+                    }, intervalMilliseconds);
+                    if (State.debug) {
+                        console.log('[keyup][interval] create');
+                    }
+                })();
+            }
+            // Set trainer speech value
+            _training.trainer.speech.value = virtue.result.value_zonal;
+            // Update student virtue non-time-based stats
+            _training.student.reflectVirtue(virtue, true, true);
+            if (virtue.result.completed) {
+                // Run the next training unit
+                _training.complete(virtue);
+                _training.next();
+
+                // Update environment books
+                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+            }
+
+            if (State.debug) {
+                console.log('[keyup] _training.trainer.truth.value: ' + _training.trainer.truth.value);
+                console.log('[keyup] _training.trainer.truth.charactersCounter: ' + _training.trainer.truth.charactersCounter);
+                console.log('[keyup] _training.trainer.speech.value: ' + _training.trainer.speech.value);
+                console.log('[keyup] _training.trainer.speech.charactersCounter: ' + _training.trainer.speech.charactersCounter);
+                console.log('[keyup] _training.student.response.value: ' + _training.student.response.value);
+                console.log('[keyup] _training.student.response.charactersCounter: ' + _training.student.response.charactersCounter);
+            }
+        }
+    )
+    // Data binding - Component: unitprogress
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "value_length"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.trainer.truth,
+        property: "charactersCounter"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "value_length_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('characterspercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "hit_num"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "hit_num_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "miss_num"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "miss_num_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+
+    // Data binding - Component: unitoverall
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "datetime_start_iso"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestart')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "datetime_stopwatch"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "shot_num_total"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "rate_hit_per_min"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "hit_num_total"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "hit_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "miss_num_total"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "miss_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "amend_num_total"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "amend_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_total"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_total_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+
+    // Data binding - Component: globaloverall
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "datetime_stopwatch_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "rate_hit_per_min_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "shot_num_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "hit_num_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "hit_num_global_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "miss_num_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "miss_num_global_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "amend_num_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "amend_num_global_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_global"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtue.result,
+        property: "other_num_global_percentage"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.student.virtues,
+        property: "count"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.trainer.memory,
+        property: "bookCount"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
+        'innerHTML'
+    );
+}
+
+var EnvironmentController = function() {
+    var _training = State.training;
+    var environment = _training.trainer.memory.environment;
 
     // Data binding - Component: menu
-    var environment = _training.trainer.memory.environment;
     Binding({
         object: environment,
         property: "state"
     })
     .addBinding(
-        document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0],
+        document.getElementsByTagName('environment')[0],
         'className',
     );
-    // Event listeners - Component: menu environment
-    document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
+    document.getElementsByTagName('environment')[0].getElementsByTagName('backdrop')[0].addEventListener('click', function(element, event) {
         environment.state = environment.state === '' ? 'customize' : '';
     });
-    document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('backdrop')[0].addEventListener('click', function(element, event) {
-        environment.state = environment.state === '' ? 'customize' : '';
-    });
+
     // Components
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_booklibraries',
         template: `
             <menuselect>
@@ -1707,7 +2061,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_bookcollections',
         template: `
         <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
@@ -1756,7 +2110,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuselect_books',
         template: `
             <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
@@ -1808,7 +2162,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menumultiswitch-playmode',
         template: `
             <menumultiswitch><label>playmode</label><symbol b-on="DOMContentLoaded,click" title="{{ ._training.trainer.memory.environment.playmode }}"></symbol></menumultiswitch>
@@ -1859,7 +2213,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuswitch',
         template: `
             <menuswitch><label>perfection</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.perfection }}"><handle></handle></switch></menuswitch>
@@ -1877,7 +2231,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuswitch_jumble',
         template: `
             <menuswitch><label>jumble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.jumble }}"><handle></handle></switch></menuswitch>
@@ -1905,7 +2259,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuswitch_scramble',
         template: `
             <menuswitch><label>scramble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.scramble }}"><handle></handle></switch></menuswitch>
@@ -1934,7 +2288,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuswitch',
         template: `
             <menuswitch><label>statistics</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.statistics }}"><handle></handle></switch></menuswitch>
@@ -1957,7 +2311,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuambienceswitch',
         template: `
             <menuambienceswitch>
@@ -2029,7 +2383,7 @@ var TrainingController = function () {
                         // Set backgrounds on UI
                         var backgroundImage = c.props.ambiences[ele.name];
                         document.body.style.backgroundImage = backgroundImage;
-                        document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0].style.backgroundImage = backgroundImage;
+                        document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0].style.backgroundImage = backgroundImage;
                         // Update choices
                         c.methods.updateChoices(c);
                     });
@@ -2041,7 +2395,7 @@ var TrainingController = function () {
         }
     });
     Component({
-        parentElement: document.getElementsByTagName('menu')[0].getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('popup')[0],
         name: 'menuexport',
         props: {
             _training: _training
@@ -2068,353 +2422,6 @@ var TrainingController = function () {
             }
         }
     });
-
-    // Data binding - Component: truth
-    Binding({
-        object: _training.trainer.truth,
-        property: "value"
-    })
-    .addBinding(
-        document.getElementsByTagName('truth')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-
-    // Data binding - Component: speech
-    Binding({
-        object: _training.trainer.speech,
-        property: "value"
-    })
-    .addBinding(
-        document.getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    )
-    .addBinding(
-        document.getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
-        'innerHTML',
-        "DOMContentLoaded",
-        function(event, _this, binding) {
-            if (State.debug) {
-                console.log('[DOMContentLoaded]');
-            }
-
-            // _training.prepare();
-
-            // Might want to get data on init
-            // _training.next()
-        }
-    );
-
-    // Data binding - Component: response
-    new Binding({
-        object: _training.student.response,
-        property: "disabled"
-    }).addBinding(
-        document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
-        'disabled'    // textarea
-    )
-    new Binding({
-        object: _training.student.response,
-        property: "value"
-    }).addBinding(
-        document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
-        'value',    // textarea
-        "DOMContentLoaded",
-        function(event, _this, binding) {
-            _training.student.setFocus(binding.element);
-            _training.student.focus();
-        }
-    ).addBinding(
-        document.getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
-        'value',    // textarea
-        "keyup",
-        function(event, _this, binding) {
-            var key = event.keyCode || event.charCode;
-
-            // Set student response. Remove all CRs
-            _this.valueSetter(binding.element[binding.attribute].replace(/\r/g, ''));
-            // Set student response counter
-            _training.student.response.charactersCounter = _training.student.response.value.length;
-
-            var virtue = _training.student.response.virtue;
-            // Validate student response
-            var started = _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.memory.environment, key);
-
-            // Update student virtue every interval
-            if (started) {
-                (function() {
-                    // Store reference to this virtue
-                    var _virtue = virtue;
-                    const intervalMilliseconds = 100;
-                    var intervalId = setInterval(function() {
-                        if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
-                            if (State.debug) {
-                                console.log('[keyup][interval] delete ' + ' ');
-                            }
-                            clearInterval(intervalId);
-                        }else {
-                            // if (State.debug) {
-                            //     console.log('[keyup][interval] ');
-                            // }
-                            _training.student.reflectVirtue(_virtue, true, false);
-                        }
-                    }, intervalMilliseconds);
-                    if (State.debug) {
-                        console.log('[keyup][interval] create');
-                    }
-                })();
-            }
-            // Set trainer speech value
-            _training.trainer.speech.value = virtue.result.value_zonal;
-            // Update student virtue non-time-based stats
-            _training.student.reflectVirtue(virtue, true, true);
-            if (virtue.result.completed) {
-                // Run the next training unit
-                _training.complete(virtue);
-                _training.next();
-
-                // Update environment books
-                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
-            }
-
-            if (State.debug) {
-                console.log('[keyup] _training.trainer.truth.value: ' + _training.trainer.truth.value);
-                console.log('[keyup] _training.trainer.truth.charactersCounter: ' + _training.trainer.truth.charactersCounter);
-                console.log('[keyup] _training.trainer.speech.value: ' + _training.trainer.speech.value);
-                console.log('[keyup] _training.trainer.speech.charactersCounter: ' + _training.trainer.speech.charactersCounter);
-                console.log('[keyup] _training.student.response.value: ' + _training.student.response.value);
-                console.log('[keyup] _training.student.response.charactersCounter: ' + _training.student.response.charactersCounter);
-            }
-        }
-    )
-    // Data binding - Component: unitprogress
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "value_length"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.trainer.truth,
-        property: "charactersCounter"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "value_length_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('characterspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-
-    // Data binding - Component: unitoverall
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "datetime_start_iso"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestart')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "datetime_stopwatch"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "shot_num_total"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "rate_hit_per_min"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_total"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_total"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_total"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_total"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('unitoverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-
-    // Data binding - Component: globaloverall
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "datetime_stopwatch_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "rate_hit_per_min_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "shot_num_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_global"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtues,
-        property: "count"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.trainer.memory,
-        property: "bookCount"
-    }).addBinding(
-        document.getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
-        'innerHTML'
-    );
 }
 
 // App state
@@ -2428,5 +2435,6 @@ var State = function() {
     }
 }();
 var myApp = function () {
-    TrainingController();
+    HomeController();
+    EnvironmentController();
 }();

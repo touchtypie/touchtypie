@@ -50,6 +50,10 @@ wrapper {
     display: block;
 }
 
+home {
+    display: block;
+}
+
 header {
     padding: 2vw;
     /* border-bottom: 1px solid #000; */
@@ -101,74 +105,6 @@ menu {
     padding: 0;
     top: 2vw;
     left: 2vw;
-}
-menu environment {
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-menu environment.customize menubutton  {
-    /* background: #fff; */
-}
-menu environment.customize menubutton span  {
-    /* color: #085078; */
-}
-menu environment backdrop {
-    display: none;
-    position: fixed;
-    z-index: 2;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.7);
-}
-menu environment.customize backdrop {
-    display: block;
-}
-menu environment popup {
-    display: none;
-    position: fixed;
-    z-index: 3;
-    border: 1px solid #fff;
-    border-radius: 1vw;
-    background: linear-gradient(45deg, rgb(0, 158, 217) 0%, rgb(0, 186, 255) 50%);
-    background: linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
-    background-attachment:fixed;
-    color: #fff;
-    top: 10vw;
-    right: 10vw;
-    bottom: 10vw;
-    left: 10vw;
-    padding: 3vw 9vw;
-}
-menu environment.customize popup {
-    display: block;
-}
-menu environment popup heading {
-    display: none;
-    color: #fff;
-    font-family: monospace;
-    font-weight: normal;
-    font-size: 2vw;
-    text-align: center;
-    margin-bottom: 2vw;
-}
-menu environment.customize popup heading {
-    display: block;
-}
-@media screen and (max-aspect-ratio: 13/10) {
-    menu environment popup {
-        padding: 4.5vw;
-    }
-    menu environment popup heading {
-        font-size: 4vw;
-        margin-bottom: 3vw;
-    }
 }
 
 menubutton {
@@ -933,5 +869,69 @@ footer icons > a > svg {
     footer icons > a > svg {
         width: 6vw;
         fill: #fff;
+    }
+}
+
+environment {
+    display: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+environment.customize {
+    display: block;
+}
+environment.customize menubutton  {
+    /* background: #fff; */
+}
+environment.customize menubutton span  {
+    /* color: #085078; */
+}
+environment backdrop {
+    display: block;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.7);
+}
+environment popup {
+    display: block;
+    position: fixed;
+    z-index: 3;
+    border: 1px solid #fff;
+    border-radius: 1vw;
+    background: linear-gradient(45deg, rgb(0, 158, 217) 0%, rgb(0, 186, 255) 50%);
+    background: linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
+    background-attachment:fixed;
+    color: #fff;
+    top: 10vw;
+    right: 10vw;
+    bottom: 10vw;
+    left: 10vw;
+    padding: 3vw 9vw;
+}
+environment popup heading {
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 2vw;
+    text-align: center;
+    margin-bottom: 2vw;
+}
+@media screen and (max-aspect-ratio: 13/10) {
+    environment popup {
+        padding: 4.5vw;
+    }
+    environment popup heading {
+        font-size: 4vw;
+        margin-bottom: 3vw;
     }
 }
