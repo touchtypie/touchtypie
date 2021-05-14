@@ -108,7 +108,7 @@ menubutton {
     display: inline-block;
     cursor: pointer;
 }
-menubutton label {
+menubutton icon {
     display: block;
     color: #fff;
     font-family: monospace;
@@ -116,7 +116,7 @@ menubutton label {
     line-height: 1;
 }
 @media screen and (max-aspect-ratio: 13/10) {
-    menubutton label {
+    menubutton icon {
         font-size: 6vw;
     }
 }
@@ -867,7 +867,7 @@ environment.customize {
 environment.customize menubutton  {
     /* background: #fff; */
 }
-environment.customize menubutton label  {
+environment.customize menubutton icon  {
     /* color: #085078; */
 }
 environment backdrop {
