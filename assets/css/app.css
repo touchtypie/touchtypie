@@ -58,7 +58,7 @@ header {
     padding: 2vw;
     /* border-bottom: 1px solid #000; */
 }
-header>banner {
+header heading {
     display: block;
     text-align: center;
 
@@ -70,7 +70,7 @@ header>banner {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
-header>banner span {
+header heading {
     display: block;
     width: 50%;
     margin: 0 auto;
@@ -85,7 +85,7 @@ header>banner span {
         padding: 4vw;
         /* border-bottom: 1px solid #000; */
     }
-    header>banner span {
+    header heading {
         width: 100%;
         font-size: 4vw;
     }
@@ -93,7 +93,6 @@ header>banner span {
 
 main {
     display: block;
-    text-align: center;
     position: relative;
 }
 
