@@ -336,7 +336,9 @@ var Bubble = function(default_value) {
             // Truth value is is multiline
 
             // Treat the beginning of truth value as an LF
-            lfIndices.unshift(0);
+            if (!/\n/.test(truth.value[0])){
+                lfIndices.unshift(0);
+            }
             // Treat the end of truth value as an LF only if it isn't
             if (!/\n/.test(truth.value[truth.value.length - 1]) ){
                 lfIndices.push(truth.value.length - 1);
