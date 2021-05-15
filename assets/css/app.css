@@ -278,7 +278,7 @@ menuselect label {
 menuselect select {
     display: inline-block;
     vertical-align: middle;
-    width: 60.67%;
+    width: calc(100vw * 2 / 3 * 2 / 3 - 1vw - 1vw - 2px - 2px);
     height: auto;
     color: #fff;
     background: transparent;
@@ -298,7 +298,7 @@ menuselect select option {
 menuselect input {
     display: inline-block;
     vertical-align: middle;
-    width: 60.67%;
+    width: calc(100vw * 2 / 3 * 2 / 3 - 1vw - 1vw - 2px - 2px);
     height: auto;
     border: 1px solid #fff;
     border-radius: 5vw;
@@ -336,7 +336,7 @@ menuselect input.error {
     }
 }
 menuselect add {
-    margin-left: 1%;
+    margin-left: 1vw;
     display: inline-block;
     vertical-align: middle;
     /* width: 6.00%; */
@@ -362,17 +362,20 @@ menuselect add {
     }
 
     menuselect select {
+        width: calc(100vw * 2 / 3 * 2 / 3 - 2vw - 2vw - 2px - 2px);
         font-size: 2vw;
     }
     menuselect select option {
         font-size: 2vw;
     }
     menuselect input {
+        width: calc(100vw * 2 / 3 * 2 / 3 - 2vw - 2vw - 2px - 2px);
         font-size: 2vw;
     }
     menuselect add {
-        width: calc(2vw + 4px + 2px);
-        height: calc(2vw + 4px + 2px);
+        margin-left: 2vw;
+        width: calc(2vw + 2px + 2px);
+        height: calc(2vw + 2px + 2px);
         padding: 1px;
         font-size: 2vw;
     }
