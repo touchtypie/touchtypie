@@ -294,6 +294,8 @@ var Bubble = function(default_value) {
     var disabled = false;
     var value = default_value;
     var charactersCounter = 0;
+    var lineWidth = 0;
+    var characterWidth = 0;
 
     var virtue = BehaviorVirtue();
 
@@ -314,12 +316,13 @@ var Bubble = function(default_value) {
     };
 
     // Returns two indices representing a peek (substring) in truth proximal to the current cursor
-    var getPeekIndices = function(bubble, truth) {
+    var getPeekIndices = function(bubble, truth, lineWidth, characterWidth) {
         // The cursor is one character ahead of the bubble value
         const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1 + 1: 0;
 
         // By default the peek (substring) around the cursor is x maximum characters. Length includes cursor.
-        const maxLength = 101;
+        const maxLines = 5;
+        const maxLength = typeof(lineWidth) !== 'undefined' && typeof(characterWidth) !== 'undefined' && lineWidth > 0 && characterWidth > 0 ? Math.floor(lineWidth / characterWidth) * maxLines : 101;
         const padCharacters = Math.floor(maxLength / 2);
         var startIndex, endIndex;
 
@@ -354,6 +357,7 @@ var Bubble = function(default_value) {
                 }
             }
 
+            // Deprecated: The peek scope no longer based on on on truth lines (i.e. LF). See next section
             // We want ideally 2 lines before and 2 after the cursor's line, if not at most 5 lines including the cursor's line.
             // We need 2 LFs before and 3 LFs after (1 extra LF)
             // i.e.
@@ -363,33 +367,121 @@ var Bubble = function(default_value) {
             // <LF>
             // <LF>
             // <LF>
-            const maxLf = 6; // Includes nearest LF
-            const padLfBefore = 2;
-            const padLfAfter = 3;
-            var startLfIndicesIdx, endLfIndicesIdx;
-            if (nearestLfIndicesIndex - padLfBefore < 0) {
-                // Not enough LF to pad before nearest LF
-                startLfIndicesIdx = 0;
-                // Pad leftover LF after nearest LF
-                endLfIndicesIdx = startLfIndicesIdx + maxLf - 1 > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + maxLf - 1;
-            }else if (nearestLfIndicesIndex + padLfAfter > lfIndices.length - 1) {
-                // Not enough LF to pad after nearest LF
-                endLfIndicesIdx = lfIndices.length - 1;
-                // Pad leftover LF before nearest LF
-                startLfIndicesIdx = endLfIndicesIdx - maxLf + 1 < 0 ? 0 : endLfIndicesIdx - maxLf + 1;
-            }else {
-                // Pad desired number of LF before and after nearest LF
-                startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore;
-                endLfIndicesIdx = nearestLfIndicesIndex + padLfAfter;
-            }
+            // const maxLf = 6; // Includes nearest LF
+            // const padLfBefore = 2;
+            // const padLfAfter = 3;
+            // var startLfIndicesIdx, endLfIndicesIdx;
+            // if (nearestLfIndicesIndex - padLfBefore < 0) {
+            //     // Not enough LF to pad before nearest LF
+            //     startLfIndicesIdx = 0;
+            //     // Pad leftover LF after nearest LF
+            //     endLfIndicesIdx = startLfIndicesIdx + maxLf - 1 > lfIndices.length - 1 ? lfIndices.length - 1 : startLfIndicesIdx + maxLf - 1;
+            // }else if (nearestLfIndicesIndex + padLfAfter > lfIndices.length - 1) {
+            //     // Not enough LF to pad after nearest LF
+            //     endLfIndicesIdx = lfIndices.length - 1;
+            //     // Pad leftover LF before nearest LF
+            //     startLfIndicesIdx = endLfIndicesIdx - maxLf + 1 < 0 ? 0 : endLfIndicesIdx - maxLf + 1;
+            // }else {
+            //     // Pad desired number of LF before and after nearest LF
+            //     startLfIndicesIdx = nearestLfIndicesIndex - padLfBefore;
+            //     endLfIndicesIdx = nearestLfIndicesIndex + padLfAfter;
+            // }
 
-            startIndex = lfIndices[startLfIndicesIdx];
-            endIndex = lfIndices[endLfIndicesIdx];
+            // The peek scope based on how many characters can fit a given area
+            var startLfIndicesIdx = nearestLfIndicesIndex, endLfIndicesIdx = nearestLfIndicesIndex;
+            if (lfIndices.length === 2) {
+                // 2 LFs
+                // Treat this as a single LF string
+                isMultiline = false;
+                startIndex = lfIndices[0];
+                endIndex = lfIndices[lfIndices.length - 1];
+            }else {
+                // More than two LFs
+                // Go in this order: lfDeviationAfter+1, lfDeviationBefore-1, lfDeviationAfter+2, lfDeviationBefore-2 ... until a line cannot fit in anymore:
+                // <lfDeviationBefore-2>
+                // <lfDeviationBefore-1>
+                // <nearestLF|>...<cursor>
+                // <lfDeviationAfter+1>
+                // <lfDeviationAfter+2>
+                function getNumberOfWrapLines(line, lineWidth, characterWidth) {
+                    // The .clientWidth, .offsetWidth, .scrollWidth of elements round up the actual width. So we always assume it is 1px smaller to be safe.
+                    return Math.ceil( (line.length * characterWidth) / (lineWidth - 1) );
+                }
+                var directionBefore = false, lfDeviationBefore = -1, lfDeviationAfter = 1, fromIdx, toIdx, lineCount = 0, totalLineCount = 0;
+                var padCharactersBefore = 0, padCharactersAfter = 0;
+                while (lfDeviationAfter - lfDeviationBefore - 1 <= lfIndices.length) {
+                    if (directionBefore) {
+                        if (nearestLfIndicesIndex + lfDeviationBefore >= -1) {
+                            if (nearestLfIndicesIndex + lfDeviationBefore === -1 ) {
+                                // Hit the beginning
+                                fromIdx = 0;
+                                toIdx = 0;
+                            }else if (nearestLfIndicesIndex + lfDeviationBefore > -1) {
+                                // Not yet the end
+                                fromIdx = lfIndices[nearestLfIndicesIndex + lfDeviationBefore];
+                                toIdx = lfIndices[nearestLfIndicesIndex + lfDeviationBefore + 1] - 1; // -1 to ignore the trailing LF
+                            }
+                            lineCount = getNumberOfWrapLines(truth.value.substring(fromIdx, toIdx + 1), lineWidth, characterWidth);
+                            if (State.debug) {
+                                console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
+                            }
+                            if (totalLineCount + lineCount > maxLines) {
+                                // Pad some lines before to meet the maxLines
+                                padCharactersBefore = Math.floor( (maxLines - totalLineCount) * Math.floor(lineWidth / characterWidth) );
+                                break;
+                            }
+                            totalLineCount += lineCount;
+                            if (nearestLfIndicesIndex + lfDeviationBefore === -1 ) {
+                                startLfIndicesIdx = lfIndices[0];
+                            }else if (nearestLfIndicesIndex + lfDeviationBefore > -1) {
+                                startLfIndicesIdx = nearestLfIndicesIndex + lfDeviationBefore;
+                            }
+
+                            lfDeviationBefore--;
+                        }
+                    }else {
+                        if (nearestLfIndicesIndex + lfDeviationAfter <= lfIndices.length) {
+                            if (nearestLfIndicesIndex + lfDeviationAfter === lfIndices.length) {
+                                // Hit the end
+                                fromIdx = lfIndices[lfIndices.length - 1];
+                                toIdx = lfIndices[lfIndices.length - 1];
+                            }else if (nearestLfIndicesIndex + lfDeviationAfter < lfIndices.length) {
+                                // Not yet the end
+                                fromIdx = lfIndices[nearestLfIndicesIndex + lfDeviationAfter - 1];
+                                toIdx = lfIndices[nearestLfIndicesIndex + lfDeviationAfter] - 1; // -1 to ignore the trailing LF
+                            }
+                            lineCount = getNumberOfWrapLines(truth.value.substring(fromIdx, toIdx + 1), lineWidth, characterWidth);
+                            if (State.debug) {
+                                console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
+                            }
+                            if (totalLineCount + lineCount > maxLines) {
+                                // Pad some lines after to meet the maxLines
+                                padCharactersAfter = Math.floor( (maxLines - totalLineCount) * Math.floor(lineWidth / characterWidth ) );
+                                break;
+                            }
+                            totalLineCount += lineCount;
+                            if (nearestLfIndicesIndex + lfDeviationAfter === lfIndices.length) {
+                                endLfIndicesIdx = lfIndices.length - 1;
+                            }else if (nearestLfIndicesIndex + lfDeviationAfter < lfIndices.length) {
+                                endLfIndicesIdx = nearestLfIndicesIndex + lfDeviationAfter;
+                            }
+                            lfDeviationAfter++;
+                        }
+                    }
+                    directionBefore = !directionBefore;
+                }
+                if (State.debug) {
+                    console.log('[getPeekIndices] startLfIndicesIdx: ' + startLfIndicesIdx + ', endLfIndicesIdx: ' + endLfIndicesIdx + ', lfIndices[startLfIndicesIdx]: ' + lfIndices[startLfIndicesIdx] + ', lfIndices[endLfIndicesIdx]: ' + lfIndices[endLfIndicesIdx]);
+                    console.log('[getPeekIndices] padCharactersAfter: ' + padCharactersAfter + ', padCharactersBefore: ' + padCharactersBefore);
+                }
+                startIndex = padCharactersBefore > 0 ? lfIndices[startLfIndicesIdx] - padCharactersBefore + 1 : lfIndices[startLfIndicesIdx];
+                endIndex = padCharactersAfter > 0 ? lfIndices[endLfIndicesIdx] + padCharactersAfter - 1 : lfIndices[endLfIndicesIdx];
+            }
 
             // Exclude the finalmost LF character if not near the end
-            if (endLfIndicesIdx < lfIndices.length - 1) {
-                endIndex = lfIndices[endLfIndicesIdx] - 1;
-            }
+            // if (endLfIndicesIdx < lfIndices.length - 1) {
+            //     endIndex = lfIndices[endLfIndicesIdx] - 1;
+            // }
 
             // Always trim down to a maximum length (But this breaks legibility, since text physically moves)
             // if (endIndex > startIndex + maxLength - 1) {
@@ -421,6 +513,10 @@ var Bubble = function(default_value) {
                     startIndex = cursorIndex - padCharacters;
                     endIndex = cursorIndex + padCharacters;
                 }
+
+                // Always show characters at and after cursor. (But this means there's no visual feedback of whether there were misses)
+                // startIndex = cursorIndex;
+                // endIndex = cursorIndex + maxLength - 1 > truth.value.length - 1 ? truth.value.length - 1 : cursorIndex + maxLength - 1;
             }
         }
         if (State.debug) {
@@ -459,7 +555,7 @@ var Bubble = function(default_value) {
     }
 
     // Populates this bubble's BehaviorVirtue object, when this bubble.value is measured against truth.value
-    var measureVirtue = function(truth, environment, key) {
+    var measureVirtue = function(truth, speech, environment, key) {
         var bubble = this;
         var virtue = bubble.virtue;
 
@@ -535,7 +631,7 @@ var Bubble = function(default_value) {
         if (virtue.result.value === '') {
             virtue.result.value = truth.value;
         }
-        const peekIndices= getPeekIndices(bubble, truth);
+        const peekIndices = getPeekIndices(bubble, truth, speech.lineWidth, speech.characterWidth);
         const startIndex = peekIndices[0];
         const endIndex = peekIndices[1];
         virtue.result.value_zonal = getFeedbackHtmlValue(
@@ -627,6 +723,8 @@ var Bubble = function(default_value) {
         disabled: disabled,
         value: value,
         charactersCounter: charactersCounter,
+        lineWidth: lineWidth,
+        characterWidth: characterWidth,
         virtue: virtue,
         newleaf: newleaf,
         newlife: newlife,
@@ -1279,7 +1377,7 @@ var Training = function() {
 
         // Validate student response
         var virtue = student.response.virtue;
-        student.response.measureVirtue(trainer.truth, trainer.memory.environment);
+        student.response.measureVirtue(trainer.truth, trainer.speech, trainer.memory.environment);
 
         // Set trainer speech value
         trainer.speech.value = virtue.result.value_zonal;
@@ -1324,7 +1422,7 @@ var Training = function() {
 
         // Validate student response
         var virtue = student.response.virtue;
-        student.response.measureVirtue(trainer.truth, trainer.memory.environment);
+        student.response.measureVirtue(trainer.truth, trainer.speech, trainer.memory.environment);
 
         // Set trainer speech value
         trainer.speech.value = virtue.result.value_zonal;
@@ -1542,10 +1640,69 @@ var HomeController = function () {
         'innerHTML'
     );
 
+    // Component: speech
+    // Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
+    var setSpeechWidths = function() {
+        if (State.debug) {
+            console.log('[setSpeechWidths]');
+        }
+
+        // Get trainer speech dimensions
+        var speechValueElement = document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0];
+
+        if (speechValueElement.childNodes.length > 0) {
+            const speechWidth = speechValueElement.clientWidth;
+            const speechHeight = speechValueElement.clientHeight;
+
+            // Get trainer speech character dimensions
+            // The first character is always a placeholder, so we get the width of the second character
+            const speechCharacterWidth = speechValueElement.getElementsByTagName('character')[1].offsetWidth;
+            const speechCharacterHeight = speechValueElement.getElementsByTagName('character')[1].offsetHeight;
+
+            // Set speech max characters
+            _training.trainer.speech.lineWidth = speechWidth;
+            _training.trainer.speech.characterWidth = speechCharacterWidth;
+            if (State.debug) {
+                console.log('[setSpeechWidths] speechWidth: ' + speechWidth, ', speechCharacterWidth: ' + speechCharacterWidth  + ', chars / line: ' + speechWidth / speechCharacterWidth + ', max chars: ' + speechWidth / speechCharacterWidth * 5 );
+            }
+        }
+    }
+    myApp.eventController.registerEvent('training-init', function() {
+        // Initialize training the training with an trainer intro speech
+        State.training.start();
+
+        // Set the speech widths based on the intro speech
+        setSpeechWidths();
+    });
+    (function() {
+        // Fire the resize callback only every x ms
+        var resizeId;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeId);
+            resizeId = setTimeout(function() {
+                if (State.debug) {
+                    console.log('[resize]');
+                }
+
+                setSpeechWidths();
+
+                // Validate student response
+                var virtue = _training.student.response.virtue;
+                _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.speech, _training.trainer.memory.environment);
+
+                // Set trainer speech value
+                _training.trainer.speech.value = virtue.result.value_zonal;
+            }, 100);
+        });
+    })();
     // Data binding - Component: speech
     myApp.eventController.registerEvent('training-init', function() {
         // Initialize training the training with an trainer intro speech
         State.training.start();
+
+        // Set the speech widths based on the intro speech
+        setSpeechWidths();
+
     });
     Binding({
         object: _training.trainer.speech,
@@ -1588,7 +1745,7 @@ var HomeController = function () {
 
             var virtue = _training.student.response.virtue;
             // Validate student response
-            var started = _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.memory.environment, key);
+            var started = _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.speech, _training.trainer.memory.environment, key);
 
             // Update student virtue every interval
             if (started) {
