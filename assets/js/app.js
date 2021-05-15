@@ -1238,11 +1238,7 @@ var Training = function() {
     var student = Student();
 
     var prepare = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
-        // Begin the training with a trainer's intro speech
-        student.response.newlife();
-        start();
         student.response.disabled = true;
-
         trainer.prepareKnowledge(bookLibraryIds, function() {
             // Ignore the intro response virtue
             student.response.newlife();
@@ -1547,6 +1543,10 @@ var HomeController = function () {
     );
 
     // Data binding - Component: speech
+    myApp.eventController.registerEvent('training-init', function() {
+        // Initialize training the training with an trainer intro speech
+        State.training.start();
+    });
     Binding({
         object: _training.trainer.speech,
         property: "value"
@@ -2016,16 +2016,11 @@ var EnvironmentController = function() {
         eventsListeners: {
             DOMContentLoaded: function(event, _this, binding) {
                 var c = this;
-                State.onLoadHandlers.push(
-                    {
-                        context: c,
-                        callback:  function() {
-                            c.methods.createSelectOptions(c, binding);
-                            Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
-                            Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
-                        }
-                    }
-                );
+                myApp.eventController.registerEvent('training-start', function() {
+                    c.methods.createSelectOptions(c, binding);
+                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                });
             },
             change: function(event, _this, binding) {
                 var c = this;
@@ -2423,12 +2418,48 @@ var State = function() {
             'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
         ],
         debug: false,
-        onLoadHandlers: [],
+        events: [
+            'training-init',
+            'training-start'
+        ],
         scene: 'home',
         scenes: [],
         training: Training()
     }
 }();
+var EventController = function(Config) {
+    // Config just has to an array of event names
+
+    // An event is just an array of callbacks
+    // E.g. 'event': [callback];
+    var events = {};
+
+    // Populate events object
+    for (var i = 0; i < Config.length; i++) {
+        events[Config[i]] = [];
+    }
+
+    var registerEvent = function(event, callback) {
+        if (event in events) {
+            events[event].push(callback);
+        }
+    };
+
+    var doEvent = function(event) {
+        if (event in events) {
+            for (var callback, i = 0; i < events[event].length; i++) {
+                callback = events[event][i];
+                callback.apply(events[event][i]);
+            }
+        }
+    }
+
+    return {
+        events: events,
+        doEvent: doEvent,
+        registerEvent: registerEvent,
+    };
+};
 var SceneController = function() {
     var scene = '';
 
@@ -2449,25 +2480,35 @@ var SceneController = function() {
             scene = newScene;
         }
     });
-}
+};
 var myApp = function () {
-    // Initialize scenes
-    State.scenes.push(
-        HomeController(),
-        EnvironmentController()
-    );
-    SceneController();
+    // Create events
+    var eventController = EventController(State.events);
 
-    // Initialize the training
-    window.addEventListener('load', function(event) {
-        State.training.prepare(State.bookLibraryIds, function() {
-            // Perform all load handlers
-            var context, callback;
-            for (var i = 0; i < State.onLoadHandlers.length; i++) {
-                context = State.onLoadHandlers[i].context;
-                callback = State.onLoadHandlers[i].callback;
-                callback.apply(context);
-            }
+    var init = function() {
+        // Create scenes
+        State.scenes.push(
+            HomeController(),
+            EnvironmentController()
+        );
+        SceneController();
+
+        // Start training
+        window.addEventListener('load', function(event) {
+            // Event: training-init
+            eventController.doEvent('training-init');
+
+            // Replenish training environment
+            State.training.prepare(State.bookLibraryIds, function() {
+                // Event: training-start
+                eventController.doEvent('training-start');
+            });
         });
-    });
+    }
+
+    return {
+        eventController: eventController,
+        init: init
+    }
 }();
+myApp.init();
