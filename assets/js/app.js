@@ -322,7 +322,11 @@ var Bubble = function(default_value) {
 
         // By default the peek (substring) around the cursor is x maximum characters. Length includes cursor.
         const maxLines = 5;
-        const maxLength = typeof(lineWidth) !== 'undefined' && typeof(characterWidth) !== 'undefined' && lineWidth > 0 && characterWidth > 0 ? Math.floor(lineWidth / characterWidth) * maxLines : 101;
+        // The .clientWidth, .offsetWidth, .scrollWidth of elements round up the actual width. So we discount one character to be safe
+        var maxLength = typeof(lineWidth) !== 'undefined' && typeof(characterWidth) !== 'undefined' && lineWidth > 0 && characterWidth > 0 ? Math.floor((lineWidth - 1) / characterWidth) * maxLines: 101;
+        // Always keep max length an odd number for an equal padding of characters before and after cursor
+        maxLength = maxLength % 2 ? maxLength : maxLength - 1;
+        // Pad characters equally on both sides of cursor. i.e. <padCharacters><cursor><padCharacters>
         const padCharacters = Math.floor(maxLength / 2);
         var startIndex, endIndex;
 
