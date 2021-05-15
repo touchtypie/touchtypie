@@ -1789,6 +1789,10 @@ var HomeController = function () {
                 _training.complete(virtue);
                 _training.next();
 
+                // Update environment libraries
+                Components.menuselect_booklibraries.methods.createSelectOptions(Components.menuselect_booklibraries);
+                // Update environment collections
+                Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
                 // Update environment books
                 Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
             }
