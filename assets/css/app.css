@@ -717,7 +717,7 @@ statistics globaloverall amendcounter,
 statistics globaloverall amendpercentagecounter,
 statistics globaloverall othercounter,
 statistics globaloverall otherpercentagecounter,
-statistics globaloverall unitcounter {
+statistics globaloverall bookcounter {
     display: block;
     border-radius: 1vw;
     /* padding: 1.5vw; */
@@ -811,7 +811,7 @@ statistics globaloverall span {
     statistics globaloverall amendpercentagecounter,
     statistics globaloverall othercounter,
     statistics globaloverall otherpercentagecounter,
-    statistics globaloverall unitcounter {
+    statistics globaloverall bookcounter {
         font-size: 3vw;
     }
     statistics globaloverall label,

@@ -2022,14 +2022,14 @@ var HomeController = function () {
         object: _training.student.virtues,
         property: "count"
     }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('value')[0],
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('bookcounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
         object: _training.trainer.memory,
         property: "bookCount"
     }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('unitcounter')[0].getElementsByTagName('total')[0],
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('bookcounter')[0].getElementsByTagName('total')[0],
         'innerHTML'
     );
 
