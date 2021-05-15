@@ -478,8 +478,13 @@ var Bubble = function(default_value) {
                     console.log('[getPeekIndices] startLfIndicesIdx: ' + startLfIndicesIdx + ', endLfIndicesIdx: ' + endLfIndicesIdx + ', lfIndices[startLfIndicesIdx]: ' + lfIndices[startLfIndicesIdx] + ', lfIndices[endLfIndicesIdx]: ' + lfIndices[endLfIndicesIdx]);
                     console.log('[getPeekIndices] padCharactersAfter: ' + padCharactersAfter + ', padCharactersBefore: ' + padCharactersBefore);
                 }
-                startIndex = padCharactersBefore > 0 ? lfIndices[startLfIndicesIdx] - padCharactersBefore + 1 : lfIndices[startLfIndicesIdx];
-                endIndex = padCharactersAfter > 0 ? lfIndices[endLfIndicesIdx] + padCharactersAfter - 1 : lfIndices[endLfIndicesIdx];
+                // If the line is too long, treat it as a single line
+                if (startLfIndicesIdx === endLfIndicesIdx) {
+                    isMultiline = false;
+                }else {
+                    startIndex = padCharactersBefore > 0 ? lfIndices[startLfIndicesIdx] - padCharactersBefore + 1 : lfIndices[startLfIndicesIdx];
+                    endIndex = padCharactersAfter > 0 ? lfIndices[endLfIndicesIdx] + padCharactersAfter - 1 : lfIndices[endLfIndicesIdx];
+                }
             }
 
             // Exclude the finalmost LF character if not near the end
