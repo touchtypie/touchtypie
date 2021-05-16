@@ -72,7 +72,6 @@ header heading {
 }
 header heading {
     display: block;
-    width: 50%;
     margin: 0 auto;
     text-align: center;
     color: #fff;
@@ -86,7 +85,6 @@ header heading {
         /* border-bottom: 1px solid #000; */
     }
     header heading {
-        width: 100%;
         font-size: 4vw;
     }
 }
@@ -140,7 +138,7 @@ menuswitch {
 menuswitch label {
     display: inline-block;
     vertical-align: middle;
-    width: 33.33%;
+    width: calc(100vw * 2 / 3 * 1 / 3);
     color: #fff;
     font-family: monospace;
     font-weight: normal;
@@ -205,7 +203,7 @@ menumultiswitch {
 menumultiswitch label {
     display: inline-block;
     vertical-align: middle;
-    width: 33.33%;
+    width: calc(100vw * 2 / 3 * 1 / 3);
     color: #fff;
     font-family: monospace;
     font-weight: normal;
@@ -273,7 +271,7 @@ menuselect .hidden {
 menuselect label {
     display: inline-block;
     vertical-align: middle;
-    width: 33.33%;
+    width: calc(100vw * 2 / 3 * 1 / 3);
     color: #fff;
     font-family: monospace;
     font-weight: normal;
@@ -346,7 +344,6 @@ menuselect add {
     margin-left: 1vw;
     display: inline-block;
     vertical-align: middle;
-    /* width: 6.00%; */
     width: calc(1vw + 2px + 2px);
     height: calc(1vw + 2px + 2px);
     border: 1px solid #fff;
@@ -396,7 +393,7 @@ menuambienceswitch {
 menuambienceswitch label {
     display: inline-block;
     vertical-align: middle;
-    width: 33.33%;
+    width: calc(100vw * 2 / 3 * 1 / 3);
     color: #fff;
     font-family: monospace;
     font-weight: normal;
@@ -407,12 +404,12 @@ menuambienceswitch label {
 }
 menuambienceswitch ambiences {
     display: inline-block;
-    width: 66.67%;
+    width: calc(100vw * 2 / 3 * 2 / 3);
     vertical-align: middle;
 }
 menuambienceswitch ambiences {
     display: inline-block;
-    width: 66.67%;
+    width: calc(100vw * 2 / 3 * 2 / 3);
     vertical-align: middle;
 }
 menuambienceswitch choice {
@@ -465,7 +462,7 @@ menuexport {
 menuexport label {
     display: inline-block;
     vertical-align: middle;
-    width: 33.33%;
+    width: calc(100vw * 2 / 3 * 1 / 3);
     color: #fff;
     font-family: monospace;
     font-weight: normal;
@@ -519,7 +516,7 @@ speech {
 speech value {
     display: block;
     margin: 0 auto;
-    width: 66.67%;
+    width: calc(100vw * 2 / 3);
     /* padding: 1vw; */
     text-align: left;
     /* border: none; */
@@ -568,7 +565,7 @@ speech value character.valid {
         margin-top: 2vw;
     }
     speech value {
-        width: 83.33%;
+        width: calc(100vw * 5 / 6);
     }
     speech value character {
         height: calc(3vw + 2px);
@@ -584,7 +581,7 @@ response {
 response textarea {
     display: block;
     margin: 0 auto;
-    width: 66.67%;
+    width: calc(100vw * 2 / 3);
     height: 20vw;
     padding: 1.75vw;
     border: 1px solid #fff;
@@ -603,7 +600,7 @@ response textarea {
         margin-top: 3vw;
     }
     response textarea {
-        width: 83.33%;
+        width: calc(100vw * 5 / 6);
         font-size: 3vw;
     }
 }
@@ -626,7 +623,7 @@ statistics progressbar characterscounter {
 statistics unitprogress {
     display: inline-block;
     vertical-align: top;
-    width: 20%;
+    width: 20vw;
 }
 statistics unitprogress heading {
     margin: 2vw;
@@ -663,7 +660,7 @@ statistics unitprogress span {
 statistics unitoverall {
     display: inline-block;
     vertical-align: top;
-    width: 20%;
+    width: 20vw;
 }
 statistics unitoverall heading {
     margin: 2vw;
@@ -706,7 +703,7 @@ statistics unitoverall span {
 statistics globaloverall {
     display: inline-block;
     vertical-align: top;
-    width: 20%;
+    width: 20vw;
 }
 statistics globaloverall heading {
     margin: 2vw;
@@ -748,7 +745,7 @@ statistics globaloverall span {
 @media screen and (max-aspect-ratio: 13/10) {
     statistics unitprogress {
         display: block;
-        width: 83.33%;
+        width: calc(100vw * 5 / 6);
         margin: 0 auto;
     }
     statistics unitprogress heading {
@@ -772,7 +769,7 @@ statistics globaloverall span {
 
     statistics unitoverall {
         display: block;
-        width: 83.33%;
+        width: calc(100vw * 5 / 6);
         margin: 0 auto;
     }
     statistics unitoverall heading {
@@ -803,7 +800,7 @@ statistics globaloverall span {
 
     statistics globaloverall {
         display: block;
-        width: 83.33%;
+        width: calc(100vw * 5 / 6);
         margin: 0 auto;
     }
     statistics globaloverall heading {
@@ -878,7 +875,7 @@ environment {
 }
 environment main {
     display: block;
-    padding: 0 16.67%;
+    padding: 0 calc(100vw * 1 / 6);
 }
 @media screen and (max-aspect-ratio: 13/10) {
     environment header heading {
