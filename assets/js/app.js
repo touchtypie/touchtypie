@@ -1723,25 +1723,32 @@ var HomeController = function () {
     );
 
     // Data binding - Component: response
+    document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].addEventListener('click', function(event) {
+        var ele = event.target || event.srcElement;
+        ele.getElementsByTagName('textarea')[0].focus();
+    });
+    document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0].addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
     new Binding({
         object: _training.student.response,
         property: "disabled"
     }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0],
         'disabled'    // textarea
     )
     new Binding({
         object: _training.student.response,
         property: "value"
     }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0],
         'value',    // textarea
         "DOMContentLoaded",
         function(event, _this, binding) {
             _training.student.setFocus(binding.element);
         }
     ).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textarea')[0],
+        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0],
         'value',    // textarea
         "keyup",
         function(event, _this, binding) {
