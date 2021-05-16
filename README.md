@@ -5,6 +5,8 @@
 
 A touch-typing trainer.
 
+https://play.touchtypie.com/
+
 ![touchtypie](assets/images/logo/logo-v1.0-blue.svg)
 
 ## Philosophy
@@ -21,7 +23,7 @@ It started out simple, but grew just enough to require a custom frontend framewo
 
 ### Q: How to practise with my own texts?
 
-To practise on your own texts, you need to a custom library.
+To practise on your own texts, you need a custom library.
 
 Simply put, a library, a collection, or a book is a `.txt` file, available as a URL.
 
