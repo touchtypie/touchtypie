@@ -1669,8 +1669,10 @@ var HomeController = function () {
             const speechCharacterHeight = speechValueElement.getElementsByTagName('character')[1].offsetHeight;
 
             // Set speech max characters
-            _training.trainer.speech.lineWidth = speechWidth;
-            _training.trainer.speech.characterWidth = speechCharacterWidth;
+            if (speechWidth > 0 && speechCharacterWidth > 0) {
+                _training.trainer.speech.lineWidth = speechWidth;
+                _training.trainer.speech.characterWidth = speechCharacterWidth;
+            }
             if (State.debug) {
                 console.log('[setSpeechWidths] speechWidth: ' + speechWidth, ', speechCharacterWidth: ' + speechCharacterWidth  + ', chars / line: ' + speechWidth / speechCharacterWidth + ', max chars: ' + speechWidth / speechCharacterWidth * 5 );
             }
