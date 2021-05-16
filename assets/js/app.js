@@ -2207,7 +2207,7 @@ var EnvironmentController = function() {
             },
             keyup: function(event, _this, binding) {
                 var c = this;
-                var ele = ele = event.target || event.srcElement;
+                var ele = event.target || event.srcElement;
                 var key = event.keyCode || event.charCode;
                 var value = ele.value.trim();
                 // ENTER key
