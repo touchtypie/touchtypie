@@ -1368,6 +1368,8 @@ var Training = function() {
                 callbackOnSuccess();
             }
         }, function() {
+            student.response.disabled = false;
+
             if (callbackOnError) {
                 callbackOnError();
             }
