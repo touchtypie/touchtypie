@@ -812,7 +812,7 @@ statistics globaloverall span {
     statistics unitprogress hitpercentagecounter,
     statistics unitprogress misscounter,
     statistics unitprogress misspercentagecounter {
-        font-size: 3vw;
+        display: block;
     }
     statistics unitprogress label,
     statistics unitprogress value,
@@ -842,7 +842,7 @@ statistics globaloverall span {
     statistics unitoverall amendpercentagecounter,
     statistics unitoverall othercounter,
     statistics unitoverall otherpercentagecounter {
-        font-size: 3vw;
+        display: block;
     }
     statistics unitoverall label,
     statistics unitoverall value,
@@ -873,7 +873,7 @@ statistics globaloverall span {
     statistics globaloverall othercounter,
     statistics globaloverall otherpercentagecounter,
     statistics globaloverall bookcounter {
-        font-size: 3vw;
+        display: block;
     }
     statistics globaloverall label,
     statistics globaloverall value,
