@@ -1803,16 +1803,34 @@ var HomeController = function () {
             // Update student virtue non-time-based stats
             _training.student.reflectVirtue(virtue, true, true);
             if (virtue.result.completed) {
+                var currentBook = _training.trainer.getCurrentBook();
                 // Run the next training unit
                 _training.complete(virtue);
                 _training.next();
+                var nextBook = _training.trainer.getCurrentBook();
 
                 // Update environment libraries
-                Components.menuselect_booklibraries.methods.createSelectOptions(Components.menuselect_booklibraries);
+                if (currentBook.libraryId === nextBook.libraryId) {
+                    Components.menuselect_booklibraries.methods.updateSelectOptions(Components.menuselect_booklibraries);
+                }else {
+                    Components.menuselect_booklibraries.methods.createSelectOptions(Components.menuselect_booklibraries);
+                }
+
                 // Update environment collections
-                Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                if (currentBook.collectionId === nextBook.collectionId) {
+                    Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
+                }else {
+                    // Update environment collections
+                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                }
+
                 // Update environment books
-                Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                if (currentBook.id === nextBook.id) {
+                    Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
+                }else {
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                }
+
             }
 
             if (State.debug) {
@@ -2108,6 +2126,17 @@ var EnvironmentController = function() {
                     ele.appendChild(optionElement);
                 }
             },
+            updateSelectOptions: function(c, binding) {
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element;
+                var selectOptions = ele.options;
+                for (var option, i = 0; i < selectOptions.length; i++) {
+                    option = selectOptions[i];
+                    if (option.value == c.props._training.trainer.memory.workingMemoryLibraryId) {
+                        ele.selectedIndex = i;
+                        break;
+                    }
+                }
+            },
             loadBookLibrary: function(c, bookLibraryId) {
                 var bookLibraryIds = [bookLibraryId];
                 c.methods.toggleAddStatus(c, '.');
@@ -2261,7 +2290,18 @@ var EnvironmentController = function() {
                     optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
                     ele.appendChild(optionElement);
                 }
-            }
+            },
+            updateSelectOptions: function(c, binding) {
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element;
+                var selectOptions = ele.options;
+                for (var option, i = 0; i < selectOptions.length; i++) {
+                    option = selectOptions[i];
+                    if (option.value == c.props._training.trainer.memory.workingMemoryCollectionId) {
+                        ele.selectedIndex = i;
+                        break;
+                    }
+                }
+            },
         },
         eventsListeners: {
             change: function(event, _this, binding) {
@@ -2319,7 +2359,18 @@ var EnvironmentController = function() {
                         ele.appendChild(optionElement);
                     }
                 }
-            }
+            },
+            updateSelectOptions: function(c, binding) {
+                var ele = binding ? binding.element : c.bindings['._training.trainer.memory.workingMemoryBookId'].elementBindings[0].element;
+                var selectOptions = ele.options;
+                for (var option, i = 0; i < selectOptions.length; i++) {
+                    option = selectOptions[i];
+                    if (option.value == c.props._training.trainer.memory.workingMemoryBookId) {
+                        ele.selectedIndex = i;
+                        break;
+                    }
+                }
+            },
         },
         eventsListeners: {
             change: function(event, _this, binding) {
