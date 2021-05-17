@@ -1612,13 +1612,14 @@ var Component = function(c) {
             var createSelectOptions = (function() {
                 var _selectElement = rootElement.getElementsByTagName('select')[0];
                 var optionElement;
-                for (var i = 0; i < c.props.options.length; i++) {
+                var options = c.props.options;
+                for (var i = 0; i < options.length; i++) {
                     optionElement = document.createElement('option');
-                    if (component.props.options[i] === component.value) {
+                    if (options[i] === component.value) {
                         optionElement.setAttribute('selected', true);
                     }
-                    optionElement.setAttribute('value', component.props.options[i]);
-                    optionElement.innerHTML = decodeURIComponent(component.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                    optionElement.value, options[i];
+                    optionElement.innerHTML = decodeURIComponent(options[i].replace(/.+\/([^\/]+)$/, '$1'));
                     _selectElement.appendChild(optionElement);
                 }
             })();
@@ -2098,13 +2099,14 @@ var EnvironmentController = function() {
                 ele.innerHTML = '';
                 // Recreate all options elements
                 var optionElement;
-                for (var i = 0; i < c.props.options.length; i++) {
+                var options = c.props.options;
+                for (var i = 0; i < options.length; i++) {
                     optionElement = document.createElement('option');
-                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryLibraryId) {
+                    if (options[i] === c.props._training.trainer.memory.workingMemoryLibraryId) {
                         optionElement.setAttribute('selected', true);
                     }
-                    optionElement.setAttribute('value', c.props.options[i]);
-                    optionElement.innerHTML = decodeURIComponent(c.props.options[i]);
+                    optionElement.setAttribute('value', options[i]);
+                    optionElement.innerHTML = decodeURIComponent(options[i]);
                     ele.appendChild(optionElement);
                 }
             },
@@ -2252,13 +2254,14 @@ var EnvironmentController = function() {
                 ele.innerHTML = '';
                 // Recreate all options elements
                 var optionElement;
-                for (var i = 0; i < c.props.options.length; i++) {
+                var options = c.props.options;
+                for (var i = 0; i < options.length; i++) {
                     optionElement = document.createElement('option');
-                    if (c.props.options[i] === c.props._training.trainer.memory.workingMemoryCollectionId) {
+                    if (options[i] === c.props._training.trainer.memory.workingMemoryCollectionId) {
                         optionElement.setAttribute('selected', true);
                     }
-                    optionElement.setAttribute('value', c.props.options[i]);
-                    optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                    optionElement.setAttribute('value', options[i]);
+                    optionElement.innerHTML = decodeURIComponent(options[i].replace(/.+\/([^\/]+)$/, '$1'));
                     ele.appendChild(optionElement);
                 }
             }
@@ -2307,15 +2310,16 @@ var EnvironmentController = function() {
                 ele.innerHTML = '';
                 // Recreate all options elements
                 var optionElement;
+                var options = c.props.options;
                 var book = c.props._training.trainer.getCurrentBook();
                 if (book) {
-                    for (var i = 0; i < c.props.options.length; i++) {
+                    for (var i = 0; i < options.length; i++) {
                         optionElement = document.createElement('option');
-                        if (c.props.options[i] === book.id) {
+                        if (options[i] === book.id) {
                             optionElement.setAttribute('selected', true);
                         }
-                        optionElement.setAttribute('value', c.props.options[i]);
-                        optionElement.innerHTML = decodeURIComponent(c.props.options[i].replace(/.+\/([^\/]+)$/, '$1'));
+                        optionElement.setAttribute('value', options[i]);
+                        optionElement.innerHTML = decodeURIComponent(options[i].replace(/.+\/([^\/]+)$/, '$1'));
                         ele.appendChild(optionElement);
                     }
                 }
