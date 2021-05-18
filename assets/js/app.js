@@ -795,6 +795,7 @@ var Memory = function() {
     var bookCollections = {};
     var books = {};
     var bookLibraryCount = 0;
+    var bookCollectionCount = 0;
     var bookCount = 0;
     var workingMemoryLibraryId = '';
     var workingMemoryCollectionId = '';
@@ -958,6 +959,7 @@ var Memory = function() {
         recallLibraries.apply(_this, [bookLibraryIds, function() {
             // Once recollection is done
             _this.bookLibraryCount = Object.keys(_this.bookLibraries).length;
+            _this.bookCollectionCount = Object.keys(_this.bookCollections).length;
             _this.bookCount = Object.keys(_this.books).length;
             callbackOnSuccess();
         }, function() {
@@ -1104,6 +1106,7 @@ var Memory = function() {
         bookCollections, bookCollections,
         books: books,
         bookLibraryCount: bookLibraryCount,
+        bookCollectionCount: bookCollectionCount,
         bookCount: bookCount,
         workingMemoryLibraryId: workingMemoryLibraryId,
         workingMemoryCollectionId: workingMemoryCollectionId,
@@ -2047,6 +2050,13 @@ var HomeController = function () {
         property: "bookLibraryCount"
     }).addBinding(
         document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('booklibrarycounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.trainer.memory,
+        property: "bookCollectionCount"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('bookcollectioncounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
