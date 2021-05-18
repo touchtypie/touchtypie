@@ -2576,7 +2576,7 @@ var EnvironmentController = function() {
                         c.props._training.trainer.memory.environment.ambience = ele.name;
                         // Set backgrounds on UI
                         var backgroundImage = c.props.ambiences[ele.name];
-                        document.body.style.backgroundImage = backgroundImage;
+                        document.getElementsByTagName('background')[0].style.backgroundImage = backgroundImage;
                         // Update choices
                         c.methods.updateChoices(c);
                     });

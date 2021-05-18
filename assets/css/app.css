@@ -10,17 +10,9 @@ html {
 }
 
 body {
-    background: #fff;
-    /* color: #000; */
     font-size: 0;
 
     overflow: visible !important;
-    background: linear-gradient(90deg, #085078 10%, #85d8ce 90%);
-    background: linear-gradient(90deg, rgb(0, 186, 255) 10%, rgb(248, 255, 223) 90%);
-    background: linear-gradient(45deg, rgb(0, 170, 234) 70%, rgb(248, 255, 223) 100%);
-    background: linear-gradient(45deg, rgb(0, 186, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
-    background: linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
-    background-attachment:fixed;
 }
 
 div {
@@ -48,6 +40,14 @@ span {
 /* Our styles */
 wrapper {
     display: block;
+}
+wrapper background {
+    content: "";
+    position: fixed;
+    background: linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
 }
 
 home {
