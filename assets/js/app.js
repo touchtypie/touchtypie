@@ -2107,6 +2107,7 @@ var EnvironmentController = function() {
     // Event listeners - Component: menu
     document.getElementsByTagName('environment')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
         myApp.sceneController.scene = 'home';
+        _training.student.focus();
     });
 
     // Components
@@ -2799,7 +2800,12 @@ var myApp = function () {
                 if (State.debug) {
                     console.log('[keyup] ESC key');
                 }
-                sceneController.scene = sceneController.scene === 'home' ? 'environment' : 'home';
+                if (sceneController.scene === 'home') {
+                    sceneController.scene = 'environment';
+                }else {
+                    sceneController.scene = 'home';
+                    State.training.student.focus();
+                }
             }
         });
 
