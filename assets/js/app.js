@@ -794,6 +794,7 @@ var Memory = function() {
     var bookLibraries = {};
     var bookCollections = {};
     var books = {};
+    var bookLibraryCount = 0;
     var bookCount = 0;
     var workingMemoryLibraryId = '';
     var workingMemoryCollectionId = '';
@@ -956,6 +957,7 @@ var Memory = function() {
         var _this = this;
         recallLibraries.apply(_this, [bookLibraryIds, function() {
             // Once recollection is done
+            _this.bookLibraryCount = Object.keys(_this.bookLibraries).length;
             _this.bookCount = Object.keys(_this.books).length;
             callbackOnSuccess();
         }, function() {
@@ -1101,6 +1103,7 @@ var Memory = function() {
         bookLibraries: bookLibraries,
         bookCollections, bookCollections,
         books: books,
+        bookLibraryCount: bookLibraryCount,
         bookCount: bookCount,
         workingMemoryLibraryId: workingMemoryLibraryId,
         workingMemoryCollectionId: workingMemoryCollectionId,
@@ -2037,6 +2040,13 @@ var HomeController = function () {
         property: "other_num_global_percentage"
     }).addBinding(
         document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
+        'innerHTML'
+    );
+    new Binding({
+        object: _training.trainer.memory,
+        property: "bookLibraryCount"
+    }).addBinding(
+        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('booklibrarycounter')[0].getElementsByTagName('value')[0],
         'innerHTML'
     );
     new Binding({
