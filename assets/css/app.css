@@ -778,6 +778,7 @@ statistics globaloverall amendcounter,
 statistics globaloverall amendpercentagecounter,
 statistics globaloverall othercounter,
 statistics globaloverall otherpercentagecounter,
+statistics globaloverall booklibrarycounter,
 statistics globaloverall bookcounter {
     display: block;
     border-radius: 1vw;
@@ -872,6 +873,7 @@ statistics globaloverall span {
     statistics globaloverall amendpercentagecounter,
     statistics globaloverall othercounter,
     statistics globaloverall otherpercentagecounter,
+    statistics globaloverall booklibrarycounter,
     statistics globaloverall bookcounter {
         display: block;
     }
