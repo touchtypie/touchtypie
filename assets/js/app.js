@@ -1785,6 +1785,11 @@ var HomeController = function () {
         function(event, _this, binding) {
             var key = event.keyCode || event.charCode;
 
+            // Skip the ESC key
+            if (key === 27) {
+                return false;
+            }
+
             // Set student response. Remove all CRs
             _this.valueSetter(binding.element[binding.attribute].replace(/\r/g, ''));
             // Set student response counter
@@ -2776,6 +2781,19 @@ var myApp = function () {
             EnvironmentController()
         );
         SceneController(State);
+
+        // Event listeners - Global
+        window.addEventListener('keyup', function(event){
+            var key = event.keyCode || event.charCode;
+
+            // ESC key toggles between environment and home scenes
+            if (key === 27) {
+                if (State.debug) {
+                    console.log('[keyup] ESC key');
+                }
+                State.scene = State.scene === 'home' ? 'environment' : 'home';
+            }
+        });
 
         // Start training
         window.addEventListener('load', function(event) {
