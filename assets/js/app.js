@@ -2741,8 +2741,11 @@ var EventController = function(Config) {
         registerEvent: registerEvent,
     };
 };
-var SceneController = function() {
-    var scene = '';
+var SceneController = function(Config) {
+    // The default scene
+    var scene = Config.scene;
+    // Array of scenes
+    var scenes = Config.scenes;
 
     // Create a setter that shows active scene while hiding inactive scenes
     Object.defineProperty(State, 'scene', {
@@ -2750,9 +2753,9 @@ var SceneController = function() {
             return scene;
         },
         set: function(newScene) {
-            for (var i = 0; i < State.scenes.length; i++ ) {
-                var sceneParentEle = document.getElementsByTagName(State.scenes[i].id)[0];
-                if (State.scenes[i].id === newScene) {
+            for (var i = 0; i < scenes.length; i++ ) {
+                var sceneParentEle = document.getElementsByTagName(scenes[i].id)[0];
+                if (scenes[i].id === newScene) {
                     sceneParentEle.style.display = 'block';
                 }else {
                     sceneParentEle.style.display = 'none';
@@ -2772,7 +2775,7 @@ var myApp = function () {
             HomeController(),
             EnvironmentController()
         );
-        SceneController();
+        SceneController(State);
 
         // Start training
         window.addEventListener('load', function(event) {
