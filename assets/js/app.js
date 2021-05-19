@@ -2330,7 +2330,9 @@ var EnvironmentController = function() {
 
                 // ENTER key
                 if (key === 13) {
-                    c.methods.loadBookLibrary(c, value)
+                    if (value !== '') {
+                        c.methods.loadBookLibrary(c, value);
+                    }
                 }
 
                 // ESC key should toggle back to add status
