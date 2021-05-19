@@ -2752,8 +2752,8 @@ var SceneController = function(Config) {
     // Array of scenes
     var scenes = Config.scenes;
 
-    // Create a setter that shows active scene while hiding inactive scenes
-    Object.defineProperty(State, 'scene', {
+    // Create a getter, and a setter that shows active scene while hiding inactive scenes
+    Object.defineProperty(Config, 'scene', {
         get: function() {
             return scene;
         },
