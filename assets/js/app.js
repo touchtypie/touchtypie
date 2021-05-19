@@ -824,7 +824,7 @@ var Memory = function() {
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 var status = xhr.status;
-                if (status === 0 || (status >= 200 && status < 400)) {
+                if (status === 200) {
                     // Success
                     if (callback) {
                         callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
