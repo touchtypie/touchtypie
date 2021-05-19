@@ -1659,13 +1659,12 @@ var Component = function(c) {
 
 // Controllers
 var HomeController = function () {
-    const id = 'home';
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
     // Event listeners - Component: menu
     document.getElementsByTagName('home')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        State.scene = 'environment';
+        myApp.sceneController.scene = 'environment';
     });
 
     // Data binding - Component: truth
@@ -2097,18 +2096,17 @@ var HomeController = function () {
     );
 
     return {
-        id: 'home'
+        id: 'home',
     }
 };
 
 var EnvironmentController = function() {
-    const id = 'environment';
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
     // Event listeners - Component: menu
     document.getElementsByTagName('environment')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        State.scene = 'home';
+        myApp.sceneController.scene = 'home';
     });
 
     // Components
@@ -2692,8 +2690,9 @@ var EnvironmentController = function() {
         }
     });
 
+    // Return a scene object
     return {
-        id: id
+        id: 'environment',
     };
 };
 
@@ -2746,41 +2745,50 @@ var EventController = function(Config) {
         registerEvent: registerEvent,
     };
 };
-var SceneController = function(Config) {
-    // The default scene
-    var scene = Config.scene;
-    // Array of scenes
-    var scenes = Config.scenes;
+var SceneController = function(state, scenes) {
+    // Object containing Scene objects
+    var _scenes = {};
+    for (var i = 0; i < scenes.length; i++) {
+        _scenes[scenes[i].id] = scenes[i];
+    }
 
-    // Create a getter, and a setter that shows active scene while hiding inactive scenes
-    Object.defineProperty(Config, 'scene', {
-        get: function() {
-            return scene;
+    return {
+        get scene() {
+            return state.scene;
         },
-        set: function(newScene) {
-            for (var i = 0; i < scenes.length; i++ ) {
-                var sceneParentEle = document.getElementsByTagName(scenes[i].id)[0];
-                if (scenes[i].id === newScene) {
+        set scene(newScene) {
+            // Show new scene and hide all other scenes
+            var sceneParentEle;
+            for (var k in _scenes) {
+                sceneParentEle = document.getElementsByTagName(_scenes[k].id)[0];
+                if (_scenes[k].id === newScene) {
                     sceneParentEle.style.display = 'block';
+
+                    // Update state object's scene
+                    state.scene = newScene;
                 }else {
                     sceneParentEle.style.display = 'none';
                 }
             }
-            scene = newScene;
         }
-    });
+    };
 };
 var myApp = function () {
     // Create events
     var eventController = EventController(State.events);
+    var sceneController;
 
     var init = function() {
         // Create scenes
-        State.scenes.push(
-            HomeController(),
-            EnvironmentController()
+        sceneController = SceneController(
+            // The state object
+            State,
+            // Scenes
+            [
+                HomeController(),
+                EnvironmentController()
+            ]
         );
-        SceneController(State);
 
         // Event listeners - Global
         window.addEventListener('keyup', function(event){
@@ -2791,7 +2799,7 @@ var myApp = function () {
                 if (State.debug) {
                     console.log('[keyup] ESC key');
                 }
-                State.scene = State.scene === 'home' ? 'environment' : 'home';
+                sceneController.scene = sceneController.scene === 'home' ? 'environment' : 'home';
             }
         });
 
@@ -2809,7 +2817,12 @@ var myApp = function () {
     }
 
     return {
-        eventController: eventController,
+        get eventController() {
+            return eventController
+        },
+        get sceneController() {
+            return sceneController
+        },
         init: init
     }
 }();
