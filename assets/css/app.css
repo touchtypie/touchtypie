@@ -51,7 +51,7 @@ wrapper {
 }
 
 home {
-    display: block;
+    display: none;
 }
 
 header {

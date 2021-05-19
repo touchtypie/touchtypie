@@ -2884,24 +2884,30 @@ var SceneController = function(state, scenes) {
         _scenes[scenes[i].id] = scenes[i];
     }
 
+    var setScene = function(newScene) {
+            // Show new scene and hide all other scenes
+            var sceneParentEle;
+            for (var k in _scenes) {
+                if (_scenes[k].id === newScene) {
+                    _scenes[k].parentElement.style.display = 'block';
+
+                    // Update state object's scene
+                    state.scene = newScene;
+                }else {
+                    _scenes[k].parentElement.style.display = 'none';
+                }
+            }
+    };
+
+    // Show the default scene
+    setScene(state.scene);
+
     return {
         get scene() {
             return state.scene;
         },
         set scene(newScene) {
-            // Show new scene and hide all other scenes
-            var sceneParentEle;
-            for (var k in _scenes) {
-                sceneParentEle = document.getElementsByTagName(_scenes[k].id)[0];
-                if (_scenes[k].id === newScene) {
-                    sceneParentEle.style.display = 'block';
-
-                    // Update state object's scene
-                    state.scene = newScene;
-                }else {
-                    sceneParentEle.style.display = 'none';
-                }
-            }
+            setScene(newScene);
         },
         get scenes() {
             return _scenes;
