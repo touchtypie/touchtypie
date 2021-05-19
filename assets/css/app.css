@@ -79,7 +79,7 @@ header heading {
     font-size: 2vw;
     text-transform: uppercase;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     header {
         padding: 4vw;
         /* border-bottom: 1px solid #000; */
@@ -122,7 +122,7 @@ menu menubutton icon {
     line-height: 1;
     text-align: center;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     menu menubutton icon {
         width: 6vw;
         height: 6vw;
@@ -173,7 +173,7 @@ switch.true handle {
     margin-left: 1vw;
     background: rgba(255, 255, 255, 1.0);
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     menuswitch {
         margin-top: 2vw;
     }
@@ -242,7 +242,7 @@ menumultiswitch symbol.shuffle span {
     line-height: 1;
     text-align: center;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     menumultiswitch {
         margin-top: 2vw;
     }
@@ -377,7 +377,7 @@ menuselect add {
     text-align: center;
     cursor: pointer;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     menuselect {
         margin-top: 2vw;
     }
@@ -456,7 +456,7 @@ menuambienceswitch choice.active {
     border: 1px solid rgba(255, 255, 255, 1.0);
     box-shadow: 0 0 0.3vw 0.1vw #fff;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     menuambienceswitch {
         margin-top: 2vw;
         /* Account for choice's margin-top and margin-bottom */
@@ -515,7 +515,7 @@ menuexport download:hover {
     background: #fff;
     color: #085078;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     menuexport {
         margin-top: 2vw;
     }
@@ -584,7 +584,7 @@ speech value character.invalid {
 speech value character.valid {
     border: 1px solid transparent;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     speech {
         margin-top: 2vw;
     }
@@ -645,7 +645,7 @@ response textarea:disabled {
 response textarea:disabled::placeholder {
     color: rgba(255, 255, 255, 1.0);
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     response {
         margin-top: 4vw;
     }
@@ -798,7 +798,7 @@ statistics globaloverall span {
     font-weight: normal;
     font-size: 1vw;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     statistics unitprogress {
         display: block;
         width: calc(100vw * 5 / 6);
@@ -906,7 +906,7 @@ footer icons > a > svg {
     width: 3vw;
     fill: #fff;
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     footer {
         margin-top: 6vw;
         margin-bottom: 4vw;
@@ -935,7 +935,7 @@ environment main {
     display: block;
     padding: 0 calc(100vw * 1 / 6);
 }
-@media screen and (max-aspect-ratio: 13/10) {
+@media (max-aspect-ratio: 13/10) {
     environment header heading {
         font-size: 4vw;
     }
