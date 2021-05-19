@@ -2144,7 +2144,7 @@ var EnvironmentController = function() {
                 <label>{{ .label }}</label>
                 <select b-on="DOMContentLoaded,change:selectchange,click:selectclick,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
                 <input class="hidden" b-on="keyup:inputkeyup" type="text" placeholder="enter url of library..." />
-                <add b-on="click:addclick" title="Add a library">{{ .addStatus }}</add>
+                <add b-on="click:addclick,keyup:addkeyup" title="Add a library" tabindex="0">{{ .addStatus }}</add>
             </menuselect><br />
         `,
         props: {
@@ -2348,6 +2348,19 @@ var EnvironmentController = function() {
                 var c = this;
                 scene.underInteraction = !scene.underInteraction;
                 c.methods.toggleAddStatus(c);
+            },
+            addkeyup: function(event, _this, binding) {
+                var c = this;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[addkeyup] ENTER or SPACE key');
+                    }
+                    scene.underInteraction = !scene.underInteraction;
+                    c.methods.toggleAddStatus(c);
+                }
             }
         }
     });
