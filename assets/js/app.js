@@ -1496,37 +1496,57 @@ var Component = function(c) {
 
     var creatingBindings = function(rootElement) {
         var allElements = rootElement.getElementsByTagName('*');
-        var matches, propsPaths, object, property, binding, events, addedBinding;
-        for (var i = 0; i < allElements.length; i++) {
-            var ele = allElements[i];
+        var matches, split, events, propsPaths, object, property, binding, addedBinding;
 
-            // Parse elements' attributes for events, and object properties specified in attribute value  '{{ .obj.someprop }}'
+        // Parse elements
+        for (var ele, i = 0; i < allElements.length; i++) {
+            ele = allElements[i];
+            events = [];
+
+            // Parse attributes for events
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
+                // Get any eventListeners and eventHandlers names
+                // E.g. <element b-on="click:myhandler,change:mychangehandler" />
+                if ("b-on" === atts[j].name) {
+                    split = atts[j].value.split(',').filter(function (v) { return v !== ''; });
+                    for (var _= 0; _ < split.length; _++) {
+                        matches = /([^:]+):?(.*)/.exec(split[_]);
+                        if (matches.length > 0) {
+                            events.push({
+                                event: matches[1],
+                                handler: matches[2] === '' ? matches[1] : matches[2]
+                            });
+                        }
+                    }
+                }
+            }
 
+            // Parse attributes for data binding
+            for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
                 addedBinding = false;
 
-                // Get any eventListeners
-                matches = /b-on/.exec(atts[j].name);
-                if (matches && matches.length > 0) {
-                    events = atts[j].value.split(',').filter(function (v) { return v !== ''; });
-                }
-                // Create data binding to attribute. E.g. '{{ .foo }}'
+                // Create data binding to attribute.
+                // E.g. <element someattribute="{{ .foo }}" /> or <element someattribute="{{ .foo.bar }}" />
                 binding = null;
                 matches = /\{\{([^\}]+)\}\}/.exec(atts[j].value);
                 if (matches && matches.length > 0) {
                     object = c.props;
                     propsPaths = matches[1].trim().split('.').filter(function (v) { return v !== ''; });
                     if (propsPaths.length > 1) {
+                        // E.g. c.props.foo
                         for (var _ = 0; _ < propsPaths.length - 1; _++) {
                             if (propsPaths[_] !== '') {
                                 object = object[propsPaths[_]];
                             }
                         }
+                        // E.g. 'bar'
                         property = propsPaths[propsPaths.length - 1];
                     }else {
+                        // E.g. 'bar'
                         property = propsPaths[0];
                     }
-                    // Search for existing object binding
+
+                    // Use existing object binding, or else create a new one
                     for (var key in c.bindings) {
                         if (key === matches[1].trim()) {
                             binding = c.bindings[key];
@@ -1537,13 +1557,13 @@ var Component = function(c) {
                         object: object,
                         property: property
                     });
-                    if (events) {
-                        for (var e = 0; e < events.length; e++) {
+                    if (events.length > 0) {
+                        for (var _ = 0; _ < events.length; _++) {
                             binding.addBinding(
                                 ele,
                                 /^class$/i.test(atts[j].name) ? 'className' : atts[j].name, // e.g. 'someattr' or 'innerHTML'
-                                events[e], // e.g. 'click'
-                                c.eventsListeners[events[e]], // callback,
+                                events[_].event, // e.g. 'click'
+                                c.eventsListeners[events[_].handler], // callback,
                                 c // callbackThisObj
                             );
                         }
@@ -1585,13 +1605,13 @@ var Component = function(c) {
                     object: object,
                     property: property
                 });
-                if (events) {
-                    for (var e = 0; e < events.length; e++) {
+                if (events.length > 0) {
+                    for (var _ = 0; _ < events.length; _++) {
                         binding.addBinding(
                             ele,
                             'innerHTML', // e.g. 'someattr' or 'innerHTML'
-                            events[e],  // e.g. 'click'
-                            c.eventsListeners[events[e]], // callback,
+                            events[_].event,  // e.g. 'click'
+                            c.eventsListeners[events[_].handler], // callback,
                             c // callbackThisObj
                         )
                     }
@@ -1608,13 +1628,12 @@ var Component = function(c) {
 
             // If there is no data binding, simply set up the eventListeners
             if (!addedBinding) {
-                if (events) {
-                    var _ele, handler;
-                    for (var e = 0; e < events.length; e++) {
-                        _ele = /DOM|ready/.test(events[e]) ? document : ele;
-                         handler = c.eventsListeners[events[e]];
-                        _ele.addEventListener(events[e], function(event){
-                            handler.apply(c, [event]);
+                if (events.length > 0) {
+                    for (var _ele, handler, _ = 0; _ < events.length; _++) {
+                        _ele = /DOM|ready/.test(events[_].event) ? document : ele;
+                        handler = events[_].handler;
+                        _ele.addEventListener(events[_].event, function(e){
+                            c.eventsListeners[handler].apply(c, [e]);
                         });
                     }
                 }
