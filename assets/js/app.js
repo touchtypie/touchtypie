@@ -1678,10 +1678,7 @@ var Component = function(c) {
 
 // Controllers
 var HomeController = function () {
-    var scene = {
-        id: 'home',
-        underInteraction: false
-    };
+    const scene = Scene('home');
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
@@ -2122,10 +2119,7 @@ var HomeController = function () {
 };
 
 var EnvironmentController = function() {
-    var scene = {
-        id: 'environment',
-        underInteraction: false
-    };
+    const scene = Scene('environment');
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
@@ -2874,6 +2868,14 @@ var EventController = function(Config) {
         doEvent: doEvent,
         registerEvent: registerEvent,
     };
+};
+// Scene object
+var Scene = function(name) {
+    return {
+        id: name,
+        parentElement: document.getElementsByTagName(name)[0],
+        underInteraction: false
+    }
 };
 var SceneController = function(state, scenes) {
     // Object containing Scene objects
