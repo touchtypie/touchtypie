@@ -1678,6 +1678,10 @@ var Component = function(c) {
 
 // Controllers
 var HomeController = function () {
+    var scene = {
+        id: 'home',
+        underInteraction: false
+    };
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
@@ -2114,12 +2118,14 @@ var HomeController = function () {
         'innerHTML'
     );
 
-    return {
-        id: 'home',
-    }
+    return scene;
 };
 
 var EnvironmentController = function() {
+    var scene = {
+        id: 'environment',
+        underInteraction: false
+    };
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
@@ -2136,9 +2142,9 @@ var EnvironmentController = function() {
         template: `
             <menuselect>
                 <label>{{ .label }}</label>
-                <select b-on="DOMContentLoaded,change" title="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
-                <input class="hidden" b-on="keyup" type="text" placeholder="enter url of library..." />
-                <add b-on="click" title="Add a library">{{ .addStatus }}</add>
+                <select b-on="DOMContentLoaded,change:selectchange,click:selectclick,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
+                <input class="hidden" b-on="keyup:inputkeyup" type="text" placeholder="enter url of library..." />
+                <add b-on="click:addclick" title="Add a library">{{ .addStatus }}</add>
             </menuselect><br />
         `,
         props: {
@@ -2284,24 +2290,63 @@ var EnvironmentController = function() {
                     Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
                 });
             },
-            change: function(event, _this, binding) {
+            selectchange: function(event, _this, binding) {
+                if (State.debug) {
+                    console.log('[selectchange]');
+                }
                 var c = this;
                 var valueNew = binding.element.value;
                 c.props._training.trainer.memory.workingMemoryLibraryId = valueNew;
                 c.methods.updateCollectionsAndBooks(c, valueNew);
             },
-            keyup: function(event, _this, binding) {
+            selectclick: function(event, _this, binding) {
+                if (State.debug) {
+                    console.log('[selectclick]');
+                }
+                scene.underInteraction = !scene.underInteraction;
+                event.stopPropagation();
+            },
+            selectkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ESC key should escape the user interaction
+                if (key === 27) {
+                    if (State.debug) {
+                        console.log('[selectkeyup] ESC key');
+                    }
+                    if (scene.underInteraction) {
+                        scene.underInteraction = false;
+                        event.stopPropagation();
+                    }
+                }
+            },
+            inputkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
                 var key = event.keyCode || event.charCode;
                 var value = ele.value.trim();
+
                 // ENTER key
                 if (key === 13) {
                     c.methods.loadBookLibrary(c, value)
                 }
+
+                // ESC key should toggle back to add status
+                if (key === 27) {
+                    if (State.debug) {
+                        console.log('[keyup] ESC key');
+                    }
+                    c.methods.toggleAddStatus(c);
+                    scene.underInteraction = false;
+                    c.parentElement.getElementsByTagName('select')[0].focus();
+                    event.stopPropagation();
+                }
             },
-            click: function(event, _this, binding) {
+            addclick: function(event, _this, binding) {
                 var c = this;
+                scene.underInteraction = !scene.underInteraction;
                 c.methods.toggleAddStatus(c);
             }
         }
@@ -2310,7 +2355,7 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_bookcollections',
         template: `
-        <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
+        <menuselect><label>{{ .label }}</label><select b-on="change,click:selectclick,change:selectchange,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
         `,
         props: {
             label: 'collection',
@@ -2360,7 +2405,10 @@ var EnvironmentController = function() {
             },
         },
         eventsListeners: {
-            change: function(event, _this, binding) {
+            selectchange: function(event, _this, binding) {
+                if (State.debug) {
+                    console.log('[selectchange]');
+                }
                 var c = this;
                 var valueNew = binding.element.value;
 
@@ -2375,6 +2423,29 @@ var EnvironmentController = function() {
                         Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
                     }
                 }
+            },
+            selectclick: function(event, _this, binding) {
+                if (State.debug) {
+                    console.log('[selectclick]');
+                }
+                scene.underInteraction = !scene.underInteraction;
+                event.stopPropagation();
+            },
+            selectkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ESC key should escape the user interaction
+                if (key === 27) {
+                    if (State.debug) {
+                        console.log('[selectkeyup] ESC key');
+                    }
+                    if (scene.underInteraction) {
+                        scene.underInteraction = false;
+                        event.stopPropagation();
+                    }
+                }
             }
         }
     });
@@ -2382,7 +2453,7 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_books',
         template: `
-            <menuselect><label>{{ .label }}</label><select b-on="change" title="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
+            <menuselect><label>{{ .label }}</label><select b-on="change,click:selectclick,change:selectchange,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryBookId }}"></select></menuselect><br />
         `,
         props: {
             label: 'book',
@@ -2438,13 +2509,39 @@ var EnvironmentController = function() {
             },
         },
         eventsListeners: {
-            change: function(event, _this, binding) {
+            selectchange: function(event, _this, binding) {
+                if (State.debug) {
+                    console.log('[selectchange]');
+                }
                 var c = this;
                 var valueNew = binding.element.value;
                 c.props._training.trainer.memory.workingMemoryBookId = valueNew;
                 var book = c.props._training.trainer.getCurrentBook();
                 if (book) {
                     c.props._training.improvise(book);
+                }
+            },
+            selectclick: function(event, _this, binding) {
+                if (State.debug) {
+                    console.log('[selectclick]');
+                }
+                scene.underInteraction = !scene.underInteraction;
+                event.stopPropagation();
+            },
+            selectkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ESC key should escape the user interaction
+                if (key === 27) {
+                    if (State.debug) {
+                        console.log('[selectkeyup] ESC key');
+                    }
+                    if (scene.underInteraction) {
+                        scene.underInteraction = false;
+                        event.stopPropagation();
+                    }
                 }
             }
         }
@@ -2711,9 +2808,7 @@ var EnvironmentController = function() {
     });
 
     // Return a scene object
-    return {
-        id: 'environment',
-    };
+    return scene;
 };
 
 // App state
@@ -2790,6 +2885,9 @@ var SceneController = function(state, scenes) {
                     sceneParentEle.style.display = 'none';
                 }
             }
+        },
+        get scenes() {
+            return _scenes;
         }
     };
 };
@@ -2819,11 +2917,18 @@ var myApp = function () {
                 if (State.debug) {
                     console.log('[keyup] ESC key');
                 }
-                if (sceneController.scene === 'home') {
-                    sceneController.scene = 'environment';
-                }else {
-                    sceneController.scene = 'home';
-                    State.training.student.focus();
+                if (sceneController.scenes[sceneController.scene].underInteraction === false) {
+                    switch(sceneController.scene) {
+                        case 'home':
+                            sceneController.scene = 'environment';
+                            break;
+                        case 'environment':
+                            sceneController.scene = 'home';
+                            State.training.student.focus();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         });
