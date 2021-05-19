@@ -1677,6 +1677,11 @@ var Component = function(c) {
 };
 
 // Controllers
+var SplashController = function () {
+    var scene = Scene('splash');
+    return scene;
+};
+
 var HomeController = function () {
     const scene = Scene('home');
     var _training = State.training;
@@ -2831,7 +2836,7 @@ var State = function() {
             'training-init',
             'training-start'
         ],
-        scene: 'home',
+        scene: 'splash',
         scenes: [],
         training: Training()
     }
@@ -2884,19 +2889,51 @@ var SceneController = function(state, scenes) {
         _scenes[scenes[i].id] = scenes[i];
     }
 
-    var setScene = function(newScene) {
-            // Show new scene and hide all other scenes
-            var sceneParentEle;
-            for (var k in _scenes) {
-                if (_scenes[k].id === newScene) {
-                    _scenes[k].parentElement.style.display = 'block';
+    // Shows the new scene and hide all other scenes if only is unspecified
+    var setScene = function(newScene, only) {
+        var sceneParentEle;
+        for (var k in _scenes) {
+            if (_scenes[k].id === newScene) {
+                _scenes[k].parentElement.style.display = 'block';
 
-                    // Update state object's scene
-                    state.scene = newScene;
-                }else {
+                // Update state object's scene
+                state.scene = newScene;
+            }else {
+                if (!only) {
                     _scenes[k].parentElement.style.display = 'none';
                 }
             }
+        }
+    };
+
+    // Fades out the current scene to the new scene
+    var transitionToScene = function(newScene, timeoutCallback, timeoutDuration, timeoutCallbackContext) {
+        // Create a CSS fadeout animation keyframe dynamically
+        var styleEle = document.createElement('style');
+        styleEle.type = 'text/css';
+        styleEle.innerHTML = '@keyframes fadeout { 0% { opacity: 1; } 100% { opacity: 0; } }';
+        document.head.appendChild(styleEle);
+
+        // Add animation to current scene and keep it on top of all scenes
+        var currentScene = _scenes[state.scene];
+        currentScene.parentElement.style.animation = 'fadeout ' + parseFloat((timeoutDuration / 1000).toFixed(2)) + 's forwards';
+        currentScene.parentElement.style.zIndex = '1000000';
+
+        // Show the new scene
+        setScene(newScene, true);
+        setTimeout(function() {
+            // Remove the dynamically created CSS style
+            styleEle.remove();
+
+            // Remove animation from the current scene
+            currentScene.parentElement.style.animation = '';
+            currentScene.parentElement.style.zIndex = '';
+            // And hide the current scene
+            setScene(newScene);
+
+            // Call the callback
+            timeoutCallback.apply(timeoutCallbackContext);
+        }, timeoutDuration);
     };
 
     // Show the default scene
@@ -2911,7 +2948,8 @@ var SceneController = function(state, scenes) {
         },
         get scenes() {
             return _scenes;
-        }
+        },
+        transitionToScene: transitionToScene
     };
 };
 var myApp = function () {
@@ -2926,6 +2964,7 @@ var myApp = function () {
             State,
             // Scenes
             [
+                SplashController(),
                 HomeController(),
                 EnvironmentController()
             ]
@@ -2958,14 +2997,18 @@ var myApp = function () {
 
         // Start training
         window.addEventListener('load', function(event) {
-            // Event: training-init
-            eventController.doEvent('training-init');
+            // Fade the splash scene out into the home scene
+            const transitionDuration = 1000; // 1 second
+            sceneController.transitionToScene('home', function() {
+                // Event: training-init
+                eventController.doEvent('training-init');
 
-            // Replenish training environment
-            State.training.prepare(State.bookLibraryIds, function() {
-                // Event: training-start
-                eventController.doEvent('training-start');
-            });
+                // Replenish training environment
+                State.training.prepare(State.bookLibraryIds, function() {
+                    // Event: training-start
+                    eventController.doEvent('training-start');
+                });
+            }, transitionDuration);
         });
     }
 
