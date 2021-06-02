@@ -3011,8 +3011,7 @@ var EnvironmentController = function() {
 var State = function() {
     return {
         bookLibraryIds: [
-            // 'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
-            '.dev/books/library.txt'
+            'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
         ],
         debug: false,
         events: [
