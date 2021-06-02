@@ -2613,17 +2613,38 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch',
         template: `
-            <menuswitch><label>perfection</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.perfection }}"><handle></handle></switch></menuswitch>
+            <menuswitch><label>perfection</label><switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.perfection }}" tabindex="0"><handle></handle></switch></menuswitch>
         `,
         props: {
             _training: _training
         },
+        methods: {
+            toggleValue: function(c) {
+                var newVal = !c.props._training.trainer.memory.environment.perfection;
+                c.props._training.trainer.memory.environment.perfection = newVal;
+            }
+        },
         eventsListeners: {
             click: function(event, _this, binding) {
                 var c = this;
-                var newVal = !c.props._training.trainer.memory.environment.perfection;
-                c.props._training.trainer.memory.environment.perfection = newVal;
+                c.methods.toggleValue(c);
+
                 event.stopPropagation()
+            },
+            switchkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[switchkeyup] ENTER or SPACE key');
+                    }
+                    c.methods.toggleValue(c);
+
+                    event.stopPropagation();
+                }
             }
         }
     });
