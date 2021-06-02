@@ -2938,16 +2938,14 @@ var EnvironmentController = function() {
     Component({
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuexport',
+        template: `
+            <menuexport><label>virtues</label><download b-on="click,keyup:downloadkeyup" tabindex="0">download</download></menuexport>
+        `,
         props: {
             _training: _training
         },
-        template: `
-            <menuexport><label>virtues</label><download b-on="click">download</download></menuexport>
-        `,
-        eventsListeners: {
-            click: function(event) {
-                var c = this;
-                // var ele = event.target || event.srcElement;
+        methods: {
+            beginDownload: function(c) {
                 var data = {
                     virtue: c.props._training.student.virtue,
                     virtues: c.props._training.student.virtues
@@ -2959,7 +2957,30 @@ var EnvironmentController = function() {
                 document.body.appendChild(downloadAnchorNode); // required for firefox
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
-                event.stopPropagation()
+            }
+        },
+        eventsListeners: {
+            click: function(event) {
+                var c = this;
+                // var ele = event.target || event.srcElement;
+                c.methods.beginDownload();
+
+                event.stopPropagation();
+            },
+            downloadkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[downloadkeyup] ENTER or SPACE key');
+                    }
+                    c.methods.beginDownload(c);
+
+                    event.stopPropagation();
+                }
             }
         }
     });
