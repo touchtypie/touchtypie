@@ -2915,17 +2915,35 @@ var EnvironmentController = function() {
                         var ele = event.target || event.srcElement;
                         var key = event.keyCode || event.charCode;
 
-                        // ENTER or SPACE key
-                        if (key === 37 || key === 39) {
+                        var direction, nextChoice;
+                        // LEFT or RIGHT key
+                        if (key === 37) {
                             if (State.debug) {
-                                console.log('[keyup] LEFT or RIGHT key');
+                                console.log('[keyup] LEFT key');
                             }
-                            var direction = key === 37 ? 'before' : 'after'
-                            var nextChoice = c.methods.getNextChoice(c, direction);
-                            c.methods.setChoice(c, nextChoice);
-
-                            event.stopPropagation();
+                            direction = 'before';
                         }
+                        // RIGHT key
+                        else if (key === 39) {
+                            if (State.debug) {
+                                console.log('[keyup] RIGHT key');
+                            }
+                            direction = 'after';
+                        }
+                        // ENTER or SPACE key
+                        else if (key === 13 || key === 32) {
+                            if (State.debug) {
+                                console.log('[keyup] ENTER or SPACE key');
+                            }
+                            direction = 'after';
+                        }
+
+                        if (direction) {
+                            nextChoice = c.methods.getNextChoice(c, direction);
+                            c.methods.setChoice(c, nextChoice);
+                        }
+
+                        event.stopPropagation();
                     });
                     ambiencesEle.appendChild(ambienceEle);
                     idx++;
@@ -2993,7 +3011,8 @@ var EnvironmentController = function() {
 var State = function() {
     return {
         bookLibraryIds: [
-            'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
+            // 'https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt'
+            '.dev/books/library.txt'
         ],
         debug: false,
         events: [
