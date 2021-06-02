@@ -146,6 +146,9 @@ menuswitch label {
     text-align: center;
     text-transform: uppercase;
 }
+menuswitch:focus-within label {
+    font-weight: bold;
+}
 menuswitch switch {
     display: inline-block;
     vertical-align: middle;
@@ -210,6 +213,9 @@ menumultiswitch label {
     font-size: 1vw;
     text-align: center;
     text-transform: uppercase;
+}
+menumultiswitch:focus-within label {
+    font-weight: bold;
 }
 menumultiswitch symbol {
     display: inline-block;
@@ -279,6 +285,9 @@ menuselect label {
     line-height: 1;
     text-align: center;
     text-transform: uppercase;
+}
+menuselect:focus-within label {
+    font-weight: bold;
 }
 menuselect select {
     display: inline-block;
@@ -426,6 +435,9 @@ menuambienceswitch label {
     text-align: center;
     text-transform: uppercase;
 }
+menuambienceswitch:focus-within label {
+    font-weight: bold;
+}
 menuambienceswitch ambiences {
     display: inline-block;
     width: calc(100vw * 2 / 3 * 2 / 3);
@@ -494,6 +506,9 @@ menuexport label {
     line-height: 1;
     text-align: center;
     text-transform: uppercase;
+}
+menuexport:focus-within label {
+    font-weight: bold;
 }
 menuexport download {
     display: inline-block;
