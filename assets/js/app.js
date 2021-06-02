@@ -2676,17 +2676,15 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch_jumble',
         template: `
-            <menuswitch><label>jumble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.jumble }}"><handle></handle></switch></menuswitch>
+            <menuswitch><label>jumble</label><switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.jumble }}" tabindex="0"><handle></handle></switch></menuswitch>
         `,
         props: {
             _training: _training
         },
-        eventsListeners: {
-            click: function(event, _this, binding) {
-                var c = this;
+        methods: {
+            toggleValue: function(c) {
                 var newVal = !c.props._training.trainer.memory.environment.jumble;
                 c.props._training.trainer.memory.environment.jumble = newVal;
-                event.stopPropagation();
 
                 // If scramble is on, turn it off
                 if (newVal === true) {
@@ -2694,9 +2692,31 @@ var EnvironmentController = function() {
                         c.props._training.trainer.memory.environment.scramble = false;
                     }
                 }
-
-                // Start the jumbled text
+            }
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                c.methods.toggleValue(c);
                 c.props._training.improvise(_training.trainer.getCurrentBook());
+
+                event.stopPropagation();
+            },
+            switchkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[switchkeyup] ENTER or SPACE key');
+                    }
+                    c.methods.toggleValue(c);
+                    c.props._training.improvise(_training.trainer.getCurrentBook());
+
+                    event.stopPropagation();
+                }
             }
         }
     });
