@@ -2562,7 +2562,7 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menumultiswitch-playmode',
         template: `
-            <menumultiswitch><label>playmode</label><symbol b-on="DOMContentLoaded,click" title="{{ ._training.trainer.memory.environment.playmode }}"></symbol></menumultiswitch>
+            <menumultiswitch><label>playmode</label><symbol b-on="DOMContentLoaded,click,keyup:symbolkeyup" title="{{ ._training.trainer.memory.environment.playmode }}" tabindex="0"></symbol></menumultiswitch>
         `,
         props: {
             _training: _training
@@ -2588,6 +2588,19 @@ var EnvironmentController = function() {
                 }
                 binding.element.innerHTML = html;
                 binding.element.className = playMode;
+            },
+            getNextPlayMode: function(c) {
+                var nextPlaymode = (function() {
+                    var keys = Object.keys(c.props._training.trainer.memory.environment.playmodes);
+                    var currIndex = keys.indexOf(c.props._training.trainer.memory.environment.playmode);
+                    var nextIndex = currIndex + 1 < keys.length ? currIndex + 1 : 0;
+                    return c.props._training.trainer.memory.environment.playmodes[keys[nextIndex]];
+                })();
+                return nextPlaymode;
+            },
+            setPlayMode: function(c, binding, playMode) {
+                c.props._training.trainer.memory.environment.playmode = playMode;
+                c.methods.updateSymbol(c, binding, playMode);
             }
         },
         eventsListeners: {
@@ -2597,15 +2610,26 @@ var EnvironmentController = function() {
             },
             click: function(event, _this, binding) {
                 var c = this;
-                var nextPlaymode = (function() {
-                    var keys = Object.keys(c.props._training.trainer.memory.environment.playmodes);
-                    var currIndex = keys.indexOf(c.props._training.trainer.memory.environment.playmode);
-                    var nextIndex = currIndex + 1 < keys.length ? currIndex + 1 : 0;
-                    return c.props._training.trainer.memory.environment.playmodes[keys[nextIndex]];
-                })();
-                c.props._training.trainer.memory.environment.playmode = nextPlaymode;
-                c.methods.updateSymbol(c, binding, nextPlaymode);
-                event.stopPropagation()
+                var nextPlaymode =  c.methods.getNextPlayMode(c, binding);
+                c.methods.setPlayMode(c, binding, nextPlaymode);
+
+                event.stopPropagation();
+            },
+            symbolkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[symbolkeyup] ENTER or SPACE key');
+                    }
+                    var nextPlaymode =  c.methods.getNextPlayMode(c);
+                    c.methods.setPlayMode(c, binding, nextPlaymode);
+
+                    event.stopPropagation();
+                }
             }
         }
     });
