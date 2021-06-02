@@ -1496,12 +1496,12 @@ var Component = function(c) {
 
     var creatingBindings = function(rootElement) {
         var allElements = rootElement.getElementsByTagName('*');
-        var matches, split, events, propsPaths, object, property, binding, addedBinding;
+        var matches, split, events, addBinding, propsPaths, object, property, binding, addedBinding;
 
         // Parse elements
         for (var ele, i = 0; i < allElements.length; i++) {
             ele = allElements[i];
-            events = [];
+            events = [], addBinding = false;
 
             // Parse attributes for events
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
@@ -1523,8 +1523,6 @@ var Component = function(c) {
 
             // Parse attributes for data binding
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
-                addedBinding = false;
-
                 // Create data binding to attribute.
                 // E.g. <element someattribute="{{ .foo }}" /> or <element someattribute="{{ .foo.bar }}" />
                 binding = null;
