@@ -153,6 +153,10 @@ menuswitch switch {
     display: inline-block;
     vertical-align: middle;
 }
+menuswitch switch:focus-visible {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+}
 switch {
     display: inline-block;
     vertical-align: middle;
@@ -225,6 +229,10 @@ menumultiswitch symbol {
     cursor: pointer;
     border: 1px solid #fff;
     padding: 0 1px;
+}
+menumultiswitch symbol:focus-visible {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
 }
 menumultiswitch symbol emoji {
     display: inline-block;
@@ -307,6 +315,10 @@ menuselect select {
     text-align-last: center;
     -moz-text-align-last: center;
 }
+menuselect select:focus-visible {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+}
 menuselect select option {
     font-family: monospace;
     font-size: 1vw;
@@ -385,6 +397,10 @@ menuselect add {
     line-height: 1;
     text-align: center;
     cursor: pointer;
+}
+menuselect add:focus-visible {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
 }
 @media (max-aspect-ratio: 13/10) {
     menuselect {
@@ -525,6 +541,10 @@ menuexport download {
     line-height: 1;
     text-transform: uppercase;
     cursor: pointer;
+}
+menuexport download:focus-visible {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
 }
 menuexport download:hover {
     background: #fff;
