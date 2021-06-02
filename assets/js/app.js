@@ -2941,9 +2941,8 @@ var EnvironmentController = function() {
                         if (direction) {
                             nextChoice = c.methods.getNextChoice(c, direction);
                             c.methods.setChoice(c, nextChoice);
+                            event.stopPropagation();
                         }
-
-                        event.stopPropagation();
                     });
                     ambiencesEle.appendChild(ambienceEle);
                     idx++;
