@@ -2659,18 +2659,15 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch_scramble',
         template: `
-            <menuswitch><label>scramble</label><switch b-on="click" class="{{ ._training.trainer.memory.environment.scramble }}"><handle></handle></switch></menuswitch>
+            <menuswitch><label>scramble</label><switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.scramble }}" tabindex="0"><handle></handle></switch></menuswitch>
         `,
         props: {
             _training: _training
         },
-        eventsListeners: {
-            click: function(event, _this, binding) {
-                var c = this;
+        methods: {
+            toggleValue: function(c) {
                 var newVal = !c.props._training.trainer.memory.environment.scramble;
                 c.props._training.trainer.memory.environment.scramble = newVal;
-                event.stopPropagation()
-
 
                 // If jumble is on, turn it off
                 if (newVal === true) {
@@ -2679,8 +2676,31 @@ var EnvironmentController = function() {
                     }
                 }
 
-                // Start the scrambled text
+            }
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                c.methods.toggleValue(c);
                 c.props._training.improvise(_training.trainer.getCurrentBook());
+
+                event.stopPropagation();
+            },
+            switchkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[switchkeyup] ENTER or SPACE key');
+                    }
+                    c.methods.toggleValue(c);
+                    c.props._training.improvise(_training.trainer.getCurrentBook());
+
+                    event.stopPropagation();
+                }
             }
         }
     });
