@@ -2747,6 +2747,29 @@ var EnvironmentController = function() {
             }
         },
         methods: {
+            getNextChoice: function(c, direction) {
+                var choices = Object.keys(c.props.ambiences);
+                var currentChoice = c.props._training.trainer.memory.environment.ambience;
+                var currIndex = choices.indexOf(currentChoice);
+                var nextIndex;
+                if (direction === 'before') {
+                    nextIndex = currIndex - 1 >= 0 ? currIndex - 1 : choices.length - 1;
+                }else if (direction === 'after') {
+                    nextIndex = currIndex + 1 <= choices.length - 1 ? currIndex + 1 : 0;
+                }else {
+                    nextIndex = 0;
+                }
+                return choices[nextIndex];
+            },
+            setChoice: function(c, choice) {
+                // Set the environment ambience to this ambience
+                c.props._training.trainer.memory.environment.ambience = choice;
+                // Set backgrounds on UI
+                var backgroundImage = c.props.ambiences[choice];
+                document.body.style.backgroundImage = backgroundImage;
+                // Update choices
+                c.methods.updateChoices(c);
+            },
             updateChoices: function(c) {
                 var choiceElements = c.parentElement.getElementsByTagName('ambiences')[0].getElementsByTagName('choice');
                 for (var i = 0; i < choiceElements.length; i++ ) {
@@ -2764,28 +2787,47 @@ var EnvironmentController = function() {
 
                 var ambiencesEle = c.parentElement.getElementsByTagName('ambiences')[0];
                 // Create all choice elements
+                var idx = 0;
                 var ambienceEle;
                 for (var ambience in c.props.ambiences) {
                     ambienceEle = document.createElement('choice');
                     ambienceEle.name = ambience;
                     ambienceEle.title = ambience;
+                    // Add tabIndex only for the first element
+                    if (idx == 0) {
+                        ambienceEle.tabIndex = 0;
+                    }
+                    ambienceEle.style.backgroundImage = c.props.ambiences[ambience];
                     if (ambience === 'random') {
                         ambienceEle.innerHTML = '?';
                     }
-                    ambienceEle.style.backgroundImage = c.props.ambiences[ambience];
                     ambienceEle.addEventListener('click', function(event) {
                         var ele = event.target || event.srcElement;
-                        // Set the environment ambience to this ambience
-                        c.props._training.trainer.memory.environment.ambience = ele.name;
-                        // Set backgrounds on UI
-                        var backgroundImage = c.props.ambiences[ele.name];
-                        document.body.style.backgroundImage = backgroundImage;
-                        // Update choices
-                        c.methods.updateChoices(c);
+                        var nextChoice = ele.name;
+                        c.methods.setChoice(c, nextChoice);
+
+                        event.stopPropagation();
+                    });
+                    ambienceEle.addEventListener('keyup', function(event) {
+                        var ele = event.target || event.srcElement;
+                        var key = event.keyCode || event.charCode;
+
+                        // ENTER or SPACE key
+                        if (key === 37 || key === 39) {
+                            if (State.debug) {
+                                console.log('[keyup] LEFT or RIGHT key');
+                            }
+                            var direction = key === 37 ? 'before' : 'after'
+                            var nextChoice = c.methods.getNextChoice(c, direction);
+                            c.methods.setChoice(c, nextChoice);
+
+                            event.stopPropagation();
+                        }
                     });
                     ambiencesEle.appendChild(ambienceEle);
+                    idx++;
                 }
-                // update choices
+                // Update choices
                 c.methods.updateChoices(c);
             }
         }
