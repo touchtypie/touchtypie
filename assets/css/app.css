@@ -459,11 +459,6 @@ menuambienceswitch ambiences {
     width: calc(100vw * 2 / 3 * 2 / 3);
     vertical-align: middle;
 }
-menuambienceswitch ambiences {
-    display: inline-block;
-    width: calc(100vw * 2 / 3 * 2 / 3);
-    vertical-align: middle;
-}
 menuambienceswitch ambiences:focus-visible {
     outline: none;
 }
