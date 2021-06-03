@@ -5,6 +5,25 @@ var Helpers = function () {
         htmlEntities: function htmlEntities(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /, '&nbsp;').replace(/\s+$/, '<br/>');
         },
+        getUrlParams: function() {
+            // E.g. 'key=value' returns { key: 'value' }
+            // E.g. 'key=value1&key=value' returns { key: [ 'value1', 'value2' ] }
+            var urlParams = {};
+            var search = /([^&=]+)=?([^&]*)/g, match, queryString = window.location.search.substring(1), key, value;
+            while (match = search.exec(queryString)) {
+                key = decodeURIComponent(match[1].replace(/\+/g, ' '));
+                value = decodeURIComponent(match[2].replace(/\+/g, ' '));
+                if (key in urlParams) {
+                    if (!Array.isArray(urlParams[key])) {
+                        urlParams[key] = [urlParams[key]];
+                    }
+                    urlParams[key].push(value);
+                }else {
+                    urlParams[key] = value;
+                }
+            }
+            return urlParams;
+        },
         getStopwatchValue: function getStopwatchValue(milliseconds) {
             var stopwatch = '';
 
@@ -3044,6 +3063,34 @@ var State = function() {
         training: Training()
     }
 }();
+var ConfigController = function(Config) {
+    // The given pre-defined Config should be an object
+
+    // Get config from GET parameters
+    var urlParams = Helpers.getUrlParams();
+    // Convert to camel-cased keys
+    var urlParamsCamelCased = {}, camelCasedKey;
+    for (var k in urlParams) {
+        // E.g. 'foo_bar_baz' becomes 'fooBarBaz', '_foo_bar_baz_' becomes 'FooBarBaz'
+        camelCasedKey = k.replace(/_([a-zA-Z])?/g, function($0, $1) { return $1 ? $1.toUpperCase() : ''; });
+        urlParamsCamelCased[camelCasedKey] = urlParams[k];
+    }
+
+    // Merge pre-defined Config and GET config
+    var mergedConfig = {};
+    // Pre-defined config
+    mergedConfig['bookLibraryIds'] = Config['bookLibraryIds']
+    // GET config
+    if (Object.keys(urlParamsCamelCased).length > 0) {
+        for (var k in urlParamsCamelCased) {
+            mergedConfig[k] = urlParamsCamelCased[k];
+        }
+    }
+
+    return {
+        config: mergedConfig
+    };
+};
 var EventController = function(Config) {
     // Config just has to an array of event names
 
@@ -3157,6 +3204,7 @@ var SceneController = function(state, scenes) {
 };
 var myApp = function () {
     // Create events
+    var configController = ConfigController(State);
     var eventController = EventController(State.events);
     var sceneController;
 
@@ -3207,7 +3255,7 @@ var myApp = function () {
                 eventController.doEvent('training-init');
 
                 // Replenish training environment
-                var trainingConfig = State;
+                var trainingConfig = configController.config;
                 State.training.prepare(trainingConfig, function() {
                     // Event: training-start
                     eventController.doEvent('training-start');
