@@ -1116,7 +1116,7 @@ var Memory = function() {
                         // Recalled library
                         data.bookLibrary.recalled = true;
                         data.callbackOnSuccess();
-                    }]);
+                    }, callbackOnError]);
                 };
             },
             callbackOnError: callbackOnError,
@@ -1130,7 +1130,7 @@ var Memory = function() {
     };
 
     // Recollection of a library collection
-    var recallCollection = function(bookCollection, fakeEntities, callback) {
+    var recallCollection = function(bookCollection, fakeEntities, callbackOnSuccess, callbackOnError) {
         var _this = this;
         fetch({
             method: 'GET',
@@ -1161,21 +1161,22 @@ var Memory = function() {
                             }
                         }
                         data.bookCollection.recalled = true;
-                        data.callback()
-                    }])
+                        data.callbackOnSuccess()
+                    }, callbackOnError])
                 }
             },
+            callbackOnError: callbackOnError,
             callbackData: {
                 self: _this,
                 bookCollection: bookCollection,
                 books: _this.books,
-                callback: callback
+                callbackOnSuccess: callbackOnSuccess
             }
         });
     };
 
     // Recollection of libary collection book
-    var recallBook = function(book, callback) {
+    var recallBook = function(book, callbackOnSuccess, callbackOnError) {
         var _this = this;
         fetch({
             method: 'GET',
@@ -1184,12 +1185,13 @@ var Memory = function() {
                 // Recalled book
                 data.book.content = _bookContentStr;
                 data.book.recalled = true;
-                data.callback();
+                data.callbackOnSuccess();
             },
+            callbackOnError: callbackOnError,
             callbackData: {
                 self: _this,
                 book: book,
-                callback: callback
+                callbackOnSuccess: callbackOnSuccess
             }
         });
     };
