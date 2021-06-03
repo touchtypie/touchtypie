@@ -794,7 +794,6 @@ var Memory = function() {
 
     // Mental representation of the physical and social environment
     var environment = {
-        state: '',
         playmodes: {
             shuffleglobal: 'shuffleglobal',
             shuffle: 'shuffle',
