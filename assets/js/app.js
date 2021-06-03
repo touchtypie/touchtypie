@@ -1388,13 +1388,32 @@ var Training = function() {
                 callbackOnSuccess();
             }
         }, function() {
-            student.response.disabled = false;
+            // Ignore the intro response virtue
+            student.response.newlife();
+
+            // Fail the training
+            fail();
 
             if (callbackOnError) {
                 callbackOnError();
             }
         });
     };
+
+    var fail = function() {
+        // Set trainer truth value
+        // trainer.truth.value = "Something went wrong . . . T.T\n\nPlease refresh and retry . . . ^.^";
+        trainer.truth.value = "I am failing to recall my libraries' books . . . T.T\n\nPlease refresh and retry . . . ^.^";
+        trainer.truth.charactersCounter = trainer.truth.value.length;
+
+        // Validate student response
+        var virtue = student.response.virtue;
+        student.response.measureVirtue(trainer.truth, trainer.speech, trainer.memory.environment);
+
+        // Set trainer speech value
+        trainer.speech.value = virtue.result.value_zonal;
+        trainer.speech.charactersCounter = trainer.truth.value.length;
+    }
 
     var start = function() {
         // Set truth values
@@ -1472,6 +1491,7 @@ var Training = function() {
         trainer: trainer,
         student: student,
         complete: complete,
+        fail: fail,
         improvise: improvise,
         next: next,
         prepare: prepare,
