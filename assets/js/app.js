@@ -1175,17 +1175,20 @@ var Trainer = function() {
         return memory.isReady();
     };
 
-    var prepareKnowledge = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
-        recallKnowledge(bookLibraryIds, function() {
-            if (bookLibraryIds) {
-                var collections = getCollectionsOfLibraryId(bookLibraryIds[0]);
-                var books = getBooksOfCollectionId(Object.keys(collections)[0]);
-                setAttention(books[Object.keys(books)[0]]);
-            }else {
-                setAttention();
-            }
-            callbackOnSuccess();
-        }, callbackOnError);
+    var prepareKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
+        if ('bookLibraryIds' in trainingConfig) {
+            var bookLibraryIds = trainingConfig.bookLibraryIds;
+            recallKnowledge(trainingConfig.bookLibraryIds, function() {
+                if (bookLibraryIds) {
+                    var collections = getCollectionsOfLibraryId(bookLibraryIds[0]);
+                    var books = getBooksOfCollectionId(Object.keys(collections)[0]);
+                    setAttention(books[Object.keys(books)[0]]);
+                }else {
+                    setAttention();
+                }
+                callbackOnSuccess();
+            }, callbackOnError);
+        }
     };
 
     var recallKnowledge = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
@@ -1370,9 +1373,9 @@ var Training = function() {
     var trainer = Trainer();
     var student = Student();
 
-    var prepare = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
+    var prepare = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         student.response.disabled = true;
-        trainer.prepareKnowledge(bookLibraryIds, function() {
+        trainer.prepareKnowledge(trainingConfig, function() {
             // Ignore the intro response virtue
             student.response.newlife();
             student.response.disabled = false;
@@ -2187,7 +2190,10 @@ var EnvironmentController = function() {
             loadBookLibrary: function(c, bookLibraryId) {
                 var bookLibraryIds = [bookLibraryId];
                 c.methods.toggleAddStatus(c, '.');
-                c.props._training.prepare(bookLibraryIds, function() {
+                var trainingConfig = {
+                    bookLibraryIds: bookLibraryIds
+                };
+                c.props._training.prepare(trainingConfig, function() {
                     c.methods.toggleAddStatus(c, '+');
                     c.methods.createSelectOptions(c);
                     c.methods.updateCollectionsAndBooks(c, bookLibraryId);
@@ -3181,7 +3187,8 @@ var myApp = function () {
                 eventController.doEvent('training-init');
 
                 // Replenish training environment
-                State.training.prepare(State.bookLibraryIds, function() {
+                var trainingConfig = State;
+                State.training.prepare(trainingConfig, function() {
                     // Event: training-start
                     eventController.doEvent('training-start');
                 });
