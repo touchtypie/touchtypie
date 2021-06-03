@@ -1627,9 +1627,10 @@ var Component = function(c) {
             // If there is no data binding, simply set up the eventListeners
             if (!addedBinding) {
                 if (events.length > 0) {
-                    for (var _ele, handler, _ = 0; _ < events.length; _++) {
+                    for (var _ele, _ = 0; _ < events.length; _++) {
                         _ele = /DOM|ready/.test(events[_].event) ? document : ele;
-                        handler = events[_].handler;
+                        // Use a const here to ensure the event callback closure references a unique variable
+                        const handler = events[_].handler;
                         _ele.addEventListener(events[_].event, function(e){
                             c.eventsListeners[handler].apply(c, [e]);
                         });
