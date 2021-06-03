@@ -464,6 +464,9 @@ menuambienceswitch ambiences {
     width: calc(100vw * 2 / 3 * 2 / 3);
     vertical-align: middle;
 }
+menuambienceswitch ambiences:focus-visible {
+    outline: none;
+}
 menuambienceswitch choice {
     display: inline-block;
     vertical-align: middle;
@@ -483,9 +486,6 @@ menuambienceswitch choice {
 menuambienceswitch choice.active {
     border: 1px solid rgba(255, 255, 255, 1.0);
     box-shadow: 0 0 0.3vw 0.1vw #fff;
-}
-menuambienceswitch choice:focus-visible {
-    outline: none;
 }
 @media (max-aspect-ratio: 13/10) {
     menuambienceswitch {

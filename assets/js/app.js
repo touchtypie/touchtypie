@@ -2817,8 +2817,7 @@ var EnvironmentController = function() {
         template: `
             <menuambienceswitch>
                 <label>ambience</label>
-                <ambiences b-on="DOMContentLoaded">
-                </ambiences>
+                <ambiences b-on="DOMContentLoaded,keyup:ambienceskeyup" tabindex="0"></ambiences>
             </menuambienceswitch>
         `,
         props: {
@@ -2891,16 +2890,11 @@ var EnvironmentController = function() {
 
                 var ambiencesEle = c.parentElement.getElementsByTagName('ambiences')[0];
                 // Create all choice elements
-                var idx = 0;
                 var ambienceEle;
                 for (var ambience in c.props.ambiences) {
                     ambienceEle = document.createElement('choice');
                     ambienceEle.name = ambience;
                     ambienceEle.title = ambience;
-                    // Add tabIndex only for the first element
-                    if (idx == 0) {
-                        ambienceEle.tabIndex = 0;
-                    }
                     ambienceEle.style.backgroundImage = c.props.ambiences[ambience];
                     if (ambience === 'random') {
                         ambienceEle.innerHTML = '?';
@@ -2912,44 +2906,45 @@ var EnvironmentController = function() {
 
                         event.stopPropagation();
                     });
-                    ambienceEle.addEventListener('keyup', function(event) {
-                        var ele = event.target || event.srcElement;
-                        var key = event.keyCode || event.charCode;
-
-                        var direction, nextChoice;
-                        // LEFT or RIGHT key
-                        if (key === 37) {
-                            if (State.debug) {
-                                console.log('[keyup] LEFT key');
-                            }
-                            direction = 'before';
-                        }
-                        // RIGHT key
-                        else if (key === 39) {
-                            if (State.debug) {
-                                console.log('[keyup] RIGHT key');
-                            }
-                            direction = 'after';
-                        }
-                        // ENTER or SPACE key
-                        else if (key === 13 || key === 32) {
-                            if (State.debug) {
-                                console.log('[keyup] ENTER or SPACE key');
-                            }
-                            direction = 'after';
-                        }
-
-                        if (direction) {
-                            nextChoice = c.methods.getNextChoice(c, direction);
-                            c.methods.setChoice(c, nextChoice);
-                            event.stopPropagation();
-                        }
-                    });
                     ambiencesEle.appendChild(ambienceEle);
-                    idx++;
                 }
                 // Update choices
                 c.methods.updateChoices(c);
+            },
+            ambienceskeyup: function(event, _this, binding) {
+                var c = this;
+
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                var direction, nextChoice;
+                // LEFT or RIGHT key
+                if (key === 37) {
+                    if (State.debug) {
+                        console.log('[ambienceskeyup] LEFT key');
+                    }
+                    direction = 'before';
+                }
+                // RIGHT key
+                else if (key === 39) {
+                    if (State.debug) {
+                        console.log('[ambienceskeyup] RIGHT key');
+                    }
+                    direction = 'after';
+                }
+                // ENTER or SPACE key
+                else if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[ambienceskeyup] ENTER or SPACE key');
+                    }
+                    direction = 'after';
+                }
+
+                if (direction) {
+                    nextChoice = c.methods.getNextChoice(c, direction);
+                    c.methods.setChoice(c, nextChoice);
+                    event.stopPropagation();
+                }
             }
         }
     });
