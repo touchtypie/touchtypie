@@ -11,8 +11,16 @@ var Helpers = function () {
             var urlParams = {};
             var search = /([^&=]+)=?([^&]*)/g, match, queryString = window.location.search.substring(1), key, value;
             while (match = search.exec(queryString)) {
-                key = decodeURIComponent(match[1].replace(/\+/g, ' '));
-                value = decodeURIComponent(match[2].replace(/\+/g, ' '));
+                try {
+                    key = decodeURIComponent(match[1].replace(/\+/g, ' '));
+                }catch {
+                    key = match[1];
+                }
+                try {
+                    value = decodeURIComponent(match[2].replace(/\+/g, ' '));
+                }catch {
+                    value = match[2];
+                }
                 if (key in urlParams) {
                     if (!Array.isArray(urlParams[key])) {
                         urlParams[key] = [urlParams[key]];
