@@ -831,6 +831,7 @@ var Memory = function() {
     var fetch = function (params) {
         var method = params.method;
         var url = params.url;
+        var fakeContent = params.fakeContent || '';
         var callback = params.callback;
         var callbackOnError = params.callbackOnError;
         var callbackData = typeof(params.callbackData) !== 'undefined' ? params.callbackData : null;
@@ -846,31 +847,38 @@ var Memory = function() {
             return data;
         };
 
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                var status = xhr.status;
-                if (status === 200) {
-                    // Success
-                    if (callback) {
-                        callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
-                    }
-                }else {
-                    // Error
-                    if (callbackOnError) {
-                        callbackOnError.apply(callbackData.self, [ callbackData ]);
+        if (fakeContent) {
+            // Fake the content
+            if (callback) {
+                callback.apply(callbackData.self, [ fakeContent, callbackData ]);
+            }
+        }else {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var status = xhr.status;
+                    if (status === 200) {
+                        // Success
+                        if (callback) {
+                            callback.apply(callbackData.self, [ readbody(xhr), callbackData ]);
+                        }
+                    }else {
+                        // Error
+                        if (callbackOnError) {
+                            callbackOnError.apply(callbackData.self, [ callbackData ]);
+                        }
                     }
                 }
-            }
 
-            // Debug
-            if (State.debug) {
-                console.log('[xhr.onreadystatechange] :' + xhr.readyState);
-                console.log('[xhr.status] :' + xhr.status);
-            }
-        };
-        xhr.open(method, url);
-        xhr.send(null);
+                // Debug
+                if (State.debug) {
+                    console.log('[xhr.onreadystatechange] :' + xhr.readyState);
+                    console.log('[xhr.status] :' + xhr.status);
+                }
+            };
+            xhr.open(method, url);
+            xhr.send(null);
+        }
     };
 
     // Retrieval
@@ -979,10 +987,68 @@ var Memory = function() {
         return true;
     };
 
+    var prepare = function(trainingConfig) {
+        // Override the environment
+        for (var k in trainingConfig) {
+            if (k in environment) {
+                if (typeof environment[k] === 'boolean') {
+                    // Convert to boolean
+                    environment[k] = trainingConfig[k] === 'true';
+                }
+                if (typeof environment[k] === 'string') {
+                    environment[k] = trainingConfig[k];
+                }
+                // Ignore other types
+            }
+        }
+
+        // If jumble is on and scramble is on, turn scramble off
+        if (environment.jumble === true && environment.scramble === true) {
+            environment.scramble = false;
+        }
+    };
+
     // Recollection of knowledge
-    var recall = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
+    var recall = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         var _this = this;
-        recallLibraries.apply(_this, [bookLibraryIds, function() {
+
+        // Determine what to recall, depending on the trainingConfig
+        var keys = Object.keys(trainingConfig);
+        var bookLibraryIds;
+        var fakeEntities = {}
+        if ('bookLibraryIds' in trainingConfig) {
+            // Pre-defined config
+            bookLibraryIds = Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds : [ trainingConfig.bookLibraryIds ];
+        }else {
+            // Custom config
+            bookLibraryIds = [
+                'Custom library'
+            ];
+
+            if ('bookIds' in trainingConfig) {
+                // Custom bookIds
+
+                // Create fake library
+                fakeEntities.bookLibrary = BookLibrary();
+                fakeEntities.bookLibrary.id = 'Custom library';
+                fakeEntities.bookLibrary.content = 'Custom collection';
+                // Create fake collection
+                fakeEntities.bookCollection = BookCollection();
+                fakeEntities.bookCollection.libraryId = fakeEntities.bookLibrary.id;
+                fakeEntities.bookCollection.id = fakeEntities.bookLibrary.content;
+                fakeEntities.bookCollection.content = Array.isArray(trainingConfig.bookIds) ? trainingConfig.bookIds.join("\n") : trainingConfig.bookIds;
+            }else if ('bookCollectionIds' in trainingConfig) {
+                // Custom bookCollectionIds
+
+                // Create fake library
+                fakeEntities.bookLibrary = BookLibrary();
+                fakeEntities.bookLibrary.id = 'Custom library';
+                fakeEntities.bookLibrary.content = Array.isArray(trainingConfig.bookCollectionIds) ? trainingConfig.bookCollectionIds.join("\n") : trainingConfig.bookCollectionIds;
+            }
+        }
+
+        // Recall
+        recallLibraries.apply(_this, [bookLibraryIds, fakeEntities, function() {
             // Once recollection is done
             _this.bookLibraryCount = Object.keys(_this.bookLibraries).length;
             _this.bookCollectionCount = Object.keys(_this.bookCollections).length;
@@ -995,7 +1061,7 @@ var Memory = function() {
     };
 
     // Recollection of book libraries
-    var recallLibraries = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
+    var recallLibraries = function(bookLibraryIds, fakeEntities, callbackOnSuccess, callbackOnError) {
         var _this = this;
 
         // Recognize and recall libraries
@@ -1006,7 +1072,7 @@ var Memory = function() {
             bookLibrary.id = bookLibraryIds[i];
             _this.bookLibraries[bookLibrary.id] = bookLibrary;
             // Recall
-            recallLibrary.apply(_this, [bookLibrary, function() {
+            recallLibrary.apply(_this, [bookLibrary, fakeEntities, function() {
                 // Ensure all libraries are recalled
                 for (var k in _this.bookLibraries) {
                     if (_this.bookLibraries[k].recalled === false) {
@@ -1019,11 +1085,12 @@ var Memory = function() {
     };
 
     // Recollection of a book library
-    var recallLibrary = function(bookLibrary, callbackOnSuccess, callbackOnError) {
+    var recallLibrary = function(bookLibrary, fakeEntities, callbackOnSuccess, callbackOnError) {
         var _this = this;
         fetch({
             method: 'GET',
             url: bookLibrary.id,
+            fakeContent: 'bookLibrary' in fakeEntities ? fakeEntities.bookLibrary.content : '',
             callback: function(_bookCollectionStr, data) {
                 // Recognize and recall collections
                 data.bookLibrary.index = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
@@ -1037,7 +1104,7 @@ var Memory = function() {
                     bookCollection.id = k;
                     data.bookCollections[k] = bookCollection;
                     // Recall
-                    recallCollection.apply(data.self, [bookCollection, function() {
+                    recallCollection.apply(data.self, [bookCollection, fakeEntities, function() {
                         // Ensure all collections are recalled
                         var k;
                         for (var i = 0; i < data.bookLibrary.index.length; i++) {
@@ -1063,11 +1130,12 @@ var Memory = function() {
     };
 
     // Recollection of a library collection
-    var recallCollection = function(bookCollection, callback) {
+    var recallCollection = function(bookCollection, fakeEntities, callback) {
         var _this = this;
         fetch({
             method: 'GET',
             url: bookCollection.id,
+            fakeContent: 'bookCollection' in fakeEntities ? fakeEntities.bookCollection.content : '',
             callback: function(_bookIdsStr, data) {
                 data.bookCollection.index = _bookIdsStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
 
@@ -1143,6 +1211,7 @@ var Memory = function() {
         getCollectionsOfLibraryId: getCollectionsOfLibraryId,
         getNextBook, getNextBook,
         isReady: isReady,
+        prepare: prepare,
         recall: recall,
     };
 };
@@ -1202,23 +1271,27 @@ var Trainer = function() {
     };
 
     var prepareKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
-        if ('bookLibraryIds' in trainingConfig) {
-            var bookLibraryIds = trainingConfig.bookLibraryIds;
-            recallKnowledge(trainingConfig.bookLibraryIds, function() {
-                if (bookLibraryIds) {
-                    var collections = getCollectionsOfLibraryId(bookLibraryIds[0]);
-                    var books = getBooksOfCollectionId(Object.keys(collections)[0]);
-                    setAttention(books[Object.keys(books)[0]]);
-                }else {
-                    setAttention();
-                }
-                callbackOnSuccess();
-            }, callbackOnError);
-        }
+        memory.prepare(trainingConfig);
+
+        recallKnowledge(trainingConfig, function() {
+            if (trainingConfig.bookIds) {
+                var books = getBooks();
+                var key = Array.isArray(trainingConfig.bookIds) ? trainingConfig.bookIds[0] : trainingConfig.bookIds;
+                setAttention(books[key]);
+            }else if (trainingConfig.bookCollectionIds) {
+                var books = getBooksOfCollectionId(Array.isArray(trainingConfig.bookCollectionIds) ? trainingConfig.bookCollectionIds[0] : trainingConfig.bookCollectionIds);
+                setAttention(books[Object.keys(books)[0]]);
+            }else if (trainingConfig.bookLibraryIds) {
+                var collections = getCollectionsOfLibraryId(Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds[0] : trainingConfig.bookLibraryIds);
+                var books = getBooksOfCollectionId(Object.keys(collections)[0]);
+                setAttention(books[Object.keys(books)[0]]);
+            }
+            callbackOnSuccess();
+        }, callbackOnError);
     };
 
-    var recallKnowledge = function(bookLibraryIds, callbackOnSuccess, callbackOnError) {
-        memory.recall(bookLibraryIds, callbackOnSuccess, callbackOnError);
+    var recallKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
+        memory.recall(trainingConfig, callbackOnSuccess, callbackOnError);
     };
 
     var setAttention = function(book) {
@@ -3084,13 +3157,17 @@ var ConfigController = function(Config) {
     }
 
     // Merge pre-defined Config and GET config
+    var keys = Object.keys(urlParamsCamelCased);
     var mergedConfig = {};
-    // Pre-defined config
-    mergedConfig['bookLibraryIds'] = Config['bookLibraryIds']
-    // GET config
-    if (Object.keys(urlParamsCamelCased).length > 0) {
-        for (var k in urlParamsCamelCased) {
-            mergedConfig[k] = urlParamsCamelCased[k];
+    if (keys.length === 0) {
+        // Pre-defined config
+        mergedConfig['bookLibraryIds'] = Config['bookLibraryIds'];
+    }else {
+        // Custom GET config
+        if (Object.keys(urlParamsCamelCased).length > 0) {
+            for (var k in urlParamsCamelCased) {
+                mergedConfig[k] = urlParamsCamelCased[k];
+            }
         }
     }
 

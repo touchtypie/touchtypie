@@ -21,7 +21,51 @@ It started out simple, but grew just enough to require a custom frontend framewo
 
 ## FAQ
 
-### Q: How to practise with my own texts?
+### Q: How to practise on custom book(s)?
+
+Supply `GET` query parameter `book_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
+
+```
+https://play.touchtypie.com?book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-letters.txt
+```
+
+To practise on multiple books, use multiple `GET` query parameter `book_ids=<URL>` separated by `&`. For example:
+
+```
+https://play.touchtypie.com?book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-letters.txt&book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-numbers.txt
+```
+
+### Q: How to practise on custom collection(s)?
+
+To practise on one collection, use `GET` query parameter `book_collection_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
+
+```
+https://play.touchtypie.com?book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/keyboard-qwerty.txt
+```
+
+To practise on multiple collections, use multiple `GET` query parameter `book_collection_ids=<URL>` separated by `&`. For example:
+
+```
+https://play.touchtypie.com?book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/keyboard-qwerty.txt&book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/plants.txt
+```
+
+### Q: How to practise on custom library(s)?
+
+To practise on one library, use `GET` query parameter `book_library_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
+
+```
+https://play.touchtypie.com?book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt
+```
+
+To practise multiple libraries, use multiple `GET` query parameter `book_library_ids=<URL>` separated by `&`. For example:
+
+```
+https://play.touchtypie.com?book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt&book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/nature.txt
+```
+
+To create a custom library, see the FAQ `Q: How to create a custom library?`.
+
+### Q: How to create a custom library?
 
 To practise on your own texts, you need a custom library.
 
