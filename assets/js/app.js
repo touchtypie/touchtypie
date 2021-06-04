@@ -2811,7 +2811,10 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menumultiswitch-playmode',
         template: `
-            <menumultiswitch><label>playmode</label><symbol b-on="DOMContentLoaded,click,keyup:symbolkeyup" title="{{ ._training.trainer.memory.environment.playmode }}" tabindex="0"></symbol></menumultiswitch>
+            <menumultiswitch>
+                <label>playmode</label>
+                <symbol b-on="DOMContentLoaded,click,keyup:symbolkeyup" title="{{ ._training.trainer.memory.environment.playmode }}" tabindex="0"></symbol>
+            </menumultiswitch>
         `,
         props: {
             _training: _training
