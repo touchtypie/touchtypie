@@ -2986,7 +2986,12 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch_scramble',
         template: `
-            <menuswitch><label>scramble</label><switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.scramble }}" tabindex="0"><handle></handle></switch></menuswitch>
+            <menuswitch>
+                <label>scramble</label>
+                <switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.scramble }}" tabindex="0">
+                    <handle></handle>
+                </switch>
+            </menuswitch>
         `,
         props: {
             _training: _training
