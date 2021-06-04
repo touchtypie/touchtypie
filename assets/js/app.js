@@ -2436,7 +2436,9 @@ var EnvironmentController = function() {
                     c.methods.toggleAddStatus(c, '+');
                     c.methods.createSelectOptions(c);
                     Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                    Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
                     Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                    Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
                 }, function() {
                     c.methods.toggleAddStatus(c, '!');
                 });
