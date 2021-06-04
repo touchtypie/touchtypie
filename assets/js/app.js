@@ -1272,10 +1272,10 @@ var Trainer = function() {
         return memory.isReady();
     };
 
-    var prepareKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
+    var recallKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         memory.prepare(trainingConfig);
 
-        recallKnowledge(trainingConfig, function() {
+        memory.recall(trainingConfig, function() {
             if (trainingConfig.bookIds) {
                 var books = getBooks();
                 var key = Array.isArray(trainingConfig.bookIds) ? trainingConfig.bookIds[0] : trainingConfig.bookIds;
@@ -1290,10 +1290,6 @@ var Trainer = function() {
             }
             callbackOnSuccess();
         }, callbackOnError);
-    };
-
-    var recallKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
-        memory.recall(trainingConfig, callbackOnSuccess, callbackOnError);
     };
 
     var setAttention = function(book) {
@@ -1334,7 +1330,7 @@ var Trainer = function() {
         getBooksOfCollectionId: getBooksOfCollectionId,
         getBookOfId: getBookOfId,
         isKnowledgeReady: isKnowledgeReady,
-        prepareKnowledge: prepareKnowledge,
+        recallKnowledge: recallKnowledge,
         setCurrentBook: setCurrentBook,
         setNextBook: setNextBook,
     };
@@ -1476,7 +1472,7 @@ var Training = function() {
 
     var begin = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         student.response.disabled = true;
-        trainer.prepareKnowledge(trainingConfig, function() {
+        trainer.recallKnowledge(trainingConfig, function() {
             // Ignore the intro response virtue
             student.response.newlife();
             student.response.disabled = false;
