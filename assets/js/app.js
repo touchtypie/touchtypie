@@ -5,6 +5,29 @@ var Helpers = function () {
         htmlEntities: function htmlEntities(str) {
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /, '&nbsp;').replace(/\s+$/, '<br/>');
         },
+        convertToUnderscores: function(object) {
+            // E.g. { 'FooBarBaz': 'hello' } becomes { 'foo_bar_baz': 'hello' }
+            var objectWithUnderscores = {};
+            var underscoredKey;
+            for (var k in object) {
+                underscoredKey = k.replace(/([A-Z])?/g, function($0, $1) { return $1 ? '_' + $1.toLowerCase() : ''; });
+                objectWithUnderscores[underscoredKey] = object[k];
+            }
+
+            return objectWithUnderscores;
+        },
+        copyToClipboard: function(text) {
+            var textarea = document.createElement('textarea');
+            textarea.innerHTML = text;
+            document.body.appendChild(textarea);
+
+            // Synchronous copy
+            textarea.select();
+            var result = document.execCommand('copy');
+
+            document.body.removeChild(textarea);
+            return result;
+        },
         getUrlParams: function() {
             // E.g. 'key=value' returns { key: 'value' }
             // E.g. 'key=value1&key=value' returns { key: [ 'value1', 'value2' ] }
@@ -93,7 +116,24 @@ var Helpers = function () {
                 }
             }
             return textJumbled.join('');
-        }
+        },
+        toSearchUrl: function(urlParams) {
+            // E.g. { foo: 'bar' } becomes '?foo=bar'
+            // E.g. { foo: [ 'bar, 'baz' ] } becomes '?foo=bar&foo=baz'
+            var url = '';
+            for (var k in urlParams) {
+                if (Array.isArray(urlParams[k])) {
+                    for (var i = 0; i < urlParams[k].length; i++) {
+                        url += '&' + k + '=' + urlParams[k][i]
+                    }
+                }else {
+                    url += '&' + k + '=' + urlParams[k].toString()
+                }
+            }
+
+            // Replace leading '&' with '?'
+            return url.replace(/^&/, '?');
+        },
     };
 }()
 
@@ -921,6 +961,21 @@ var Memory = function() {
         return book;
     };
 
+    var getFullEnvironment = function() {
+        var fullEnvironment = {};
+        for (var k in environment) {
+            if (typeof environment[k] === 'boolean' || typeof environment[k] === 'string') {
+                fullEnvironment[k] = environment[k];
+            }
+        }
+
+        fullEnvironment.bookLibraryIds = this.workingMemoryLibraryId;
+        fullEnvironment.bookCollectionIds = this.workingMemoryCollectionId;
+        fullEnvironment.bookIds = this.workingMemoryBookId;
+
+        return fullEnvironment;
+    }
+
     var getNextBook = function() {
         var _book, _books;
         var availableBooks = [];
@@ -1203,6 +1258,7 @@ var Memory = function() {
         getBooksOfCollectionId: getBooksOfCollectionId,
         getBookOfId: getBookOfId,
         getCollectionsOfLibraryId: getCollectionsOfLibraryId,
+        getFullEnvironment: getFullEnvironment,
         getNextBook, getNextBook,
         isReady: isReady,
         prepare: prepare,
@@ -3182,6 +3238,76 @@ var EnvironmentController = function() {
                     event.stopPropagation();
                 }
             }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
+        name: 'menufavorite',
+        template: `
+            <menufavorite><label>favorite</label><copybutton b-on="click,keyup:copybuttonkeyup" tabindex="0">{{ .copyButtonText }}<success>&nbsp;🎉</success></copybutton></menufavorite>
+        `,
+        props: {
+            _training: _training,
+            copyButtonText: 'copy',
+            copyTimeoutId: -1,
+            copyTimeoutDuration: 2000
+        },
+        methods: {
+            copyFavorite: function(c) {
+                var fullEnvironment = _training.trainer.memory.getFullEnvironment();
+
+                // Convert object keys to underscore convention
+                var fullEnvironmentUnderscores = Helpers.convertToUnderscores(fullEnvironment);
+
+                // Generate the search url. E.g. '?foo=bar&hello=world'
+                var searchUrl = Helpers.toSearchUrl(fullEnvironmentUnderscores);
+                var fullUrl = window.location.origin + searchUrl;
+
+                // Set the full URL in the browser's address bar
+                // window.history.pushState("bookmark", window.document.title, fullUrl);
+
+                // Copy full URL to clipboard (synchronous copy)
+                Helpers.copyToClipboard(fullUrl);
+
+                // Show success
+                c.methods.success(c);
+
+                // Reset after a duration
+                clearTimeout(c.props.copyTimeoutId);
+                c.props.copyTimeoutId = setTimeout(function() {
+                    c.methods.reset(c);
+                }, c.props.copyTimeoutDuration);
+            },
+            reset: function(c) {
+                c.props.copyButtonText = 'copy';
+            },
+            success: function(c) {
+                c.props.copyButtonText = 'copied!';
+            }
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                // var ele = event.target || event.srcElement;
+                c.methods.copyFavorite(c);
+
+                event.stopPropagation();
+            },
+            copybuttonkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[copybuttonkeyup] ENTER or SPACE key');
+                    }
+                    c.methods.copyFavorite(c);
+
+                    event.stopPropagation();
+                }
+            },
         }
     });
 
