@@ -2884,7 +2884,7 @@ var EnvironmentController = function() {
     });
     Component({
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
-        name: 'menuswitch',
+        name: 'menuswitch_perfection',
         template: `
             <menuswitch><label>perfection</label><switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.perfection }}" tabindex="0"><handle></handle></switch></menuswitch>
         `,
