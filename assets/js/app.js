@@ -1151,27 +1151,32 @@ var Memory = function() {
                 data.bookLibrary.index = _bookCollectionStr.split(/\r\n|\n/).filter(function (v) { return v !== ''; }); //.slice(0,1);
                 var k, bookCollection;
                 for (var i = 0; i < data.bookLibrary.index.length; i++) {
-                    k = data.bookLibrary.index[i];
-
-                    // Recognize
-                    bookCollection = BookCollection();
-                    bookCollection.libraryId = data.bookLibrary.id;
-                    bookCollection.id = k;
-                    data.bookCollections[k] = bookCollection;
-                    // Recall
-                    recallCollection.apply(data.self, [bookCollection, fakeEntities, function() {
-                        // Ensure all collections are recalled
-                        var k;
-                        for (var i = 0; i < data.bookLibrary.index.length; i++) {
-                            k = data.bookLibrary.index[i];
-                            if (data.bookCollections[k].recalled === false) {
-                                return;
+                    (function(k) {
+                        // Recognize
+                        bookCollection = BookCollection();
+                        bookCollection.libraryId = data.bookLibrary.id;
+                        bookCollection.id = k;
+                        data.bookCollections[k] = bookCollection;
+                        // Recall
+                        recallCollection.apply(data.self, [bookCollection, fakeEntities, function() {
+                            // Ensure all collections are recalled
+                            var k;
+                            for (var i = 0; i < data.bookLibrary.index.length; i++) {
+                                k = data.bookLibrary.index[i];
+                                if (data.bookCollections[k].recalled === false) {
+                                    return;
+                                }
                             }
-                        }
-                        // Recalled library
-                        data.bookLibrary.recalled = true;
-                        data.callbackOnSuccess();
-                    }, callbackOnError]);
+                            // Recalled library
+                            data.bookLibrary.recalled = true;
+                            data.callbackOnSuccess();
+                        }, function() {
+                            // Failed. Remove the recognition
+                            delete data.bookCollections[k];
+
+                            callbackOnError();
+                        }]);
+                    })(data.bookLibrary.index[i]);
                 };
             },
             callbackOnError: callbackOnError,
@@ -2633,10 +2638,13 @@ var EnvironmentController = function() {
         <menuselect>
             <label>{{ .label }}</label>
             <select b-on="change,click:selectclick,change:selectchange,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select>
+            <input class="hidden" b-on="keyup:inputkeyup" type="text" placeholder="enter url of collection..." />
+            <add b-on="click:addclick,keyup:addkeyup" title="Add a library" tabindex="0">{{ .addStatus }}</add>
         </menuselect>
         `,
         props: {
             label: 'collection',
+            addStatus: '+',
             _training: _training,
             get options() {
                 return Object.values(_training.trainer.getCollections());
@@ -2681,7 +2689,94 @@ var EnvironmentController = function() {
                     }
                 }
             },
+            loadBookCollection: function(c, bookCollectionId) {
+                var bookCollectionIds = [bookCollectionId];
+                c.methods.toggleAddStatus(c, '.');
+                var trainingConfig = {
+                    bookCollectionIds: bookCollectionIds
+                };
+                c.props._training.begin(trainingConfig, function() {
+                    c.methods.toggleAddStatus(c, '+');
+                    Components.menuselect_booklibraries.methods.createSelectOptions(Components.menuselect_booklibraries);
+                    Components.menuselect_booklibraries.methods.updateSelectOptions(Components.menuselect_booklibraries);
+                    c.methods.createSelectOptions(c);
+                    c.methods.updateSelectOptions(c);
+                    Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
+                    Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
+                }, function() {
+                    c.methods.toggleAddStatus(c, '!');
+                });
+            },
+            getBookCollectionFirstBook: function(c, collectionId) {
+                var books = c.props._training.trainer.getBooksOfCollectionId(collectionId);
+                var keys, book;
+                if (books) {
+                    keys = Object.keys(books);
+                    if (keys.length > 0) {
+                        book = books[keys[0]];
+                        return book;
+                    }
+                }
+                return null;
+            },
+            toggleAddStatus: function(c, statusNew) {
+                var status = c.props.addStatus;
+
+                 // No status provided. Dynamically determine the new status based on existing status.
+                 if (typeof(statusNew) === 'undefined') {
+                     switch(status) {
+                         case '+':
+                             statusNew = '-'
+                             break;
+                         case '-':
+                         case '!':
+                             statusNew = '+'
+                             break;
+                         case '.':
+                             break;
+                         default:
+                             break;
+                     }
+                 }
+                 switch(statusNew) {
+                     // default
+                     case '+':
+                         c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element.removeAttribute('class');
+                         c.rootElement.getElementsByTagName('input')[0].className = 'hidden';
+                         c.rootElement.getElementsByTagName('input')[0].disabled = true;
+                         c.rootElement.getElementsByTagName('input')[0].value = '';
+                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                         break;
+                     // adding
+                     case '-':
+                         c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element.className = 'hidden';
+                         c.rootElement.getElementsByTagName('input')[0].removeAttribute('class');
+                         c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                         c.rootElement.getElementsByTagName('input')[0].focus();
+                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                         break;
+                     // loading
+                     case '.':
+                         c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element.className = 'hidden';
+                         c.rootElement.getElementsByTagName('input')[0].className = 'loading';
+                         c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                         // c.bindings['.addStatus'].elementBindings[0].element.className = 'adding';
+                         break;
+                     // loading error
+                     case '!':
+                         c.bindings['._training.trainer.memory.workingMemoryCollectionId'].elementBindings[0].element.className = 'hidden';
+                         c.rootElement.getElementsByTagName('input')[0].className = 'error';
+                         c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                         c.rootElement.getElementsByTagName('input')[0].focus();
+                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                         break;
+                     default:
+                         break;
+                 }
+                 c.props.addStatus = statusNew;
+             }
         },
+
         eventsListeners: {
             selectchange: function(event, _this, binding) {
                 if (State.debug) {
@@ -2690,17 +2785,13 @@ var EnvironmentController = function() {
                 var c = this;
                 var valueNew = binding.element.value;
 
-                var books = c.props._training.trainer.getBooksOfCollectionId(valueNew);
-                var keys, book;
-                if (books) {
-                    keys = Object.keys(books);
-                    if (keys.length > 0) {
-                        book = books[keys[0]]
-                        c.props._training.improvise(book);
-
-                        Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
-                    }
+                var book = c.methods.getBookCollectionFirstBook(c, valueNew);
+                if (book) {
+                    c.props._training.improvise(book);
                 }
+                // Update library and books
+                Components.menuselect_booklibraries.methods.updateSelectOptions(Components.menuselect_booklibraries);
+                Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
             },
             selectclick: function(event, _this, binding) {
                 if (State.debug) {
@@ -2723,6 +2814,48 @@ var EnvironmentController = function() {
                         scene.underInteraction = false;
                         event.stopPropagation();
                     }
+                }
+            },
+            inputkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+                var value = ele.value.trim();
+
+                // ENTER key
+                if (key === 13) {
+                    if (value !== '') {
+                        c.methods.loadBookCollection(c, value);
+                    }
+                }
+
+                // ESC key should toggle back to add status
+                if (key === 27) {
+                    if (State.debug) {
+                        console.log('[keyup] ESC key');
+                    }
+                    c.methods.toggleAddStatus(c);
+                    scene.underInteraction = false;
+                    c.rootElement.getElementsByTagName('select')[0].focus();
+                    event.stopPropagation();
+                }
+            },
+            addclick: function(event, _this, binding) {
+                var c = this;
+                scene.underInteraction = !scene.underInteraction;
+                c.methods.toggleAddStatus(c);
+            },
+            addkeyup: function(event, _this, binding) {
+                var c = this;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[addkeyup] ENTER or SPACE key');
+                    }
+                    scene.underInteraction = !scene.underInteraction;
+                    c.methods.toggleAddStatus(c);
                 }
             }
         }
