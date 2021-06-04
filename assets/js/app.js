@@ -1525,6 +1525,18 @@ var Training = function() {
 
     var begin = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         student.response.disabled = true;
+
+        callbackOnError = callbackOnError ? callbackOnError : function() {
+            // Ignore the intro response virtue
+            student.response.newlife();
+
+            // Fail the training
+            fail();
+
+            if (callbackOnError) {
+                callbackOnError();
+            }
+        };
         trainer.recallKnowledge(trainingConfig, function() {
             // Ignore the intro response virtue
             student.response.newlife();
@@ -1537,17 +1549,7 @@ var Training = function() {
             if (callbackOnSuccess) {
                 callbackOnSuccess();
             }
-        }, function() {
-            // Ignore the intro response virtue
-            student.response.newlife();
-
-            // Fail the training
-            fail();
-
-            if (callbackOnError) {
-                callbackOnError();
-            }
-        });
+        }, callbackOnError);
     };
 
     var fail = function() {
