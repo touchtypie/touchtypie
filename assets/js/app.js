@@ -1857,13 +1857,13 @@ var Component = function(c) {
             // If there is no data binding, simply set up the eventListeners
             if (!addedBinding) {
                 if (events.length > 0) {
-                    for (var _ele, _ = 0; _ < events.length; _++) {
-                        _ele = /DOM|ready/.test(events[_].event) ? document : ele;
-                        // Use a const here to ensure the event callback closure references a unique variable
-                        const handler = events[_].handler;
-                        _ele.addEventListener(events[_].event, function(e){
-                            c.eventsListeners[handler].apply(c, [e]);
-                        });
+                    for (var _ = 0; _ < events.length; _++) {
+                        (function(eventObj) {
+                            var _ele = /DOM|ready/.test(eventObj.event) ? document : ele;
+                            _ele.addEventListener(eventObj.event, function(e){
+                                c.eventsListeners[eventObj.handler].apply(c, [e]);
+                            });
+                        })(events[_]);
                     }
                 }
             }
@@ -1881,7 +1881,6 @@ var Component = function(c) {
             }
         }
     };
-
 
     // Create the DOM element
     var rootElement = createElementFromHTML(c.template);
