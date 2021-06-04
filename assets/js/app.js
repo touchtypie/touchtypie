@@ -1474,7 +1474,7 @@ var Training = function() {
     var trainer = Trainer();
     var student = Student();
 
-    var prepare = function(trainingConfig, callbackOnSuccess, callbackOnError) {
+    var begin = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         student.response.disabled = true;
         trainer.prepareKnowledge(trainingConfig, function() {
             // Ignore the intro response virtue
@@ -1591,11 +1591,11 @@ var Training = function() {
     return {
         trainer: trainer,
         student: student,
+        begin: begin,
         complete: complete,
         fail: fail,
         improvise: improvise,
         next: next,
-        prepare: prepare,
         start: start,
     };
 };
@@ -2314,7 +2314,7 @@ var EnvironmentController = function() {
                 var trainingConfig = {
                     bookLibraryIds: bookLibraryIds
                 };
-                c.props._training.prepare(trainingConfig, function() {
+                c.props._training.begin(trainingConfig, function() {
                     c.methods.toggleAddStatus(c, '+');
                     c.methods.createSelectOptions(c);
                     c.methods.updateCollectionsAndBooks(c, bookLibraryId);
@@ -3342,7 +3342,7 @@ var myApp = function () {
 
                 // Replenish training environment
                 var trainingConfig = configController.config;
-                State.training.prepare(trainingConfig, function() {
+                State.training.begin(trainingConfig, function() {
                     // Event: training-start
                     eventController.doEvent('training-start');
                 });
