@@ -1626,12 +1626,12 @@ var Component = function(c) {
 
     var creatingBindings = function(rootElement) {
         var allElements = rootElement.getElementsByTagName('*');
-        var matches, split, events, addBinding, propsPaths, object, property, binding, addedBinding;
+        var matches, split, events, setters, addBinding, propsPaths, object, property, binding, addedBinding;
 
         // Parse elements
         for (var ele, i = 0; i < allElements.length; i++) {
             ele = allElements[i];
-            events = [], addBinding = false;
+            events = [], setters = [], addBinding = false;
 
             // Parse attributes for events
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
@@ -1646,6 +1646,55 @@ var Component = function(c) {
                                 event: matches[1],
                                 handler: matches[2] === '' ? matches[1] : matches[2]
                             });
+                        }
+                    }
+                }
+
+                // Get any object properties and setters
+                if ('b-setter' === atts[j].name) {
+                    // E.g. '.foo.bar:mysetter'
+                    split = atts[j].value.split(';').filter(function (v) { return v !== ''; });
+                    for (var _= 0; _ < split.length; _++) {
+                        matches = /([^:]+):?(.*)/.exec(split[_]);
+                        if (matches.length > 0) {
+                            (function(m) {
+                                var object = c.props, property;
+                                var propsPaths = m[1].trim().split('.').filter(function (v) { return v !== ''; });
+                                if (propsPaths.length > 1) {
+                                    // E.g. c.props.foo
+                                    for (var _ = 0; _ < propsPaths.length - 1; _++) {
+                                        if (propsPaths[_] !== '') {
+                                            object = object[propsPaths[_]];
+                                        }
+                                    }
+                                    // E.g. 'bar'
+                                    property = propsPaths[propsPaths.length - 1];
+                                }else {
+                                    // E.g. 'bar'
+                                    property = propsPaths[0];
+                                }
+                                // E.g. 'mysetter'
+                                var setterName = m[2].trim();
+
+                                // Create a setter
+                                var _value; // Shadow value
+                                var setter = {
+                                    object: object,
+                                    property: property,
+                                    getter: function() {
+                                        return _value;
+                                    },
+                                    setter: function (newVal) {
+                                        _value = newVal,
+                                        c.methods[setterName].apply(c, [c, newVal]);
+                                    }
+                                };
+                                // Call the setter function once
+                                setter.setter(object[property]);
+
+                                // Store the setter
+                                setters.push(setter);
+                            })(matches);
                         }
                     }
                 }
@@ -1765,6 +1814,18 @@ var Component = function(c) {
                             c.eventsListeners[handler].apply(c, [e]);
                         });
                     }
+                }
+            }
+
+            // Set up the setters
+            if (setters.length > 0) {
+                for (var _ele, _ = 0; _ < setters.length; _++) {
+                    (function(setter) {
+                        Object.defineProperty(setter.object, setter.property, {
+                            get: setter.getter,
+                            set: setter.setter
+                        });
+                    })(setters[_]);
                 }
             }
         }
