@@ -35,6 +35,9 @@ To practise on multiple books, use multiple `GET` query parameter `book_ids=<URL
 https://play.touchtypie.com?book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-letters.txt&book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-numbers.txt
 ```
 
+Alternatively, in `touchtypie`, click on the settings icon, and click `+` beside books, paste a book URL and hit enter. Do this for each book you want to practice.
+
+
 ### Q: How to practise on custom collection(s)?
 
 To practise on one collection, use `GET` query parameter `book_collection_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
