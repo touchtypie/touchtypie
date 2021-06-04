@@ -3276,7 +3276,10 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menufavorite',
         template: `
-            <menufavorite><label>favorite</label><copybutton b-on="click,keyup:copybuttonkeyup" tabindex="0">{{ .copyButtonText }}<success>&nbsp;🎉</success></copybutton></menufavorite>
+            <menufavorite>
+                <label>favorite</label>
+                <copybutton b-on="click,keyup:copybuttonkeyup" tabindex="0">{{ .copyButtonText }}</copybutton>
+            </menufavorite>
         `,
         props: {
             _training: _training,
