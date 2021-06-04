@@ -1674,12 +1674,12 @@ var Component = function(c) {
 
     var creatingBindings = function(rootElement) {
         var allElements = rootElement.getElementsByTagName('*');
-        var matches, split, events, setters, addBinding, propsPaths, object, property, binding, addedBinding;
+        var matches, split, events, setters, propsPaths, object, property, binding, addedBinding;
 
         // Parse elements
         for (var ele, i = 0; i < allElements.length; i++) {
             ele = allElements[i];
-            events = [], setters = [], addBinding = false;
+            events = [], setters = [], addedBinding = false;
 
             // Parse attributes for events
             for (var j = 0, atts = ele.attributes; j < atts.length; j++) {
