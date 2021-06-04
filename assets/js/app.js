@@ -2461,7 +2461,7 @@ var EnvironmentController = function() {
                     c.methods.toggleAddStatus(c, '!');
                 });
             },
-            getLibraryFirstBook: function(c, libraryId) {
+            getBookLibraryFirstBook: function(c, libraryId) {
                 var collections = c.props._training.trainer.getCollectionsOfLibraryId(libraryId);
                 var keys, collection, books, book;
                 if (collections) {
@@ -2557,13 +2557,13 @@ var EnvironmentController = function() {
                 var c = this;
                 var valueNew = binding.element.value;
                 c.props._training.trainer.memory.workingMemoryLibraryId = valueNew;
-                var book = c.methods.getLibraryFirstBook(c, valueNew);
+                var book = c.methods.getBookLibraryFirstBook(c, valueNew);
                 c.props._training.improvise(book);
 
                 // Update collection and books
                 Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
                 Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
-        },
+            },
             selectclick: function(event, _this, binding) {
                 if (State.debug) {
                     console.log('[selectclick]');
