@@ -1662,9 +1662,10 @@ var Component = function(c) {
 
     // Store this components in global
     Components[c.name] = c;
-    c.bindings = [];
 
-    var rootElement, results;
+    // Add some properties to component
+    c.bindings = [];
+    c.rootElement = null;
 
     var createElementFromHTML = function(html) {
         var div = document.createElement('div');
@@ -1884,6 +1885,7 @@ var Component = function(c) {
 
     // Create the DOM element
     var rootElement = createElementFromHTML(c.template);
+    c.rootElement = rootElement;
     if (rootElement) {
         if (/select/i.test(rootElement.nodeName)) {
             // Create its <option> elements
@@ -2486,32 +2488,32 @@ var EnvironmentController = function() {
                     // default
                     case '+':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.removeAttribute('class');
-                        c.parentElement.getElementsByTagName('input')[0].className = 'hidden';
-                        c.parentElement.getElementsByTagName('input')[0].disabled = true;
-                        c.parentElement.getElementsByTagName('input')[0].value = '';
+                        c.rootElement.getElementsByTagName('input')[0].className = 'hidden';
+                        c.rootElement.getElementsByTagName('input')[0].disabled = true;
+                        c.rootElement.getElementsByTagName('input')[0].value = '';
                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
                         break;
                     // adding
                     case '-':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('class');
-                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('disabled');
-                        c.parentElement.getElementsByTagName('input')[0].focus();
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('class');
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.rootElement.getElementsByTagName('input')[0].focus();
                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
                         break;
                     // loading
                     case '.':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.parentElement.getElementsByTagName('input')[0].className = 'loading';
-                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.rootElement.getElementsByTagName('input')[0].className = 'loading';
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
                         // c.bindings['.addStatus'].elementBindings[0].element.className = 'adding';
                         break;
                     // loading error
                     case '!':
                         c.bindings['._training.trainer.memory.workingMemoryLibraryId'].elementBindings[0].element.className = 'hidden';
-                        c.parentElement.getElementsByTagName('input')[0].className = 'error';
-                        c.parentElement.getElementsByTagName('input')[0].removeAttribute('disabled');
-                        c.parentElement.getElementsByTagName('input')[0].focus();
+                        c.rootElement.getElementsByTagName('input')[0].className = 'error';
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.rootElement.getElementsByTagName('input')[0].focus();
                         // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
                         break;
                     default:
@@ -2584,7 +2586,7 @@ var EnvironmentController = function() {
                     }
                     c.methods.toggleAddStatus(c);
                     scene.underInteraction = false;
-                    c.parentElement.getElementsByTagName('select')[0].focus();
+                    c.rootElement.getElementsByTagName('select')[0].focus();
                     event.stopPropagation();
                 }
             },
@@ -3147,7 +3149,7 @@ var EnvironmentController = function() {
                 c.methods.updateChoices(c);
             },
             updateChoices: function(c) {
-                var choiceElements = c.parentElement.getElementsByTagName('ambiences')[0].getElementsByTagName('choice');
+                var choiceElements = c.rootElement.getElementsByTagName('ambiences')[0].getElementsByTagName('choice');
                 for (var i = 0; i < choiceElements.length; i++ ) {
                     if (choiceElements[i].name === c.props.ambience) {
                         choiceElements[i].className = 'active';
@@ -3161,7 +3163,7 @@ var EnvironmentController = function() {
             DOMContentLoaded: function(event, _this, binding) {
                 var c = this;
 
-                var ambiencesEle = c.parentElement.getElementsByTagName('ambiences')[0];
+                var ambiencesEle = c.rootElement.getElementsByTagName('ambiences')[0];
                 // Create all choice elements
                 var ambienceEle;
                 for (var ambience in c.props.ambiences) {
