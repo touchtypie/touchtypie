@@ -2933,7 +2933,12 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuswitch_jumble',
         template: `
-            <menuswitch><label>jumble</label><switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.jumble }}" tabindex="0"><handle></handle></switch></menuswitch>
+            <menuswitch>
+                <label>jumble</label>
+                <switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.jumble }}" tabindex="0">
+                    <handle></handle>
+                </switch>
+            </menuswitch>
         `,
         props: {
             _training: _training
