@@ -3224,7 +3224,10 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuexport',
         template: `
-            <menuexport><label>virtues</label><download b-on="click,keyup:downloadkeyup" tabindex="0">download</download></menuexport>
+            <menuexport>
+                <label>virtues</label>
+                <download b-on="click,keyup:downloadkeyup" tabindex="0">download</download>
+            </menuexport>
         `,
         props: {
             _training: _training
