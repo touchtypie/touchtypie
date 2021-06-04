@@ -2809,7 +2809,7 @@ var EnvironmentController = function() {
     });
     Component({
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
-        name: 'menumultiswitch-playmode',
+        name: 'menumultiswitch_playmode',
         template: `
             <menumultiswitch>
                 <label>playmode</label>
