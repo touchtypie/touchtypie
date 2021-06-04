@@ -2610,7 +2610,10 @@ var EnvironmentController = function() {
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_bookcollections',
         template: `
-        <menuselect><label>{{ .label }}</label><select b-on="change,click:selectclick,change:selectchange,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select></menuselect><br />
+        <menuselect>
+            <label>{{ .label }}</label>
+            <select b-on="change,click:selectclick,change:selectchange,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryCollectionId }}"></select>
+        </menuselect>
         `,
         props: {
             label: 'collection',
