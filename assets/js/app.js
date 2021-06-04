@@ -3219,7 +3219,7 @@ var EnvironmentController = function() {
             click: function(event) {
                 var c = this;
                 // var ele = event.target || event.srcElement;
-                c.methods.beginDownload();
+                c.methods.beginDownload(c);
 
                 event.stopPropagation();
             },
