@@ -19,7 +19,81 @@ In contrast to reading alone, typing while reading engages the visual, linguisti
 
 It started out simple, but grew just enough to require a custom frontend framework. Most parts of are is still in pure HTML, CSS, JS.
 
-## FAQ
+## FAQ - Practice
+
+### Keyboard navigation?
+
+Use the `ESC` key to navigate between `home` and `environment` (i.e. settings).
+
+In `environment`, use the `TAB` key to navigate between settings.
+
+### Q: How to practice on my own texts?
+
+Ensure each text you want to practice is available as a URL.
+
+In `touchtypie`, go to `environment`, and click `+` beside `BOOKS`, paste a URL and hit enter. Do this for each URL you want to practice.
+
+To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
+
+### Q: How to save the practice session?
+
+To save the practice session, go to `environment`, and under `FAVORITE` click on the `COPY` button.
+
+A `touchtypie` URL is saved to your clipboard with your custom settings and added URLs (i.e. books). You may now bookmark, save, or share that `touchtypie` URL to practice anytime you want.
+
+### Q: How to practice on my own URL?
+
+See [this answer](#q-how-to-practice-on-my-own-texts).
+
+### Q: I get a red exclamation mark when I add a URL.
+
+Check that the URL is valid. Invalid URLs cannot be fetched.
+
+If the URL is indeed valid, the failure to fetch the URL is because a browser security issue. See [this answer](#q-why-cant-i-use-any-urls-content-as-practice).
+
+### Q: Why can't I use any URL's content as practice?
+
+The browser is subject to a policy called [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) which limits the browser from consuming resources from a website other than the current website (i.e. `touchtypie`).
+
+In order for the browser to consume resources of another website, that website's server must return a HTTP header `access-control-allow-origin *`. However we have no control over that website's server.
+
+Hence, the solution is to host our library, collection and book file(s) ourselves. This can easily be done by using [Github Pages](https://pages.github.com/) as discussed above, or uploading to your own web server.
+
+### Q: How to practise on custom book(s)?
+
+See [this answer](#q-how-to-practice-on-my-own-texts).
+
+### Q: How to practise on custom collection(s)?
+
+Ensure each collection you want to practice is available as a URL.
+
+In `touchtypie`, go to `environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each book you want to practice.
+
+To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
+
+### Q: How to practise on custom library(s)?
+
+Ensure each collection you want to practice is available as a URL.
+
+In `touchtypie`, go to `environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each book you want to practice.
+
+To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
+
+## FAQ - Terminology
+
+### Q: What is a book?
+
+A book is simply a URL. The content of the book is the content at the URL.
+
+### Q: What is a collection?
+
+A collection is a list of book URLs.
+
+### Q: What is a library?
+
+A library is a list of collection URLs.
+
+## FAQ - Advanced
 
 ### Q: How to practise on custom book(s)?
 
@@ -35,9 +109,6 @@ To practise on multiple books, use multiple `GET` query parameter `book_ids=<URL
 https://play.touchtypie.com?book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-letters.txt&book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-numbers.txt
 ```
 
-Alternatively, in `touchtypie`, click on the settings icon, and click `+` beside books, paste a book URL and hit enter. Do this for each book you want to practice.
-
-
 ### Q: How to practise on custom collection(s)?
 
 To practise on one collection, use `GET` query parameter `book_collection_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
@@ -51,8 +122,6 @@ To practise on multiple collections, use multiple `GET` query parameter `book_co
 ```
 https://play.touchtypie.com?book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/keyboard-qwerty.txt&book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/plants.txt
 ```
-
-Alternatively, in `touchtypie`, click on the settings icon, and click `+` beside collections, paste a collection URL and hit enter. Do this for each book you want to practice.
 
 ### Q: How to practise on custom library(s)?
 
@@ -68,9 +137,7 @@ To practise multiple libraries, use multiple `GET` query parameter `book_library
 https://play.touchtypie.com?book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt&book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/nature.txt
 ```
 
-To create a custom library, see the FAQ `Q: How to create a custom library?`.
-
-### Q: How to create a custom library?
+### Q: How to create a custom library, collection, or book?
 
 To practise on your own texts, you need a custom library.
 
@@ -87,7 +154,7 @@ An easy way to host library, collection, and book files is to use [Github Pages]
 3. Committing library, collection and book files to the repository's `master` or `gh-pages` branch
 4. Each file will be available as `https://yourname.github.io/your-repository/<file.txt>`, where `<file.txt>` is the name of the committed file.
 
-Once your library URL is up, in `touchtypie`, click the settings icon, click `+` beside libraries dropdown box, and paste the URL of the library and press enter. The library will be retreived and the practice will start. You may also share the library with others to practise on.
+Once your library URL is up, in `touchtypie`, go to `environment`, click `+` beside libraries dropdown box, and paste the URL of the library and press enter. The library will be retreived and the practice will start. You may also share the library with others to practise on.
 
 ### Basic example
 
@@ -182,11 +249,3 @@ They carry thmeselves with class.
 ### Q: Can it be easier to create a library?
 
 It is part of the roadmap to support fetching of `.json` files as libraries. This will eliminate the need for creating multiple `.txt` files for libraries, collections, and books.
-
-### Q: Why can't I use any URL's content as practice?
-
-The browser is subject to a policy called [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) which limits the browser from consuming resources from a website other than the current website (i.e. `touchtypie`).
-
-In order for the browser to consume resources of another website, that website's server must return a HTTP header `access-control-allow-origin *`. However we have no control over that website's server.
-
-Hence, the solution is to host our library, collection and book file(s) ourselves. This can easily be done by using [Github Pages](https://pages.github.com/) as discussed above, or uploading to your own web server.
