@@ -2435,14 +2435,13 @@ var EnvironmentController = function() {
                 c.props._training.begin(trainingConfig, function() {
                     c.methods.toggleAddStatus(c, '+');
                     c.methods.createSelectOptions(c);
-                    c.methods.updateCollectionsAndBooks(c, bookLibraryId);
                     Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
                     Components.menuselect_books.methods.createSelectOptions(Components.menuselect_books);
                 }, function() {
                     c.methods.toggleAddStatus(c, '!');
                 });
             },
-            updateCollectionsAndBooks: function(c, libraryId) {
+            getLibraryFirstBook: function(c, libraryId) {
                 var collections = c.props._training.trainer.getCollectionsOfLibraryId(libraryId);
                 var keys, collection, books, book;
                 if (collections) {
@@ -2454,15 +2453,14 @@ var EnvironmentController = function() {
                         if (books) {
                             keys = Object.keys(books);
                             if (keys.length > 0) {
-                                book = books[keys[0]]
-                                c.props._training.improvise(book);
+                                book = books[keys[0]];
+                                return book;
 
-                                Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
-                                Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
                             }
                         }
                     }
                 }
+                return null;
             },
             toggleAddStatus: function(c, statusNew) {
                var status = c.props.addStatus;
@@ -2540,8 +2538,13 @@ var EnvironmentController = function() {
                 var c = this;
                 var valueNew = binding.element.value;
                 c.props._training.trainer.memory.workingMemoryLibraryId = valueNew;
-                c.methods.updateCollectionsAndBooks(c, valueNew);
-            },
+                var book = c.methods.getLibraryFirstBook(c, valueNew);
+                c.props._training.improvise(book);
+
+                // Update collection and books
+                Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
+                Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
+        },
             selectclick: function(event, _this, binding) {
                 if (State.debug) {
                     console.log('[selectclick]');
