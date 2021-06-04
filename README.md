@@ -23,21 +23,31 @@ It started out simple, but grew just enough to require a custom frontend framewo
 
 ### Keyboard navigation?
 
-Use the `ESC` key to navigate between `home` and `environment` (i.e. settings).
+Use the `ESC` key to navigate between `Home` and `Environment` (i.e. settings).
 
-In `environment`, use the `TAB` key to navigate between settings.
+In `Environment`:
+
+- Use the `TAB` key to navigate between settings.
+
+- Use `ARROW` keys to navigate between dropdown entries.
+
+- Use `ENTER` or `SPACE` keys to select or toggle settings.
+
+### Q: What are the red boxes in the Trainer's speech?
+
+The red boxes in the Trainer's speech are indications of errors present in the Student response.
 
 ### Q: How to practice on my own texts?
 
 Ensure each text you want to practice is available as a URL.
 
-In `touchtypie`, go to `environment`, and click `+` beside `BOOKS`, paste a URL and hit enter. Do this for each URL you want to practice.
+In `touchtypie`, go to `Environment`, and click `+` beside `BOOKS`, paste a URL and hit enter. Do this for each URL you want to practice.
 
 To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
 
 ### Q: How to save the practice session?
 
-To save the practice session, go to `environment`, and under `FAVORITE` click on the `COPY` button.
+To save the practice session, go to `Environment`, and under `FAVORITE` click on the `COPY` button.
 
 A `touchtypie` URL is saved to your clipboard with your custom settings and added URLs (i.e. books). You may now bookmark, save, or share that `touchtypie` URL to practice anytime you want.
 
@@ -51,7 +61,7 @@ Check that the URL is valid. Invalid URLs cannot be fetched.
 
 If the URL is indeed valid, the failure to fetch the URL is because a browser security issue. See [this answer](#q-why-cant-i-use-any-urls-content-as-practice).
 
-### Q: Why can't I use any URL's content as practice?
+### Q: Why can't I use any URL as a book (i.e. practice text)?
 
 The browser is subject to a policy called [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) which limits the browser from consuming resources from a website other than the current website (i.e. `touchtypie`).
 
@@ -59,25 +69,82 @@ In order for the browser to consume resources of another website, that website's
 
 Hence, the solution is to host our library, collection and book file(s) ourselves. This can easily be done by using [Github Pages](https://pages.github.com/) as discussed above, or uploading to your own web server.
 
-### Q: How to practise on custom book(s)?
+### Q: How to practice on custom book(s)?
 
 See [this answer](#q-how-to-practice-on-my-own-texts).
 
-### Q: How to practise on custom collection(s)?
+### Q: How to practice on custom collection(s)?
 
 Ensure each collection you want to practice is available as a URL.
 
-In `touchtypie`, go to `environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each book you want to practice.
+In `touchtypie`, go to `Environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each book you want to practice.
 
 To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
 
-### Q: How to practise on custom library(s)?
+### Q: How to practice on custom library(s)?
 
 Ensure each collection you want to practice is available as a URL.
 
-In `touchtypie`, go to `environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each book you want to practice.
+In `touchtypie`, go to `Environment`, and click `+` beside `LIBRARIES`, paste a library URL and hit enter. Do this for each book you want to practice.
 
 To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
+
+## FAQ - Environment
+
+### Q: What is libraries?
+
+All of the available libraries for practice. Use the `+` to add a custom library.
+
+### Q: What is collections?
+
+All of the available collections for practice. Use the `+` to add a custom collection.
+
+### Q: What is books?
+
+All of the available books for practice. Use the `+` to add a custom book.
+
+### Q: What is playmode?
+
+Works like repeat and shuffle in a media player. The playmode defines how the next book will be retrieved.
+
+There are 4 playmodes:
+
+- `shuffleglobal` - Shuffle across collections.
+- `shuffle` - Shuffle within a collection.
+- `repeat` - Cycle within a collection.
+- `repeatone` - Repeat the current book.
+
+### Q: What is perfection?
+
+As its name implies, perfection enforces an exact match between the Student response (what you typed) and the Trainer's speech (the feeto be considered a successful training.
+
+### Q: What is jumble?
+
+As its name implies, jumble simply jumbles the **words** present in a book.
+
+### Q: What is scramble?
+
+As its name implies, scramble simply scrambles the **characters** present in a book.
+
+### Q: What is statistics?
+
+As its name implies, statistics simply shows statistics summaries on the `Home` scene.
+
+Even when statistics is turned off, it continues being collected. Statistics are collated into a virtue at the end of each training session.
+
+### Q: What is an ambience?
+
+As its name implies, ambience is the background of the training setting.
+
+### Q: What is a virtue?
+
+As its name implies, virtue is the measure of a Student's performance for a particular training session.
+
+A global virtue is a measure of a Student's overall performance across all training sessions.
+
+### Q: What is a favorite?
+
+As its name implies, a favorite is a touchtypie URL that is copied to your clipboard containing your training settings, which you may save, bookmark, or share with others to practice on one particular book or books.
 
 ## FAQ - Terminology
 
@@ -93,9 +160,33 @@ A collection is a list of book URLs.
 
 A library is a list of collection URLs.
 
+### Q: Who is the Trainer?
+
+The Trainer is the `touchtypie` who prepares training sessions for you.
+
+### Q: What is the Trainer's speech?
+
+The Trainer's speech is the text displayed for you to read and type.
+
+### Q: Who is the Student?
+
+The Student is the player of `touchtypie` who is you.
+
+### Q: What is the Student's response?
+
+The Student's response is the text you typed.
+
+### Q: What is Home?
+
+`Home` is the main scene of `touchtypie` where the Trainer and Student are.
+
+### Q: What is Environment?
+
+`Environment` is the settings scene of `touchtypie`.
+
 ## FAQ - Advanced
 
-### Q: How to practise on custom book(s)?
+### Q: How to practice on custom book(s)?
 
 Supply `GET` query parameter `book_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
 
@@ -103,43 +194,41 @@ Supply `GET` query parameter `book_ids=<URL>` (URL-encoding is not required) whe
 https://play.touchtypie.com?book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-letters.txt
 ```
 
-To practise on multiple books, use multiple `GET` query parameter `book_ids=<URL>` separated by `&`. For example:
+To practice on multiple books, use multiple `GET` query parameter `book_ids=<URL>` separated by `&`. For example:
 
 ```
 https://play.touchtypie.com?book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-letters.txt&book_ids=https://touchtypie.github.io/touchtypie-libraries/books/keyboard-qwerty-numbers.txt
 ```
 
-### Q: How to practise on custom collection(s)?
+### Q: How to practice on custom collection(s)?
 
-To practise on one collection, use `GET` query parameter `book_collection_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
+To practice on one collection, use `GET` query parameter `book_collection_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
 
 ```
 https://play.touchtypie.com?book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/keyboard-qwerty.txt
 ```
 
-To practise on multiple collections, use multiple `GET` query parameter `book_collection_ids=<URL>` separated by `&`. For example:
+To practice on multiple collections, use multiple `GET` query parameter `book_collection_ids=<URL>` separated by `&`. For example:
 
 ```
 https://play.touchtypie.com?book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/keyboard-qwerty.txt&book_collection_ids=https://touchtypie.github.io/touchtypie-libraries/collections/plants.txt
 ```
 
-### Q: How to practise on custom library(s)?
+### Q: How to practice on custom library(s)?
 
-To practise on one library, use `GET` query parameter `book_library_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
+To practice on one library, use `GET` query parameter `book_library_ids=<URL>` (URL-encoding is not required) when accessing touchtypie. For example:
 
 ```
 https://play.touchtypie.com?book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt
 ```
 
-To practise multiple libraries, use multiple `GET` query parameter `book_library_ids=<URL>` separated by `&`. For example:
+To practice multiple libraries, use multiple `GET` query parameter `book_library_ids=<URL>` separated by `&`. For example:
 
 ```
 https://play.touchtypie.com?book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/daily.txt&book_library_ids=https://touchtypie.github.io/touchtypie-libraries/libraries/nature.txt
 ```
 
 ### Q: How to create a custom library, collection, or book?
-
-To practise on your own texts, you need a custom library.
 
 Simply put, a library, a collection, or a book is a `.txt` file, available as a URL.
 
@@ -154,7 +243,7 @@ An easy way to host library, collection, and book files is to use [Github Pages]
 3. Committing library, collection and book files to the repository's `master` or `gh-pages` branch
 4. Each file will be available as `https://yourname.github.io/your-repository/<file.txt>`, where `<file.txt>` is the name of the committed file.
 
-Once your library URL is up, in `touchtypie`, go to `environment`, click `+` beside libraries dropdown box, and paste the URL of the library and press enter. The library will be retreived and the practice will start. You may also share the library with others to practise on.
+Once your library URL is up, in `touchtypie`, go to `Environment`, click `+` beside libraries dropdown box, and paste the URL of the library and press enter. The library will be retreived and the practice will start. You may also share the library with others to practice on.
 
 ### Basic example
 
