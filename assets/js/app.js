@@ -1016,35 +1016,27 @@ var Memory = function() {
         var keys = Object.keys(trainingConfig);
         var bookLibraryIds;
         var fakeEntities = {}
-        if ('bookLibraryIds' in trainingConfig) {
-            // Pre-defined config
-            bookLibraryIds = Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds : [ trainingConfig.bookLibraryIds ];
-        }else {
-            // Custom config
-            bookLibraryIds = [
-                'Custom library'
-            ];
+        bookLibraryIds = Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds : [ trainingConfig.bookLibraryIds ];
 
-            if ('bookIds' in trainingConfig) {
-                // Custom bookIds
+        if ('bookIds' in trainingConfig) {
+            // Custom bookIds
 
-                // Create fake library
-                fakeEntities.bookLibrary = BookLibrary();
-                fakeEntities.bookLibrary.id = 'Custom library';
-                fakeEntities.bookLibrary.content = 'Custom collection';
-                // Create fake collection
-                fakeEntities.bookCollection = BookCollection();
-                fakeEntities.bookCollection.libraryId = fakeEntities.bookLibrary.id;
-                fakeEntities.bookCollection.id = fakeEntities.bookLibrary.content;
-                fakeEntities.bookCollection.content = Array.isArray(trainingConfig.bookIds) ? trainingConfig.bookIds.join("\n") : trainingConfig.bookIds;
-            }else if ('bookCollectionIds' in trainingConfig) {
-                // Custom bookCollectionIds
+            // Create fake library
+            fakeEntities.bookLibrary = BookLibrary();
+            fakeEntities.bookLibrary.id = 'Custom library';
+            fakeEntities.bookLibrary.content = 'Custom collection';
+            // Create fake collection
+            fakeEntities.bookCollection = BookCollection();
+            fakeEntities.bookCollection.libraryId = fakeEntities.bookLibrary.id;
+            fakeEntities.bookCollection.id = fakeEntities.bookLibrary.content;
+            fakeEntities.bookCollection.content = Array.isArray(trainingConfig.bookIds) ? trainingConfig.bookIds.join("\n") : trainingConfig.bookIds;
+        }else if ('bookCollectionIds' in trainingConfig) {
+            // Custom bookCollectionIds
 
-                // Create fake library
-                fakeEntities.bookLibrary = BookLibrary();
-                fakeEntities.bookLibrary.id = 'Custom library';
-                fakeEntities.bookLibrary.content = Array.isArray(trainingConfig.bookCollectionIds) ? trainingConfig.bookCollectionIds.join("\n") : trainingConfig.bookCollectionIds;
-            }
+            // Create fake library
+            fakeEntities.bookLibrary = BookLibrary();
+            fakeEntities.bookLibrary.id = 'Custom library';
+            fakeEntities.bookLibrary.content = Array.isArray(trainingConfig.bookCollectionIds) ? trainingConfig.bookCollectionIds.join("\n") : trainingConfig.bookCollectionIds;
         }
 
         // Recall
@@ -3233,6 +3225,9 @@ var ConfigController = function(Config) {
         // Pre-defined config
         mergedConfig['bookLibraryIds'] = Config['bookLibraryIds'];
     }else {
+        // Pre-defined config
+        mergedConfig['bookLibraryIds'] = Config['bookLibraryIds'];
+
         // Custom GET config
         if (Object.keys(urlParamsCamelCased).length > 0) {
             for (var k in urlParamsCamelCased) {
