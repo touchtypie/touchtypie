@@ -1272,6 +1272,10 @@ var Trainer = function() {
         return memory.isReady();
     };
 
+    var prepare = function(trainingConfig) {
+        memory.prepare(trainingConfig);
+    };
+
     var recallKnowledge = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         memory.prepare(trainingConfig);
 
@@ -1330,6 +1334,7 @@ var Trainer = function() {
         getBooksOfCollectionId: getBooksOfCollectionId,
         getBookOfId: getBookOfId,
         isKnowledgeReady: isKnowledgeReady,
+        prepare: prepare,
         recallKnowledge: recallKnowledge,
         setCurrentBook: setCurrentBook,
         setNextBook: setNextBook,
@@ -1512,6 +1517,10 @@ var Training = function() {
         trainer.speech.charactersCounter = trainer.truth.value.length;
     }
 
+    var prepare = function(trainingConfig) {
+        trainer.prepare(trainingConfig);
+    };
+
     var start = function() {
         // Set truth values
         var book = trainer.getCurrentBook();
@@ -1592,6 +1601,7 @@ var Training = function() {
         fail: fail,
         improvise: improvise,
         next: next,
+        prepare: prepare,
         start: start,
     };
 };
@@ -3291,6 +3301,9 @@ var myApp = function () {
     var sceneController;
 
     var init = function() {
+        // Configure
+        State.training.prepare(configController.config);
+
         // Create scenes
         sceneController = SceneController(
             // The state object
@@ -3337,8 +3350,7 @@ var myApp = function () {
                 eventController.doEvent('training-init');
 
                 // Replenish training environment
-                var trainingConfig = configController.config;
-                State.training.begin(trainingConfig, function() {
+                State.training.begin(configController.config, function() {
                     // Event: training-start
                     eventController.doEvent('training-start');
                 });
