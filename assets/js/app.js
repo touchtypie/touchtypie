@@ -1071,7 +1071,15 @@ var Memory = function() {
         var keys = Object.keys(trainingConfig);
         var bookLibraryIds;
         var fakeEntities = {}
-        bookLibraryIds = Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds : [ trainingConfig.bookLibraryIds ];
+        if ('bookLibraryIds' in trainingConfig) {
+            // Pre-defined config
+            bookLibraryIds = Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds : [ trainingConfig.bookLibraryIds ];
+        }else {
+            // Custom config
+            bookLibraryIds = [
+                'Custom library'
+            ];
+        }
 
         if ('bookIds' in trainingConfig) {
             // Custom bookIds
@@ -1189,27 +1197,33 @@ var Memory = function() {
                 // Recognize and recall books
                 var k, book;
                 for (var i = 0; i < data.bookCollection.index.length; i++) {
-                    // Recognize
-                    k = data.bookCollection.index[i];
-                    book = Book();
-                    book.libraryId = data.bookCollection.libraryId;
-                    book.collectionId = data.bookCollection.id;
-                    book.id = k;
-                    data.books[k] = book;
+                    (function(k) {
+                        // Recognize
+                        book = Book();
+                        book.libraryId = data.bookCollection.libraryId;
+                        book.collectionId = data.bookCollection.id;
+                        book.id = k;
+                        data.books[k] = book;
 
-                    // Recall
-                    recallBook.apply(data.self, [book, function() {
-                        // Ensure all books are recalled
-                        var k;
-                        for (var i = 0; i < data.bookCollection.index.length; i++) {
-                            k = data.bookCollection.index[i];
-                            if (data.books[k].recalled === false) {
-                                return;
+                        // Recall
+                        recallBook.apply(data.self, [book, function() {
+                            // Ensure all books are recalled
+                            var k;
+                            for (var i = 0; i < data.bookCollection.index.length; i++) {
+                                k = data.bookCollection.index[i];
+                                if (data.books[k].recalled === false) {
+                                    return;
+                                }
                             }
-                        }
-                        data.bookCollection.recalled = true;
-                        data.callbackOnSuccess()
-                    }, callbackOnError])
+                            data.bookCollection.recalled = true;
+                            data.callbackOnSuccess()
+                        }, function() {
+                            // Failed. Remove the recognition
+                            delete data.books[k];
+
+                            callbackOnError();
+                        }]);
+                    })(data.bookCollection.index[i]);
                 }
             },
             callbackOnError: callbackOnError,
@@ -2722,10 +2736,13 @@ var EnvironmentController = function() {
             <menuselect>
                 <label>{{ .label }}</label>
                 <select b-on="change,click:selectclick,change:selectchange,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryBookId }}"></select>
+                <input class="hidden" b-on="keyup:inputkeyup" type="text" placeholder="enter url of book..." />
+                <add b-on="click:addclick,keyup:addkeyup" title="Add a book" tabindex="0">{{ .addStatus }}</add>
             </menuselect>
         `,
         props: {
             label: 'book',
+            addStatus: '+',
             _training: _training,
             get options() {
                 return Object.values(_training.trainer.getBooks());
@@ -2776,6 +2793,80 @@ var EnvironmentController = function() {
                     }
                 }
             },
+            loadBook: function(c, bookId) {
+                var bookIds = [bookId];
+                c.methods.toggleAddStatus(c, '.');
+                var trainingConfig = {
+                    bookIds: bookIds
+                };
+                c.props._training.begin(trainingConfig, function() {
+                    c.methods.toggleAddStatus(c, '+');
+                    Components.menuselect_booklibraries.methods.createSelectOptions(Components.menuselect_booklibraries);
+                    Components.menuselect_booklibraries.methods.updateSelectOptions(Components.menuselect_booklibraries);
+                    Components.menuselect_bookcollections.methods.createSelectOptions(Components.menuselect_bookcollections);
+                    Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
+                    c.methods.createSelectOptions(c);
+                    c.methods.updateSelectOptions(c);
+                }, function() {
+                    c.methods.toggleAddStatus(c, '!');
+                });
+            },
+            toggleAddStatus: function(c, statusNew) {
+               var status = c.props.addStatus;
+
+                // No status provided. Dynamically determine the new status based on existing status.
+                if (typeof(statusNew) === 'undefined') {
+                    switch(status) {
+                        case '+':
+                            statusNew = '-'
+                            break;
+                        case '-':
+                        case '!':
+                            statusNew = '+'
+                            break;
+                        case '.':
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                switch(statusNew) {
+                    // default
+                    case '+':
+                        c.bindings['._training.trainer.memory.workingMemoryBookId'].elementBindings[0].element.removeAttribute('class');
+                        c.rootElement.getElementsByTagName('input')[0].className = 'hidden';
+                        c.rootElement.getElementsByTagName('input')[0].disabled = true;
+                        c.rootElement.getElementsByTagName('input')[0].value = '';
+                        // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                        break;
+                    // adding
+                    case '-':
+                        c.bindings['._training.trainer.memory.workingMemoryBookId'].elementBindings[0].element.className = 'hidden';
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('class');
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.rootElement.getElementsByTagName('input')[0].focus();
+                        // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                        break;
+                    // loading
+                    case '.':
+                        c.bindings['._training.trainer.memory.workingMemoryBookId'].elementBindings[0].element.className = 'hidden';
+                        c.rootElement.getElementsByTagName('input')[0].className = 'loading';
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        // c.bindings['.addStatus'].elementBindings[0].element.className = 'adding';
+                        break;
+                    // loading error
+                    case '!':
+                        c.bindings['._training.trainer.memory.workingMemoryBookId'].elementBindings[0].element.className = 'hidden';
+                        c.rootElement.getElementsByTagName('input')[0].className = 'error';
+                        c.rootElement.getElementsByTagName('input')[0].removeAttribute('disabled');
+                        c.rootElement.getElementsByTagName('input')[0].focus();
+                        // c.bindings['.addStatus'].elementBindings[0].element.removeAttribute('class');
+                        break;
+                    default:
+                        break;
+                }
+                c.props.addStatus = statusNew;
+            }
         },
         eventsListeners: {
             selectchange: function(event, _this, binding) {
@@ -2811,6 +2902,48 @@ var EnvironmentController = function() {
                         scene.underInteraction = false;
                         event.stopPropagation();
                     }
+                }
+            },
+            inputkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+                var value = ele.value.trim();
+
+                // ENTER key
+                if (key === 13) {
+                    if (value !== '') {
+                        c.methods.loadBook(c, value);
+                    }
+                }
+
+                // ESC key should toggle back to add status
+                if (key === 27) {
+                    if (State.debug) {
+                        console.log('[inputkeyup] ESC key');
+                    }
+                    c.methods.toggleAddStatus(c);
+                    scene.underInteraction = false;
+                    c.rootElement.getElementsByTagName('select')[0].focus();
+                    event.stopPropagation();
+                }
+            },
+            addclick: function(event, _this, binding) {
+                var c = this;
+                scene.underInteraction = !scene.underInteraction;
+                c.methods.toggleAddStatus(c);
+            },
+            addkeyup: function(event, _this, binding) {
+                var c = this;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[addkeyup] ENTER or SPACE key');
+                    }
+                    scene.underInteraction = !scene.underInteraction;
+                    c.methods.toggleAddStatus(c);
                 }
             }
         }
