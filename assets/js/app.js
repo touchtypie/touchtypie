@@ -3011,11 +3011,12 @@ var EnvironmentController = function() {
         template: `
             <menuambienceswitch>
                 <label>ambience</label>
-                <ambiences b-on="DOMContentLoaded,keyup:ambienceskeyup" tabindex="0"></ambiences>
+                <ambiences b-on="DOMContentLoaded,keyup:ambienceskeyup" b-setter="ambience:setChoice" tabindex="0"></ambiences>
             </menuambienceswitch>
         `,
         props: {
             _training: _training,
+            ambience: _training.trainer.memory.environment.ambience,
             ambiences: {
                 // CSS styles
                 sky: 'linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%)',
@@ -3038,7 +3039,6 @@ var EnvironmentController = function() {
                             Math.floor(Math.random() * 255)
                         ].join(',');
                     }
-                    var css
                     return 'linear-gradient(45deg, rgb(' + getRandomColor() + ') 10%, rgb(' + getRandomColor() + ') 80%, rgb(' + getRandomColor() + ') 100%)'
                 }
             }
@@ -3046,7 +3046,7 @@ var EnvironmentController = function() {
         methods: {
             getNextChoice: function(c, direction) {
                 var choices = Object.keys(c.props.ambiences);
-                var currentChoice = c.props._training.trainer.memory.environment.ambience;
+                var currentChoice = c.props.ambience;
                 var currIndex = choices.indexOf(currentChoice);
                 var nextIndex;
                 if (direction === 'before') {
@@ -3070,7 +3070,7 @@ var EnvironmentController = function() {
             updateChoices: function(c) {
                 var choiceElements = c.parentElement.getElementsByTagName('ambiences')[0].getElementsByTagName('choice');
                 for (var i = 0; i < choiceElements.length; i++ ) {
-                    if (choiceElements[i].name === c.props._training.trainer.memory.environment.ambience) {
+                    if (choiceElements[i].name === c.props.ambience) {
                         choiceElements[i].className = 'active';
                     }else {
                         choiceElements[i].className = '';
@@ -3095,8 +3095,8 @@ var EnvironmentController = function() {
                     }
                     ambienceEle.addEventListener('click', function(event) {
                         var ele = event.target || event.srcElement;
-                        var nextChoice = ele.name;
-                        c.methods.setChoice(c, nextChoice);
+                        var newChoice = ele.name;
+                        c.props.ambience = newChoice;
 
                         event.stopPropagation();
                     });
@@ -3136,7 +3136,8 @@ var EnvironmentController = function() {
 
                 if (direction) {
                     nextChoice = c.methods.getNextChoice(c, direction);
-                    c.methods.setChoice(c, nextChoice);
+                    c.props.ambience = nextChoice;
+
                     event.stopPropagation();
                 }
             }
