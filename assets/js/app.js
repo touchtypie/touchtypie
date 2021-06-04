@@ -2405,7 +2405,6 @@ var EnvironmentController = function() {
             label: 'library',
             addStatus: '+',
             _training: _training,
-            customBookLibraryId: '',
             get options() {
                 return Object.values(_training.trainer.getLibraries());
             }
@@ -2471,7 +2470,6 @@ var EnvironmentController = function() {
                             if (keys.length > 0) {
                                 book = books[keys[0]];
                                 return book;
-
                             }
                         }
                     }
