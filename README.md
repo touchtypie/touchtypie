@@ -107,14 +107,16 @@ All of the available books for practice. Use the `+` to add a custom book.
 
 ### Q: What is playmode?
 
-Works like repeat and shuffle in a media player. The playmode defines how the next book will be retrieved.
+The playmode defines how the next book will be retrieved. Much like how a next song is played in a media player.
 
 There are 4 playmodes:
 
-- `shuffleglobal` - Shuffle across collections.
+- `shuffleglobal` - Shuffle across libraries.
 - `shuffle` - Shuffle within a collection.
 - `repeat` - Cycle within a collection.
 - `repeatone` - Repeat the current book.
+
+The default playmode is `shuffleglobal`.
 
 ### Q: What is perfection?
 
