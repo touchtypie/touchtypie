@@ -59,15 +59,17 @@ See [this answer](#q-how-to-practice-on-my-own-texts).
 
 Check that the URL is valid. Invalid URLs cannot be fetched.
 
-If the URL is indeed valid, the failure to fetch the URL is because a browser security issue. See [this answer](#q-why-cant-i-use-any-urls-content-as-practice).
+If the URL is indeed valid, the failure to fetch the URL is because that website is protecting that resource from being shared. See [this answer](#q-why-cant-i-use-any-url-as-a-book-ie-practice-text). You may try another URL.
 
 ### Q: Why can't I use any URL as a book (i.e. practice text)?
 
 The browser is subject to a policy called [Cross-Origin Resource Sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) which limits the browser from consuming resources from a website other than the current website (i.e. `touchtypie`).
 
-In order for the browser to consume resources of another website, that website's server must return a HTTP header `access-control-allow-origin *`. However we have no control over that website's server.
+In order for the browser to consume resources of another website, that website's server must return a HTTP header `access-control-allow-origin: *`. However we have no control over that website's server.
 
-Hence, the solution is to host our library, collection and book file(s) ourselves. This can easily be done by using [Github Pages](https://pages.github.com/) as discussed above, or uploading to your own web server.
+Hence, the solution is to host our library, collection and book file(s) ourselves. This can easily be done by using [Github Pages](https://pages.github.com/) as discussed in [this answer](#q-how-to-create-a-custom-library-collection-or-book), or uploading to your own web server.
+
+Alternatively, another solution is to use a proxy server which fetches the content of that page directly, and returns the content with a HTTP header `access-control-allow-origin: *`. This can be done by using [Cloudflare Workers](https://developers.cloudflare.com/workers/examples/cors-header-proxy).
 
 ### Q: How to practice on custom book(s)?
 
