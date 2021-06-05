@@ -118,7 +118,7 @@ There are 4 playmodes:
 
 ### Q: What is perfection?
 
-As its name implies, perfection enforces an exact match between the Student response (what you typed) and the Trainer's speech (the feeto be considered a successful training.
+As its name implies, perfection enforces an exact match between the Student response (what you typed) and the Trainer's speech to be considered a successful training.
 
 ### Q: What is jumble?
 
@@ -134,17 +134,17 @@ As its name implies, statistics simply shows statistics summaries on the `Home` 
 
 Even when statistics is turned off, it continues being collected. Statistics are collated into a virtue at the end of each training session.
 
-### Q: What is an ambience?
+### Q: What is ambience?
 
 As its name implies, ambience is the background of the training setting.
 
-### Q: What is a virtue?
+### Q: What is virtue?
 
 As its name implies, virtue is the measure of a Student's performance for a particular training session.
 
 A global virtue is a measure of a Student's overall performance across all training sessions.
 
-### Q: What is a favorite?
+### Q: What is favorite?
 
 As its name implies, a favorite is a touchtypie URL that is copied to your clipboard containing your training settings, which you may save, bookmark, or share with others to practice on one particular book or books.
 
