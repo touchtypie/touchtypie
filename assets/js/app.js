@@ -479,84 +479,110 @@ var Bubble = function(default_value) {
                 // <lfDeviationAfter+1>
                 // <lfDeviationAfter+2>
                 if (characterWidth > 0 && lineWidth > 0) {
-                    function getNumberOfWrapLines(line, lineWidth, characterWidth) {
-                        // The .clientWidth, .offsetWidth, .scrollWidth of elements round up the actual width. So we always assume it is 1px smaller to be safe.
-                        return Math.ceil( (line.length * characterWidth) / (lineWidth - 1) );
-                    }
-                    var directionBefore = false, lfDeviationBefore = -1, lfDeviationAfter = 1, fromIdx, toIdx, lineCount = 0, totalLineCount = 0;
-                    var padCharactersBefore = 0, padCharactersAfter = 0;
-                    while (lfDeviationAfter - lfDeviationBefore - 1 <= lfIndices.length) {
-                        if (directionBefore) {
-                            if (nearestLfIndicesIndex + lfDeviationBefore >= -1) {
-                                if (nearestLfIndicesIndex + lfDeviationBefore === -1 ) {
-                                    // Right at the beginning
-                                    if (State.debug) {
-                                        console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
-                                    }
-                                }else {
-                                    // Not yet the beginning
-                                    fromIdx = lfIndices[nearestLfIndicesIndex + lfDeviationBefore];
-                                    toIdx = lfIndices[nearestLfIndicesIndex + lfDeviationBefore + 1] - 1; // -1 to ignore the trailing LF
-                                    lineCount = getNumberOfWrapLines(truth.value.substring(fromIdx, toIdx + 1), lineWidth, characterWidth);
-                                    if (State.debug) {
-                                        console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
-                                    }
-                                    if (totalLineCount + lineCount > maxLines) {
-                                        // Pad some lines before to meet the maxLines
-                                        padCharactersBefore = Math.floor( (maxLines - totalLineCount) * Math.floor(lineWidth / characterWidth) );
-                                        break;
-                                    }
-                                    totalLineCount += lineCount;
-                                    if (nearestLfIndicesIndex + lfDeviationBefore === -1 ) {
-                                        startLfIndicesIdx = lfIndices[0];
-                                    }else if (nearestLfIndicesIndex + lfDeviationBefore > -1) {
-                                        startLfIndicesIdx = nearestLfIndicesIndex + lfDeviationBefore;
-                                    }
-                                }
-                                lfDeviationBefore--;
-                            }
+                    const maxPadChars = maxLines * Math.floor(lineWidth / characterWidth);
+                    if (lfIndices[startLfIndicesIdx + 1] - lfIndices[startLfIndicesIdx] > maxPadChars) {
+                        const padChars = Math.floor(maxPadChars / 2);
+                        // Get the start index
+                        // Get the end index
+                        if (cursorIndex - padChars < lfIndices[startLfIndicesIdx]) {
+                            // Not enough characters to pad before cursor
+                            startIndex = lfIndices[startLfIndicesIdx];
+                            // Pad leftover characters after cursor
+                            endIndex = startIndex + maxPadChars - 1 > lfIndices[startLfIndicesIdx + 1] - 1 ? lfIndices[startLfIndicesIdx + 1] - 1 : startIndex + maxPadChars - 1;
+                        }else if (cursorIndex + padChars > lfIndices[startLfIndicesIdx + 1] - 1) {
+                            // Not enough characters to pad after cursor
+                            endIndex = lfIndices[startLfIndicesIdx + 1] - 1;
+                            // Pad leftover characters before cursor
+                            startIndex = endIndex - maxPadChars + 1 < lfIndices[startLfIndicesIdx] ? lfIndices[startLfIndicesIdx] : endIndex - maxPadChars + 1;
                         }else {
-                            if (nearestLfIndicesIndex + lfDeviationAfter <= lfIndices.length) {
-                                if (nearestLfIndicesIndex + lfDeviationAfter === lfIndices.length) {
-                                    // Hit the end
-                                    if (State.debug) {
-                                        console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
-                                    }
-                                }else {
-                                    // Not yet the end
-                                    fromIdx = lfIndices[nearestLfIndicesIndex + lfDeviationAfter - 1];
-                                    toIdx = lfIndices[nearestLfIndicesIndex + lfDeviationAfter] - 1; // -1 to ignore the trailing LF
-                                    lineCount = getNumberOfWrapLines(truth.value.substring(fromIdx, toIdx + 1), lineWidth, characterWidth);
-                                    if (State.debug) {
-                                        console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
-                                    }
-                                    if (totalLineCount + lineCount > maxLines) {
-                                        // Pad some lines after to meet the maxLines
-                                        padCharactersAfter = Math.floor( (maxLines - totalLineCount) * Math.floor(lineWidth / characterWidth ) );
-                                        // Never pad beyond the next LF
-                                        if (lfIndices[nearestLfIndicesIndex + lfDeviationAfter] + padCharactersAfter - 1 > lfIndices[nearestLfIndicesIndex + lfDeviationAfter + 1]) {
-                                            padCharactersAfter -= (lfIndices[nearestLfIndicesIndex + lfDeviationAfter] + padCharactersAfter - 1) - lfIndices[nearestLfIndicesIndex + lfDeviationAfter + 1];
-                                        }
-                                        break;
-                                    }
-                                    totalLineCount += lineCount;
-                                    endLfIndicesIdx = nearestLfIndicesIndex + lfDeviationAfter;
-                                }
-                                lfDeviationAfter++;
-                            }
+                            // Pad equal number of characters before and after cursor
+                            startIndex = cursorIndex - padChars;
+                            endIndex = cursorIndex + padChars;
                         }
-                        directionBefore = !directionBefore;
-                    }
-                    if (State.debug) {
-                        console.log('[getPeekIndices] startLfIndicesIdx: ' + startLfIndicesIdx + ', endLfIndicesIdx: ' + endLfIndicesIdx + ', lfIndices[startLfIndicesIdx]: ' + lfIndices[startLfIndicesIdx] + ', lfIndices[endLfIndicesIdx]: ' + lfIndices[endLfIndicesIdx]);
-                        console.log('[getPeekIndices] padCharactersAfter: ' + padCharactersAfter + ', padCharactersBefore: ' + padCharactersBefore);
+                        if (State.debug) {
+                            console.log('[getPeekIndices] Book line overflows trainer speech. start: ' + lfIndices[startLfIndicesIdx] + ', end: ' + (lfIndices[startLfIndicesIdx + 1] - 1));
+                            console.log('[getPeekIndices] cursorIndex: ' + cursorIndex + ', maxPadChars: ' + maxPadChars + ', padChars: ' + padChars);
+                        }
+                    }else {
+                        function getNumberOfWrapLines(line, lineWidth, characterWidth) {
+                            // The .clientWidth, .offsetWidth, .scrollWidth of elements round up the actual width. So we always assume it is 1px smaller to be safe.
+                            return Math.ceil( (line.length * characterWidth) / (lineWidth - 1) );
+                        }
+                        var directionBefore = false, lfDeviationBefore = -1, lfDeviationAfter = 1, fromIdx, toIdx, lineCount = 0, totalLineCount = 0;
+                        var padCharactersBefore = 0, padCharactersAfter = 0;
+                        while (lfDeviationAfter - lfDeviationBefore - 1 <= lfIndices.length) {
+                            if (directionBefore) {
+                                if (nearestLfIndicesIndex + lfDeviationBefore >= -1) {
+                                    if (nearestLfIndicesIndex + lfDeviationBefore === -1 ) {
+                                        // Right at the beginning
+                                        if (State.debug) {
+                                            console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
+                                        }
+                                    }else {
+                                        // Not yet the beginning
+                                        fromIdx = lfIndices[nearestLfIndicesIndex + lfDeviationBefore];
+                                        toIdx = lfIndices[nearestLfIndicesIndex + lfDeviationBefore + 1] - 1; // -1 to ignore the trailing LF
+                                        lineCount = getNumberOfWrapLines(truth.value.substring(fromIdx, toIdx + 1), lineWidth, characterWidth);
+                                        if (State.debug) {
+                                            console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
+                                        }
+                                        if (totalLineCount + lineCount > maxLines) {
+                                            // Pad some lines before to meet the maxLines
+                                            padCharactersBefore = Math.floor( (maxLines - totalLineCount) * Math.floor(lineWidth / characterWidth) );
+                                            break;
+                                        }
+                                        totalLineCount += lineCount;
+                                        if (nearestLfIndicesIndex + lfDeviationBefore === -1 ) {
+                                            startLfIndicesIdx = lfIndices[0];
+                                        }else if (nearestLfIndicesIndex + lfDeviationBefore > -1) {
+                                            startLfIndicesIdx = nearestLfIndicesIndex + lfDeviationBefore;
+                                        }
+                                    }
+                                    lfDeviationBefore--;
+                                }
+                            }else {
+                                if (nearestLfIndicesIndex + lfDeviationAfter <= lfIndices.length) {
+                                    if (nearestLfIndicesIndex + lfDeviationAfter === lfIndices.length) {
+                                        // Hit the end
+                                        if (State.debug) {
+                                            console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
+                                        }
+                                    }else {
+                                        // Not yet the end
+                                        fromIdx = lfIndices[nearestLfIndicesIndex + lfDeviationAfter - 1];
+                                        toIdx = lfIndices[nearestLfIndicesIndex + lfDeviationAfter] - 1; // -1 to ignore the trailing LF
+                                        lineCount = getNumberOfWrapLines(truth.value.substring(fromIdx, toIdx + 1), lineWidth, characterWidth);
+                                        if (State.debug) {
+                                            console.log('[getPeekIndices] nearestLfIndicesIndex: ' + nearestLfIndicesIndex + ', totalLineCount: ' + totalLineCount + ', lineCount: ' + lineCount + ', directionBefore: ' + directionBefore);
+                                        }
+                                        if (totalLineCount + lineCount > maxLines) {
+                                            // Pad some lines after to meet the maxLines
+                                            padCharactersAfter = Math.floor( (maxLines - totalLineCount) * Math.floor(lineWidth / characterWidth ) );
+                                            // Never pad beyond the next LF
+                                            if (lfIndices[nearestLfIndicesIndex + lfDeviationAfter] + padCharactersAfter - 1 > lfIndices[nearestLfIndicesIndex + lfDeviationAfter + 1]) {
+                                                padCharactersAfter -= (lfIndices[nearestLfIndicesIndex + lfDeviationAfter] + padCharactersAfter - 1) - lfIndices[nearestLfIndicesIndex + lfDeviationAfter + 1];
+                                            }
+                                            break;
+                                        }
+                                        totalLineCount += lineCount;
+                                        endLfIndicesIdx = nearestLfIndicesIndex + lfDeviationAfter;
+                                    }
+                                    lfDeviationAfter++;
+                                }
+                            }
+                            directionBefore = !directionBefore;
+                        }
+                        if (State.debug) {
+                            console.log('[getPeekIndices] startLfIndicesIdx: ' + startLfIndicesIdx + ', endLfIndicesIdx: ' + endLfIndicesIdx + ', lfIndices[startLfIndicesIdx]: ' + lfIndices[startLfIndicesIdx] + ', lfIndices[endLfIndicesIdx]: ' + lfIndices[endLfIndicesIdx]);
+                            console.log('[getPeekIndices] padCharactersAfter: ' + padCharactersAfter + ', padCharactersBefore: ' + padCharactersBefore);
+                        }
+                        startIndex = padCharactersBefore > 0 ? lfIndices[startLfIndicesIdx] - padCharactersBefore + 1 : lfIndices[startLfIndicesIdx];
+                        endIndex = padCharactersAfter > 0 ? lfIndices[endLfIndicesIdx] + padCharactersAfter - 1 : lfIndices[endLfIndicesIdx];
                     }
                 }else {
                     // Invalid linewidth and characterwidth, treat it as a single line
                     isMultiline = false;
                 }
-                startIndex = padCharactersBefore > 0 ? lfIndices[startLfIndicesIdx] - padCharactersBefore + 1 : lfIndices[startLfIndicesIdx];
-                endIndex = padCharactersAfter > 0 ? lfIndices[endLfIndicesIdx] + padCharactersAfter - 1 : lfIndices[endLfIndicesIdx];
             }
 
             // If not at the end, exclude the trailing LF
