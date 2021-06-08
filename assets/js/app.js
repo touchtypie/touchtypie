@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var Helpers = function () {
     return {
@@ -158,7 +158,7 @@ var Binding = function(b) {
             element: element,
             attribute: attribute,
             event: event
-        }
+        };
         if (event){
             // E.g. DOMContentLoaded, onreadystatechange
             var ele = /DOM|ready/.test(event) ? document : element;
@@ -253,7 +253,7 @@ var BehaviorVirtue = function() {
             other_num_total: 0,
             other_num_total_percentage: 0.00,
         };
-    }
+    };
     var result = newVirtue();
 
     var newleaf = function() {
@@ -318,7 +318,7 @@ var BehaviorVirtue = function() {
         newleaf: newleaf,
         newlife: newlife,
         graduate: graduate
-    }
+    };
 }
 // A representation of the measure of a student nature's congruence to a perfect nature
 var StudentVirtue = function() {
@@ -1686,7 +1686,7 @@ var Training = function() {
 
         // Set trainer speech value
         trainer.speech.value = virtue.result.value_zonal;
-    }
+    };
 
     return {
         trainer: trainer,
@@ -3717,7 +3717,7 @@ var EventController = function(Config) {
                 callback.apply(events[event][i]);
             }
         }
-    }
+    };
 
     return {
         events: events,
@@ -3731,7 +3731,7 @@ var Scene = function(name) {
         id: name,
         parentElement: document.getElementsByTagName(name)[0],
         underInteraction: false
-    }
+    };
 };
 var SceneController = function(state, scenes) {
     // Object containing Scene objects
@@ -3875,6 +3875,6 @@ var myApp = function () {
             return sceneController
         },
         init: init
-    }
+    };
 }();
 myApp.init();
