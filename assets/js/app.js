@@ -2430,7 +2430,7 @@ var EnvironmentController = function() {
                 <select b-on="DOMContentLoaded,change:selectchange,click:selectclick,keyup:selectkeyup" title="{{ ._training.trainer.memory.workingMemoryLibraryId }}"></select>
                 <input class="hidden" b-on="keyup:inputkeyup" type="text" placeholder="enter url of library..." />
                 <add b-on="click:addclick,keyup:addkeyup" title="Add a library" tabindex="0">{{ .addStatus }}</add>
-            </menuselect><br />
+            </menuselect>
         `,
         props: {
             label: 'library',
