@@ -2016,14 +2016,7 @@ var HomeController = function () {
                 console.log('[setSpeechWidths] speechWidth: ' + speechWidth, ', speechCharacterWidth: ' + speechCharacterWidth  + ', chars / line: ' + speechWidth / speechCharacterWidth + ', max chars: ' + speechWidth / speechCharacterWidth * 5 );
             }
         }
-    }
-    myApp.eventController.registerEvent('training-init', function() {
-        // Initialize training the training with an trainer intro speech
-        State.training.start();
-
-        // Set the speech widths based on the intro speech
-        setSpeechWidths();
-    });
+    };
     (function() {
         // Fire the resize callback only every x ms
         var resizeId;
