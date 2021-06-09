@@ -1995,7 +1995,7 @@ var HomeController = function () {
         name: 'menu',
         template: `
             <menu>
-                <menubutton b-on"click"><icon>{{ .label }}</icon></menubutton>
+                <menubutton b-on="click"><icon>{{ .label }}</icon></menubutton>
             </menu>
         `,
         props: {
