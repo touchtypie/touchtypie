@@ -361,6 +361,7 @@ var Bubble = function(default_value) {
     var disabled = false;
     var value = default_value;
     var charactersCounter = 0;
+    var maxLines = 5;
     var lineWidth = 0;
     var characterWidth = 0;
 
@@ -383,12 +384,10 @@ var Bubble = function(default_value) {
     };
 
     // Returns two indices representing a peek (substring) in truth proximal to the current cursor
-    var getPeekIndices = function(bubble, truth, lineWidth, characterWidth) {
+    var getPeekIndices = function(bubble, truth, maxLines, lineWidth, characterWidth) {
         // The cursor is one character ahead of the bubble value
         const cursorIndex = bubble.value.length > 0 ? bubble.value.length - 1 + 1: 0;
 
-        // By default the peek (substring) around the cursor is x maximum characters. Length includes cursor.
-        const maxLines = 5;
         // The .clientWidth, .offsetWidth, .scrollWidth of elements round up the actual width. So we discount one character to be safe
         var maxLength = typeof(lineWidth) !== 'undefined' && typeof(characterWidth) !== 'undefined' && lineWidth > 0 && characterWidth > 0 ? Math.floor((lineWidth - 1) / characterWidth) * maxLines: 101;
         // Always keep max length an odd number for an equal padding of characters before and after cursor
@@ -738,7 +737,7 @@ var Bubble = function(default_value) {
         if (virtue.result.value === '') {
             virtue.result.value = truth.value;
         }
-        const peekIndices = getPeekIndices(bubble, truth, speech.lineWidth, speech.characterWidth);
+        const peekIndices = getPeekIndices(bubble, truth, speech.maxLines, speech.lineWidth, speech.characterWidth);
         const startIndex = peekIndices[0];
         const endIndex = peekIndices[1];
         virtue.result.value_zonal = getFeedbackHtmlValue(
@@ -830,6 +829,7 @@ var Bubble = function(default_value) {
         disabled: disabled,
         value: value,
         charactersCounter: charactersCounter,
+        maxLines: maxLines,
         lineWidth: lineWidth,
         characterWidth: characterWidth,
         virtue: virtue,
@@ -2071,6 +2071,7 @@ var HomeController = function () {
 
                     // Set speech max characters
                     if (speechWidth > 0 && speechCharacterWidth > 0) {
+                        c.props._training.trainer.speech.maxLines = 5;
                         c.props._training.trainer.speech.lineWidth = speechWidth;
                         c.props._training.trainer.speech.characterWidth = speechCharacterWidth;
                     }
