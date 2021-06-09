@@ -2043,7 +2043,9 @@ var HomeController = function () {
         name: 'speech',
         template: `
             <speech b-on="click:speechclick">
-                <value b-on="DOMContentLoaded">{{ ._training.trainer.speech.value }}</value>
+                <speechwrapper>
+                    <value b-on="DOMContentLoaded">{{ ._training.trainer.speech.value }}</value>
+                </speechwrapper>
             </speech>
         `,
         props: {
