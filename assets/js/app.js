@@ -1853,7 +1853,7 @@ var Component = function(c) {
             }
             // Or data bind to innerHTML
             binding = null;
-            if (ele.childNodes.length === 1 && ele.childNodes.nodeType === 3) {
+            if (ele.childNodes.length === 1 && ele.childNodes[0].nodeType === 3) {
                 matches = /\{\{([^\}]+)\}\}/.exec(ele.innerHTML);
                 if (matches && matches.length > 0) {
                     object = c.props;
