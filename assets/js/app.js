@@ -2448,13 +2448,52 @@ var EnvironmentController = function() {
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
-    // Event listeners - Component: menu
-    document.getElementsByTagName('environment')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        myApp.sceneController.scene = 'home';
-        _training.student.focus();
+    // Component: header
+    Component({
+        parentElement: document.getElementsByTagName('environment')[0],
+        name: 'header',
+        template: `
+            <header>
+                <heading>{{ .label }}</heading>
+            </header>
+        `,
+        props: {
+            label: 'E N V I R O N M E N T',
+        }
     });
 
-    // Components
+    // Component: menu
+    Component({
+        parentElement: document.getElementsByTagName('environment')[0],
+        name: 'menu',
+        template: `
+            <menu>
+                <menubutton b-on="click"><icon>{{ .label }}</icon></menubutton>
+            </menu>
+        `,
+        props: {
+            label: '🏡',
+            _training: _training
+        },
+        eventsListeners: {
+            click: function(event) {
+                var c = this;
+
+                myApp.sceneController.scene = 'home';
+                c.props._training.student.focus();
+
+            }
+        }
+    });
+
+    // Component: main
+    Component({
+        parentElement: document.getElementsByTagName('environment')[0],
+        name: 'main',
+        template: `
+            <main></main>
+        `,
+    });
     Component({
         parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
         name: 'menuselect_booklibraries',
