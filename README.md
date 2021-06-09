@@ -118,6 +118,10 @@ There are 4 playmodes:
 
 The default playmode is `shuffleglobal`.
 
+### Q: What is meditation?
+
+As its name implies, meditation declutters the `touchtypie` user interface to help the Student reach a state of meditation - a state of singularity of the Mind on the book.
+
 ### Q: What is perfection?
 
 As its name implies, perfection enforces an exact match between the Student response (what you typed) and the Trainer's speech to be considered a successful training.
