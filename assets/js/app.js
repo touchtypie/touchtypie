@@ -1853,50 +1853,52 @@ var Component = function(c) {
             }
             // Or data bind to innerHTML
             binding = null;
-            matches = /\{\{([^\}]+)\}\}/.exec(ele.innerHTML);
-            if (matches && matches.length > 0) {
-                object = c.props;
-                propsPaths = matches[1].trim().split('.').filter(function (v) { return v !== ''; });
-                if (propsPaths.length > 1) {
-                    for (var _ = 0; _ < propsPaths.length - 1; _++) {
-                        if (propsPaths[_] !== '') {
-                            object = object[propsPaths[_]];
+            if (ele.childNodes.length === 1 && ele.childNodes.nodeType === 3) {
+                matches = /\{\{([^\}]+)\}\}/.exec(ele.innerHTML);
+                if (matches && matches.length > 0) {
+                    object = c.props;
+                    propsPaths = matches[1].trim().split('.').filter(function (v) { return v !== ''; });
+                    if (propsPaths.length > 1) {
+                        for (var _ = 0; _ < propsPaths.length - 1; _++) {
+                            if (propsPaths[_] !== '') {
+                                object = object[propsPaths[_]];
+                            }
                         }
+                        property = propsPaths[propsPaths.length - 1];
+                    }else {
+                        property = propsPaths[0];
                     }
-                    property = propsPaths[propsPaths.length - 1];
-                }else {
-                    property = propsPaths[0];
-                }
-                    // Search for existing object binding
-                    for (var key in c.bindings) {
-                        if (key === matches[1].trim()) {
-                            binding = c.bindings[key];
-                            break;
+                        // Search for existing object binding
+                        for (var key in c.bindings) {
+                            if (key === matches[1].trim()) {
+                                binding = c.bindings[key];
+                                break;
+                            }
                         }
-                    }
-                binding = binding ? binding : Binding({
-                    object: object,
-                    property: property
-                });
-                if (events.length > 0) {
-                    for (var _ = 0; _ < events.length; _++) {
+                    binding = binding ? binding : Binding({
+                        object: object,
+                        property: property
+                    });
+                    if (events.length > 0) {
+                        for (var _ = 0; _ < events.length; _++) {
+                            binding.addBinding(
+                                ele,
+                                'innerHTML', // e.g. 'someattr' or 'innerHTML'
+                                events[_].event,  // e.g. 'click'
+                                c.eventsListeners[events[_].handler], // callback,
+                                c // callbackThisObj
+                            )
+                        }
+                    }else {
                         binding.addBinding(
                             ele,
-                            'innerHTML', // e.g. 'someattr' or 'innerHTML'
-                            events[_].event,  // e.g. 'click'
-                            c.eventsListeners[events[_].handler], // callback,
-                            c // callbackThisObj
-                        )
+                            'innerHTML'
+                        );
                     }
-                }else {
-                    binding.addBinding(
-                        ele,
-                        'innerHTML'
-                    );
+                    // Store the binding
+                    c.bindings[matches[1].trim()] = binding;
+                    addedBinding = true;
                 }
-                // Store the binding
-                c.bindings[matches[1].trim()] = binding;
-                addedBinding = true;
             }
 
             // If there is no data binding, simply set up the eventListeners
