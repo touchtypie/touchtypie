@@ -2042,8 +2042,8 @@ var HomeController = function () {
         parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
         name: 'speech',
         template: `
-            <speech>
-                <value b-on="DOMContentLoaded,click">{{ ._training.trainer.speech.value }}</value>
+            <speech b-on="click:speechclick">
+                <value b-on="DOMContentLoaded">{{ ._training.trainer.speech.value }}</value>
             </speech>
         `,
         props: {
@@ -2112,7 +2112,7 @@ var HomeController = function () {
                     }, 100);
                 });
             },
-            click: function(event, _this, binding) {
+            speechclick: function(event, _this, binding) {
                 var c = this;
 
                 // Focus on Student response
