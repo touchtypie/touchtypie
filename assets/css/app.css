@@ -96,6 +96,7 @@ main {
 
 menu {
     position: absolute;
+    z-index: 1000;
     display: block;
     top: 2.5vw;
     left: 2.5vw;
