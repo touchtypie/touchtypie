@@ -1984,7 +1984,7 @@ var HomeController = function () {
     // Component: header
     Component({
         parentElement: document.getElementsByTagName('home')[0],
-        name: 'header',
+        name: 'header_home',
         template: `
             <header>
                 <heading>{{ .label }}</heading>
@@ -1998,7 +1998,7 @@ var HomeController = function () {
     // Component: menu
     Component({
         parentElement: document.getElementsByTagName('home')[0],
-        name: 'menu',
+        name: 'menu_home',
         template: `
             <menu>
                 <menubutton b-on="click"><icon>{{ .label }}</icon></menubutton>
@@ -2017,7 +2017,7 @@ var HomeController = function () {
     // Component: main
     Component({
         parentElement: document.getElementsByTagName('home')[0],
-        name: 'main',
+        name: 'main_home',
         template: `
             <main></main>
         `,
@@ -2468,7 +2468,7 @@ var EnvironmentController = function() {
     // Component: header
     Component({
         parentElement: document.getElementsByTagName('environment')[0],
-        name: 'header',
+        name: 'header_environment',
         template: `
             <header>
                 <heading>{{ .label }}</heading>
@@ -2482,7 +2482,7 @@ var EnvironmentController = function() {
     // Component: menu
     Component({
         parentElement: document.getElementsByTagName('environment')[0],
-        name: 'menu',
+        name: 'menu_environment',
         template: `
             <menu>
                 <menubutton b-on="click"><icon>{{ .label }}</icon></menubutton>
@@ -2506,7 +2506,7 @@ var EnvironmentController = function() {
     // Component: main
     Component({
         parentElement: document.getElementsByTagName('environment')[0],
-        name: 'main',
+        name: 'main_environment',
         template: `
             <main></main>
         `,
