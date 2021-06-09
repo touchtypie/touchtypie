@@ -2037,7 +2037,7 @@ var HomeController = function () {
         name: 'speech',
         template: `
             <speech>
-                <value b-on="DOMContentLoaded">{{ ._training.trainer.speech.value }}</value>
+                <value b-on="DOMContentLoaded,click">{{ ._training.trainer.speech.value }}</value>
             </speech>
         `,
         props: {
@@ -2105,6 +2105,14 @@ var HomeController = function () {
                         c.props._training.trainer.speech.value = virtue.result.value_zonal;
                     }, 100);
                 });
+            },
+            click: function(event, _this, binding) {
+                var c = this;
+
+                // Focus on Student response
+                c.props._training.student.focus();
+
+                event.stopPropagation();
             }
         }
     });
