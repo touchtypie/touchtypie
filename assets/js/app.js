@@ -1721,7 +1721,13 @@ var Component = function(c) {
     };
 
     var creatingBindings = function(rootElement) {
-        var allElements = rootElement.getElementsByTagName('*');
+        // Get all elements
+        var allElements = [ rootElement ];
+        var myElements = rootElement.getElementsByTagName('*');
+        for (var i = 0; i < myElements.length; i++) {
+            allElements.push(myElements[i]);
+        }
+
         var matches, split, events, setters, propsPaths, object, property, binding, addedBinding;
 
         // Parse elements
