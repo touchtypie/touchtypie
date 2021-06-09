@@ -2129,7 +2129,7 @@ var HomeController = function () {
         name: 'response',
         template: `
             <response b-on="click:responseclick">
-                <textareawrapper b-on="click:textareawrapperclick">
+                <textareawrapper>
                     <textarea b-on="DOMContentLoaded,click:textareaclick,keyup:textareakeyup" placeholder="Start typing . . ."></textarea>
                 </textareawrapper>
             </response>
@@ -2166,11 +2166,6 @@ var HomeController = function () {
                 c.props._training.student.focus();
 
                 event.stopPropagation();
-            },
-            textareawrapperclick: function(event, _this, binding) {
-                var c = this;
-                // var ele = event.target || event.srcElement;
-                c.rootElement.getElementsByTagName('textarea')[0].focus();
             },
             textareaclick: function(event, _this, binding) {
                 event.stopPropagation();
