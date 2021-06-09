@@ -1975,431 +1975,470 @@ var HomeController = function () {
     var _training = State.training;
     var environment = _training.trainer.memory.environment;
 
-    // Event listeners - Component: menu
-    document.getElementsByTagName('home')[0].getElementsByTagName('menu')[0].getElementsByTagName('menubutton')[0].addEventListener('click', function(element, event) {
-        myApp.sceneController.scene = 'environment';
+    // Component: header
+    Component({
+        parentElement: document.getElementsByTagName('home')[0],
+        name: 'header',
+        template: `
+            <header>
+                <heading>{{ .label }}</heading>
+            </header>
+        `,
+        props: {
+            label: 't o u c h t y p i e',
+        }
     });
 
-    // Data binding - Component: truth
-    Binding({
-        object: _training.trainer.truth,
-        property: "value"
-    })
-    .addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('truth')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
+    // Component: menu
+    Component({
+        parentElement: document.getElementsByTagName('home')[0],
+        name: 'menu',
+        template: `
+            <menu>
+                <menubutton b-on"click"><icon>{{ .label }}</icon></menubutton>
+            </menu>
+        `,
+        props: {
+            label: '⚙️',
+        },
+        eventsListeners: {
+            click: function(event) {
+                myApp.sceneController.scene = 'environment';
+            }
+        }
+    });
+
+    // Component: main
+    Component({
+        parentElement: document.getElementsByTagName('home')[0],
+        name: 'main',
+        template: `
+            <main></main>
+        `,
+    });
+
+    // Component: truth
+    Component({
+        parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
+        name: 'truth',
+        template: `
+            <truth>
+                <value>{{ ._training.trainer.truth.value }}</value>
+            </truth>
+        `,
+        props: {
+            _training: _training,
+        },
+    });
 
     // Component: speech
-    // Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
-    var setSpeechWidths = function() {
-        if (State.debug) {
-            console.log('[setSpeechWidths]');
-        }
-
-        // Get trainer speech dimensions
-        var speechValueElement = document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0];
-
-        if (speechValueElement.childNodes.length > 0) {
-            const speechWidth = speechValueElement.clientWidth;
-            const speechHeight = speechValueElement.clientHeight;
-
-            // Get trainer speech character dimensions
-            // The first character is always a placeholder, so we get the width of the second character
-            const speechCharacterWidth = speechValueElement.getElementsByTagName('character')[1].offsetWidth;
-            const speechCharacterHeight = speechValueElement.getElementsByTagName('character')[1].offsetHeight;
-
-            // Set speech max characters
-            if (speechWidth > 0 && speechCharacterWidth > 0) {
-                _training.trainer.speech.lineWidth = speechWidth;
-                _training.trainer.speech.characterWidth = speechCharacterWidth;
-            }
-            if (State.debug) {
-                console.log('[setSpeechWidths] speechWidth: ' + speechWidth, ', speechCharacterWidth: ' + speechCharacterWidth  + ', chars / line: ' + speechWidth / speechCharacterWidth + ', max chars: ' + speechWidth / speechCharacterWidth * 5 );
-            }
-        }
-    };
-    (function() {
-        // Fire the resize callback only every x ms
-        var resizeId;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeId);
-            resizeId = setTimeout(function() {
+    Component({
+        parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
+        name: 'speech',
+        template: `
+            <speech>
+                <value b-on="DOMContentLoaded">{{ ._training.trainer.speech.value }}</value>
+            </speech>
+        `,
+        props: {
+            _training: _training,
+            resizeTimeoutId: -1
+        },
+        methods: {
+            // Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
+            setSpeechWidths: function(c) {
                 if (State.debug) {
-                    console.log('[resize]');
+                    console.log('[setSpeechWidths]');
                 }
 
-                setSpeechWidths();
+                // Get trainer speech dimensions
+                var speechValueElement = c.rootElement.getElementsByTagName('value')[0];
 
-                // Validate student response
-                var virtue = _training.student.response.virtue;
-                _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.speech, _training.trainer.memory.environment);
+                if (speechValueElement.childNodes.length > 0) {
+                    const speechWidth = speechValueElement.clientWidth;
+                    const speechHeight = speechValueElement.clientHeight;
 
-                // Set trainer speech value
-                _training.trainer.speech.value = virtue.result.value_zonal;
-            }, 100);
-        });
-    })();
-    // Data binding - Component: speech
-    myApp.eventController.registerEvent('training-init', function() {
-        // Initialize training the training with an trainer intro speech
-        State.training.start();
+                    // Get trainer speech character dimensions
+                    // The first character is always a placeholder, so we get the width of the second character
+                    const speechCharacterWidth = speechValueElement.getElementsByTagName('character')[1].offsetWidth;
+                    const speechCharacterHeight = speechValueElement.getElementsByTagName('character')[1].offsetHeight;
 
-        // Set the speech widths based on the intro speech
-        setSpeechWidths();
-
-    });
-    Binding({
-        object: _training.trainer.speech,
-        property: "value"
-    })
-    .addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('speech')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-
-    // Data binding - Component: response
-    document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].addEventListener('click', function(event) {
-        var ele = event.target || event.srcElement;
-        ele.getElementsByTagName('textarea')[0].focus();
-    });
-    document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0].addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
-    new Binding({
-        object: _training.student.response,
-        property: "disabled"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0],
-        'disabled'    // textarea
-    )
-    new Binding({
-        object: _training.student.response,
-        property: "value"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0],
-        'value',    // textarea
-        "DOMContentLoaded",
-        function(event, _this, binding) {
-            _training.student.setFocus(binding.element);
-        }
-    ).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('response')[0].getElementsByTagName('textareawrapper')[0].getElementsByTagName('textarea')[0],
-        'value',    // textarea
-        "keyup",
-        function(event, _this, binding) {
-            var key = event.keyCode || event.charCode;
-
-            // Skip the ESC key
-            if (key === 27) {
-                return false;
-            }
-
-            // Set student response. Remove all CRs
-            _this.valueSetter(binding.element[binding.attribute].replace(/\r/g, ''));
-            // Set student response counter
-            _training.student.response.charactersCounter = _training.student.response.value.length;
-
-            var virtue = _training.student.response.virtue;
-            // Validate student response
-            var started = _training.student.response.measureVirtue(_training.trainer.truth, _training.trainer.speech, _training.trainer.memory.environment, key);
-
-            // Update student virtue every interval
-            if (started) {
-                (function() {
-                    // Store reference to this virtue
-                    var _virtue = virtue;
-                    const intervalMilliseconds = 100;
-                    var intervalId = setInterval(function() {
-                        if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
-                            if (State.debug) {
-                                console.log('[keyup][interval] delete ' + ' ');
-                            }
-                            clearInterval(intervalId);
-                        }else {
-                            // if (State.debug) {
-                            //     console.log('[keyup][interval] ');
-                            // }
-                            _training.student.reflectVirtue(_virtue, true, false);
-                        }
-                    }, intervalMilliseconds);
-                    if (State.debug) {
-                        console.log('[keyup][interval] create');
+                    // Set speech max characters
+                    if (speechWidth > 0 && speechCharacterWidth > 0) {
+                        c.props._training.trainer.speech.lineWidth = speechWidth;
+                        c.props._training.trainer.speech.characterWidth = speechCharacterWidth;
                     }
-                })();
+                    if (State.debug) {
+                        console.log('[setSpeechWidths] speechWidth: ' + speechWidth, ', speechCharacterWidth: ' + speechCharacterWidth  + ', chars / line: ' + speechWidth / speechCharacterWidth + ', max chars: ' + speechWidth / speechCharacterWidth * 5 );
+                    }
+                }
             }
-            // Set trainer speech value
-            _training.trainer.speech.value = virtue.result.value_zonal;
-            // Update student virtue non-time-based stats
-            _training.student.reflectVirtue(virtue, true, true);
-            if (virtue.result.completed) {
-                // Run the next training unit
-                _training.complete(virtue);
-                _training.next();
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
 
-                // Update environment libraries
-                Components.menuselect_booklibraries.methods.updateSelectOptions(Components.menuselect_booklibraries);
+                // Data binding - Component: speech
+                myApp.eventController.registerEvent('training-init', function() {
+                    // Initialize training the training with an trainer intro speech
+                    c.props._training.start();
 
-                // Update environment collections
-                Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
+                    // Set the speech widths based on the intro speech
+                    c.methods.setSpeechWidths(c);
+                });
 
-                // Update environment books
-                Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
-            }
+                // Window resize event
+                window.addEventListener('resize', function() {
+                    clearTimeout(c.props.resizeTimeoutId);
+                    c.props.resizeTimeoutId = setTimeout(function() {
+                        if (State.debug) {
+                            console.log('[resize]');
+                        }
 
-            if (State.debug) {
-                console.log('[keyup] _training.trainer.truth.value: ' + _training.trainer.truth.value);
-                console.log('[keyup] _training.trainer.truth.charactersCounter: ' + _training.trainer.truth.charactersCounter);
-                console.log('[keyup] _training.trainer.speech.value: ' + _training.trainer.speech.value);
-                console.log('[keyup] _training.trainer.speech.charactersCounter: ' + _training.trainer.speech.charactersCounter);
-                console.log('[keyup] _training.student.response.value: ' + _training.student.response.value);
-                console.log('[keyup] _training.student.response.charactersCounter: ' + _training.student.response.charactersCounter);
+                        c.methods.setSpeechWidths(c);
+
+                        // Validate student response
+                        var virtue = c.props._training.student.response.virtue;
+                        c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment);
+
+                        // Set trainer speech value
+                        c.props._training.trainer.speech.value = virtue.result.value_zonal;
+                    }, 100);
+                });
             }
         }
-    )
-    // Data binding - Component: unitprogress
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "value_length"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.trainer.truth,
-        property: "charactersCounter"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('characterscounter')[0].getElementsByTagName('total')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "value_length_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('characterspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitprogress')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
+    });
 
-    // Data binding - Component: unitoverall
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "datetime_start_iso"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestart')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "datetime_stopwatch"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "shot_num_total"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "rate_hit_per_min"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_total"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_total"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_total"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_total"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_total_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('unitoverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
+    // Component: response
+    Component({
+        parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
+        name: 'response',
+        template: `
+            <response>
+                <textareawrapper b-on="click:textareawrapperclick">
+                    <textarea b-on="DOMContentLoaded,click:textareaclick,keyup:textareakeyup" placeholder="Start typing . . ."></textarea>
+                </textareawrapper>
+            </response>
+        `,
+        props: {
+            _training: _training,
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
 
-    // Data binding - Component: globaloverall
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "datetime_stopwatch_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('datetimestopwatch')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "rate_hit_per_min_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('ratehitpermincounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "shot_num_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('shotcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('hitcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "hit_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('hitpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('misscounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "miss_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('misspercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('amendcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "amend_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('amendpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_global"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('othercounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtue.result,
-        property: "other_num_global_percentage"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('otherpercentagecounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.trainer.memory,
-        property: "bookLibraryCount"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('booklibrarycounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.trainer.memory,
-        property: "bookCollectionCount"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('bookcollectioncounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.student.virtues,
-        property: "count"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('bookcounter')[0].getElementsByTagName('value')[0],
-        'innerHTML'
-    );
-    new Binding({
-        object: _training.trainer.memory,
-        property: "bookCount"
-    }).addBinding(
-        document.getElementsByTagName('home')[0].getElementsByTagName('globaloverall')[0].getElementsByTagName('bookcounter')[0].getElementsByTagName('total')[0],
-        'innerHTML'
-    );
+                new Binding({
+                    object: c.props._training.student.response,
+                    property: "value"
+                }).addBinding(
+                    c.rootElement.getElementsByTagName('textarea')[0],
+                    'value'    // textarea
+                );
+
+                new Binding({
+                    object: c.props._training.student.response,
+                    property: "disabled"
+                }).addBinding(
+                    c.rootElement.getElementsByTagName('textarea')[0],
+                    'disabled'    // textarea
+                );
+
+                c.props._training.student.setFocus(c.rootElement.getElementsByTagName('textarea')[0]);
+            },
+            textareawrapperclick: function(event, _this, binding) {
+                var c = this;
+                // var ele = event.target || event.srcElement;
+                c.rootElement.getElementsByTagName('textarea')[0].focus();
+            },
+            textareaclick: function(event, _this, binding) {
+                event.stopPropagation();
+            },
+            textareakeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // Skip the ESC key
+                if (key === 27) {
+                    return false;
+                }
+
+                // Set student response. Remove all CRs
+                c.props._training.student.response.value = ele.value.replace(/\r/g, '');
+                // Set student response counter
+                c.props._training.student.response.charactersCounter = c.props._training.student.response.value.length;
+
+                var virtue = c.props._training.student.response.virtue;
+                // Validate student response
+                var started = c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment, key);
+
+                // Update student virtue every interval
+                if (started) {
+                    (function() {
+                        // Store reference to this virtue
+                        var _virtue = virtue;
+                        const intervalMilliseconds = 100;
+                        var intervalId = setInterval(function() {
+                            if (_virtue.result.datetime_start_epoch === 0 || _virtue.result.completed) {
+                                if (State.debug) {
+                                    console.log('[keyup][interval] delete ' + ' ');
+                                }
+                                clearInterval(intervalId);
+                            }else {
+                                // if (State.debug) {
+                                //     console.log('[keyup][interval] ');
+                                // }
+                                c.props._training.student.reflectVirtue(_virtue, true, false);
+                            }
+                        }, intervalMilliseconds);
+                        if (State.debug) {
+                            console.log('[keyup][interval] create');
+                        }
+                    })();
+                }
+                // Set trainer speech value
+                c.props._training.trainer.speech.value = virtue.result.value_zonal;
+                // Update student virtue non-time-based stats
+                c.props._training.student.reflectVirtue(virtue, true, true);
+                if (virtue.result.completed) {
+                    // Run the next training unit
+                    c.props._training.complete(virtue);
+                    c.props._training.next();
+
+                    // Update environment libraries
+                    Components.menuselect_booklibraries.methods.updateSelectOptions(Components.menuselect_booklibraries);
+
+                    // Update environment collections
+                    Components.menuselect_bookcollections.methods.updateSelectOptions(Components.menuselect_bookcollections);
+
+                    // Update environment books
+                    Components.menuselect_books.methods.updateSelectOptions(Components.menuselect_books);
+                }
+
+                if (State.debug) {
+                    console.log('[keyup] c.props._training.trainer.truth.value: ' + c.props._training.trainer.truth.value);
+                    console.log('[keyup] c.props._training.trainer.truth.charactersCounter: ' + c.props._training.trainer.truth.charactersCounter);
+                    console.log('[keyup] c.props._training.trainer.speech.value: ' + c.props._training.trainer.speech.value);
+                    console.log('[keyup] c.props._training.trainer.speech.charactersCounter: ' + c.props._training.trainer.speech.charactersCounter);
+                    console.log('[keyup] c.props._training.student.response.value: ' + c.props._training.student.response.value);
+                    console.log('[keyup] c.props._training.student.response.charactersCounter: ' + c.props._training.student.response.charactersCounter);
+                }
+            }
+        }
+    });
+
+    // Component: statistics
+    Component({
+        parentElement: document.getElementsByTagName('home')[0],
+        name: 'statistics',
+        template: `
+            <statistics></statistics>
+        `,
+    });
+
+    // Component: statistics
+    Component({
+        parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('statistics')[0],
+        name: 'unitprogress',
+        template: `
+            <unitprogress>
+                <heading>P R O G R E S S</heading>
+                <characterscounter>
+                    <label>Characters: </label>
+                    <value>{{ _training.student.virtue.result.value_length }}</value>
+                    <span>&nbsp;/&nbsp;</span>
+                    <total>{{ _training.trainer.truth.charactersCounter }}</total>
+                </characterscounter>
+                <characterspercentagecounter>
+                    <label>Characters (%): </label>
+                    <value>{{ _training.student.virtue.result.value_length_percentage }}</value>
+                </characterspercentagecounter>
+                <hitcounter>
+                    <label>Hits: </label>
+                    <value>{{ _training.student.virtue.result.hit_num }}</value>
+                </hitcounter>
+                <hitpercentagecounter>
+                    <label>Hits (%): </label>
+                    <value>{{ _training.student.virtue.result.hit_num_percentage }}</value>
+                </hitpercentagecounter>
+                <misscounter>
+                    <label>Misses: </label>
+                    <value>{{ _training.student.virtue.result.miss_num }}</value>
+                </misscounter>
+                <misspercentagecounter>
+                    <label>Misses (%): </label>
+                    <value>{{ _training.student.virtue.result.miss_num_percentage }}</value>
+                </misspercentagecounter>
+            </unitprogress>
+        `,
+        props: {
+            _training: _training
+        }
+    });
+
+    // Component: statistics
+    Component({
+        parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('statistics')[0],
+        name: 'unitoverall',
+        template: `
+            <unitoverall>
+                <heading>U N I T</heading>
+                <datetimestart>
+                    <label>Date: </label>
+                    <value>{{ _training.student.virtue.result.datetime_start_iso }}</value>
+                </datetimestart>
+                <datetimestopwatch>
+                    <label>Duration: </label>
+                    <value>{{ _training.student.virtue.result.datetime_stopwatch }}</value>
+                </datetimestopwatch>
+                <shotcounter>
+                    <label>Shots: </label>
+                    <value>{{ _training.student.virtue.result.shot_num_total }}</value>
+                </shotcounter>
+                <ratehitpermincounter>
+                    <label>Hits / min: </label>
+                    <value>{{ _training.student.virtue.result.rate_hit_per_min }}</value>
+                </ratehitpermincounter>
+                <hitcounter>
+                    <label>Hits: </label>
+                    <value>{{ _training.student.virtue.result.hit_num_total }}</value>
+                </hitcounter>
+                <hitpercentagecounter>
+                    <label>Hits (%): </label>
+                    <value>{{ _training.student.virtue.result.hit_num_total_percentage }}</value>
+                </hitpercentagecounter>
+                <misscounter>
+                    <label>Misses: </label>
+                    <value>{{ _training.student.virtue.result.miss_num_total }}</value>
+                </misscounter>
+                <misspercentagecounter>
+                    <label>Misses (%): </label>
+                    <value>{{ _training.student.virtue.result.miss_num_total_percentage }}</value>
+                </misspercentagecounter>
+                <amendcounter>
+                    <label>Amends: </label>
+                    <value>{{ _training.student.virtue.result.amend_num_total }}</value>
+                </amendcounter>
+                <amendpercentagecounter>
+                    <label>Amends (%): </label>
+                    <value>{{ _training.student.virtue.result.amend_num_total_percentage }}</value>
+                </amendpercentagecounter>
+                <othercounter>
+                    <label>Other: </label>
+                    <value>{{ _training.student.virtue.result.other_num_total }}</value>
+                </othercounter>
+                <otherpercentagecounter>
+                    <label>Other (%): </label>
+                    <value>{{ _training.student.virtue.result.other_num_total_percentage }}</value>
+                </otherpercentagecounter>
+            </unitoverall>
+        `,
+        props: {
+            _training: _training
+        }
+    });
+
+    // Component: statistics
+    Component({
+        parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('statistics')[0],
+        name: 'globaloverall',
+        template: `
+            <globaloverall>
+                <heading>G L O B A L</heading>
+                <datetimestopwatch>
+                    <label>Duration: </label>
+                    <value>{{ _training.student.virtue.result.datetime_stopwatch_global }}</value>
+                </datetimestopwatch>
+                <shotcounter>
+                    <label>Shots: </label>
+                    <value>{{ _training.student.virtue.result.rate_hit_per_min_global }}</value>
+                </shotcounter>
+                <ratehitpermincounter>
+                    <label>Hits / min: </label>
+                    <value>{{ _training.student.virtue.result.shot_num_global }}</value>
+                </ratehitpermincounter>
+                <hitcounter>
+                    <label>Hits: </label>
+                    <value>{{ _training.student.virtue.result.hit_num_global }}</value>
+                </hitcounter>
+                <hitpercentagecounter>
+                    <label>Hits (%): </label>
+                    <value>{{ _training.student.virtue.result.hit_num_global_percentage }}</value>
+                </hitpercentagecounter>
+                <misscounter>
+                    <label>Misses: </label>
+                    <value>{{ _training.student.virtue.result.miss_num_global }}</value>
+                </misscounter>
+                <misspercentagecounter>
+                    <label>Misses (%): </label>
+                    <value>{{ _training.student.virtue.result.miss_num_global_percentage }}</value>
+                </misspercentagecounter>
+                <amendcounter>
+                    <label>Amends: </label>
+                    <value>{{ _training.student.virtue.result.amend_num_global }}</value>
+                </amendcounter>
+                <amendpercentagecounter>
+                    <label>Amends (%): </label>
+                    <value>{{ _training.student.virtue.result.amend_num_global }}</value>
+                </amendpercentagecounter>
+                <othercounter>
+                    <label>Other: </label>
+                    <value>{{ _training.student.virtue.result.amend_num_global_percentage }}</value>
+                </othercounter>
+                <otherpercentagecounter>
+                    <label>Other (%): </label>
+                    <value>{{ _training.student.virtue.result.other_num_global }}</value>
+                </otherpercentagecounter>
+                <booklibrarycounter>
+                    <label>Libraries: </label>
+                    <value>{{ _training.trainer.memory.bookLibraryCount }}</value>
+                </booklibrarycounter>
+                <bookcollectioncounter>
+                    <label>Collections: </label>
+                    <value>{{ _training.trainer.memory.bookCollectionCount }}</value>
+                </bookcollectioncounter>
+                <bookcounter>
+                    <label>Books: </label>
+                    <value>{{ _training.student.virtues.count }}</value><span>&nbsp;/&nbsp;</span><total>{{ _training.trainer.memory.bookCount }}</total>
+                </bookcounter>
+            </globaloverall>
+        `,
+        props: {
+            _training: _training
+        }
+    });
+
+    // Component: statistics
+    // Component({
+    //     parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('statistics')[0],
+    //     name: 'globaloverall',
+    //     template: `
+    //         <progressbar>
+    //             <characterscounter>
+    //                 <label></label>
+    //                 <value></value><span>&nbsp;/&nbsp;</span><total></total>
+    //             </characterscounter>
+    //         </progressbar>
+    //     `,
+    //     props: {
+    //         _training: _training
+    //     }
+    // });
+
+    Component({
+        parentElement: document.getElementsByTagName('home')[0],
+        name: 'footer',
+        template: `
+            <footer>
+                <icons>
+                    <a href="https://github.com/touchtypie/touchtypie" title="Github">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256"><path d="M 155.68,218.64 C 155.68,214.68 155.83,201.56 155.83,185.23 155.83,173.81 151.86,166.32 147.59,162.66 174.74,159.66 203.26,149.35 203.26,102.48 203.26,89.16 198.53,78.28 190.75,69.74 191.97,66.66 196.09,54.26 189.53,37.45 189.53,37.45 179.31,34.18 156.13,49.96 146.37,47.24 136.00,45.90 125.63,45.84 115.26,45.90 104.89,47.24 95.13,49.96 71.80,34.18 61.58,37.45 61.58,37.45 55.03,54.26 59.14,66.66 60.52,69.74 52.69,78.28 47.96,89.16 47.96,102.48 47.96,149.22 76.44,159.72 103.53,162.77 100.05,165.82 96.90,171.19 95.81,179.08 88.83,182.20 71.15,187.59 60.27,168.94 60.27,168.94 53.84,157.22 41.59,156.37 41.59,156.37 29.68,156.22 40.73,163.78 40.73,163.78 48.75,167.54 54.31,181.62 54.31,181.62 61.46,205.35 95.40,197.99 95.45,208.16 95.55,215.84 95.55,218.73 95.55,218.73 155.68,218.64 155.68,218.64 Z" /></svg>
+                    </a>
+                </icons>
+            </footer>
+        `,
+        props: {}
+    });
 
     return scene;
 };
