@@ -2079,7 +2079,6 @@ var HomeController = function () {
 
                     // Set speech max characters
                     if (speechWidth > 0 && speechCharacterWidth > 0) {
-                        c.props._training.trainer.speech.maxLines = 5;
                         c.props._training.trainer.speech.lineWidth = speechWidth;
                         c.props._training.trainer.speech.characterWidth = speechCharacterWidth;
                     }
