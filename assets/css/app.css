@@ -58,6 +58,9 @@ header {
     padding: 2vw;
     /* border-bottom: 1px solid #000; */
 }
+header.meditation {
+    display: none;
+}
 header heading {
     display: block;
     text-align: center;
@@ -746,6 +749,15 @@ response textarea:disabled {
 response textarea:disabled::placeholder {
     color: rgba(255, 255, 255, 1.0);
 }
+response.meditation {
+    margin: 0;
+}
+response.meditation textareawrapper {
+    width: 0;
+    height: 0;
+    border: 0;
+    padding: 0;
+}
 @media (max-aspect-ratio: 13/10) {
     response {
         margin-top: 4vw;
@@ -991,6 +1003,9 @@ statistics globaloverall span {
 footer {
     margin-top: 2vw;
     margin-bottom: 2vw;
+}
+footer.meditation {
+    display: none;
 }
 footer icons {
     display: block;

@@ -209,6 +209,7 @@ var BehaviorVirtue = function() {
             libraryId: '',
             collectionId: '',
             id: '',
+            meditation: false,
             perfection: false,
             jumble: false,
             scramble: false,
@@ -258,6 +259,7 @@ var BehaviorVirtue = function() {
 
     var newleaf = function() {
         // Unit meta
+        this.result.meditation = false;
         this.result.perfection = false;
         this.result.jumble = false;
         this.result.scramble = false;
@@ -729,6 +731,7 @@ var Bubble = function(default_value) {
         virtue.result.libraryId = truth.libraryId;
         virtue.result.collectionId = truth.collectionId;
         virtue.result.id = truth.id;
+        virtue.result.meditation = environment.meditation;
         virtue.result.perfection = environment.perfection;
         virtue.result.jumble = environment.jumble;
         virtue.result.scramble = environment.scramble;
@@ -777,6 +780,7 @@ var Bubble = function(default_value) {
             console.log('[measureVirtue] virtue.result.libraryId: ' + virtue.result.libraryId);
             console.log('[measureVirtue] virtue.result.collectionId: ' + virtue.result.collectionId);
             console.log('[measureVirtue] virtue.result.id: ' + virtue.result.id);
+            console.log('[measureVirtue] virtue.result.meditation: ' + virtue.result.meditation);
             console.log('[measureVirtue] virtue.result.perfection: ' + virtue.result.perfection);
             console.log('[measureVirtue] virtue.result.jumble: ' + virtue.result.jumble);
             console.log('[measureVirtue] virtue.result.scramble: ' + virtue.result.scramble);
@@ -875,6 +879,7 @@ var Memory = function() {
             repeatone: 'repeatone',
         },
         playmode: 'shuffleglobal',
+        meditation : false,
         perfection : false,
         jumble : false,
         scramble : false,
@@ -1458,6 +1463,7 @@ var Student = function() {
             _student.virtue.result.libraryId = virtue.result.libraryId;
             _student.virtue.result.collectionId = virtue.result.collectionId;
             _student.virtue.result.id = virtue.result.id;
+            _student.virtue.result.meditation = virtue.result.meditation;
             _student.virtue.result.perfection = virtue.result.perfection;
             _student.virtue.result.jumble = virtue.result.jumble;
             _student.virtue.result.scramble = virtue.result.scramble;
@@ -3270,6 +3276,80 @@ var EnvironmentController = function() {
                     }
                     var nextPlaymode =  c.methods.getNextPlayMode(c);
                     c.methods.setPlayMode(c, binding, nextPlaymode);
+
+                    event.stopPropagation();
+                }
+            }
+        }
+    });
+    Component({
+        parentElement: document.getElementsByTagName('environment')[0].getElementsByTagName('main')[0],
+        name: 'menuswitch_meditation',
+        template: `
+            <menuswitch>
+                <label>meditation</label>
+                <switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.meditation }}" tabindex="0">
+                    <handle></handle>
+                </switch>
+            </menuswitch>
+        `,
+        props: {
+            _training: _training
+        },
+        methods: {
+            toggleValue: function(c) {
+                var newVal = !c.props._training.trainer.memory.environment.meditation;
+                c.props._training.trainer.memory.environment.meditation = newVal;
+
+                if (newVal === true) {
+                    Components.header_home.rootElement.className = 'meditation';
+                    Components.speech.rootElement.className = 'meditation';
+                    Components.response.rootElement.className = 'meditation';
+                    Components.footer.rootElement.className = 'meditation';
+
+                    // Turn off statistics
+                    if (c.props._training.trainer.memory.environment.statistics === true) {
+                        Components.menuswitch_statistics.methods.toggleValue(Components.menuswitch_statistics);
+                    }
+
+                    // Set Trainer speech to 10 lines
+                    c.props._training.trainer.speech.maxLines = 10;
+                }else {
+                    Components.header_home.rootElement.className = '';
+                    Components.speech.rootElement.className = '';
+                    Components.response.rootElement.className = '';
+                    Components.footer.rootElement.className = '';
+
+                    // Set Trainer speech back to 5 lines
+                    c.props._training.trainer.speech.maxLines = 5;
+                }
+
+                // Validate student response
+                var virtue = c.props._training.student.response.virtue;
+                c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment);
+
+                // Set trainer speech value
+                c.props._training.trainer.speech.value = virtue.result.value_zonal;
+            }
+        },
+        eventsListeners: {
+            click: function(event, _this, binding) {
+                var c = this;
+                c.methods.toggleValue(c);
+
+                event.stopPropagation()
+            },
+            switchkeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var key = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (key === 13 || key === 32) {
+                    if (State.debug) {
+                        console.log('[switchkeyup] ENTER or SPACE key');
+                    }
+                    c.methods.toggleValue(c);
 
                     event.stopPropagation();
                 }
