@@ -1720,7 +1720,7 @@ var Component = function(c) {
         return div.firstChild;
     };
 
-    var creatingBindings = function(rootElement) {
+    var createBindings = function(rootElement) {
         // Get all elements
         var allElements = [ rootElement ];
         var myElements = rootElement.getElementsByTagName('*');
@@ -1959,13 +1959,13 @@ var Component = function(c) {
             c.parentElement.appendChild(rootElement);
 
             // Create data bindings
-            creatingBindings(rootElement);
+            createBindings(rootElement);
         }else {
             // Create the DOM element
             c.parentElement.appendChild(rootElement);
 
             // Create data bindings
-            creatingBindings(rootElement);
+            createBindings(rootElement);
         }
     }
 };
