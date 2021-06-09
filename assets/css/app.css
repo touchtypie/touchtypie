@@ -631,16 +631,22 @@ truth {
 
 speech {
     display: block;
-    margin-top: 1vw;
 }
-speech value {
+speech speechwrapper {
     display: block;
     margin: 0 auto;
     width: calc(100vw * 2 / 3);
-    /* padding: 1vw; */
+    height: auto;
+    border: 1px solid transparent;
+    border-radius: 1.75vw;
+    padding: calc(2vw * 2 / 3);
+    cursor: text;
+}
+speech value {
+    display: block;
+    width: 100%;
+    height: 100%;
     text-align: left;
-    /* border: none; */
-    /* border-bottom: 1px solid #000; */
 }
 speech value character {
     display: inline-block;
@@ -681,11 +687,9 @@ speech value character.valid {
     border: 1px solid transparent;
 }
 @media (max-aspect-ratio: 13/10) {
-    speech {
-        margin-top: 2vw;
-    }
-    speech value {
+    speech speechwrapper {
         width: calc(100vw * 5 / 6);
+        padding: calc(4vw * 2 / 3);
     }
     speech value character {
         height: calc(3vw + 2px);
