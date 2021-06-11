@@ -2181,10 +2181,10 @@ var HomeController = function () {
             textareakeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // Skip the ESC key
-                if (key === 27) {
+                if (keyCode === 27) {
                     return false;
                 }
 
@@ -2195,7 +2195,7 @@ var HomeController = function () {
 
                 var virtue = c.props._training.student.response.virtue;
                 // Validate student response
-                var started = c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment, key);
+                var started = c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment, keyCode);
 
                 // Update student virtue every interval
                 if (started) {
@@ -2698,10 +2698,10 @@ var EnvironmentController = function() {
             selectkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ESC key should escape the user interaction
-                if (key === 27) {
+                if (keyCode === 27) {
                     if (State.debug) {
                         console.log('[selectkeyup] ESC key');
                     }
@@ -2714,18 +2714,18 @@ var EnvironmentController = function() {
             inputkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
                 var value = ele.value.trim();
 
                 // ENTER key
-                if (key === 13) {
+                if (keyCode === 13) {
                     if (value !== '') {
                         c.methods.loadBookLibrary(c, value);
                     }
                 }
 
                 // ESC key should toggle back to add status
-                if (key === 27) {
+                if (keyCode === 27) {
                     if (State.debug) {
                         console.log('[keyup] ESC key');
                     }
@@ -2742,10 +2742,10 @@ var EnvironmentController = function() {
             },
             addkeyup: function(event, _this, binding) {
                 var c = this;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[addkeyup] ENTER or SPACE key');
                     }
@@ -2927,10 +2927,10 @@ var EnvironmentController = function() {
             selectkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ESC key should escape the user interaction
-                if (key === 27) {
+                if (keyCode === 27) {
                     if (State.debug) {
                         console.log('[selectkeyup] ESC key');
                     }
@@ -2943,18 +2943,18 @@ var EnvironmentController = function() {
             inputkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
                 var value = ele.value.trim();
 
                 // ENTER key
-                if (key === 13) {
+                if (keyCode === 13) {
                     if (value !== '') {
                         c.methods.loadBookCollection(c, value);
                     }
                 }
 
                 // ESC key should toggle back to add status
-                if (key === 27) {
+                if (keyCode === 27) {
                     if (State.debug) {
                         console.log('[keyup] ESC key');
                     }
@@ -2971,10 +2971,10 @@ var EnvironmentController = function() {
             },
             addkeyup: function(event, _this, binding) {
                 var c = this;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[addkeyup] ENTER or SPACE key');
                     }
@@ -3146,10 +3146,10 @@ var EnvironmentController = function() {
             selectkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ESC key should escape the user interaction
-                if (key === 27) {
+                if (keyCode === 27) {
                     if (State.debug) {
                         console.log('[selectkeyup] ESC key');
                     }
@@ -3162,18 +3162,18 @@ var EnvironmentController = function() {
             inputkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
                 var value = ele.value.trim();
 
                 // ENTER key
-                if (key === 13) {
+                if (keyCode === 13) {
                     if (value !== '') {
                         c.methods.loadBook(c, value);
                     }
                 }
 
                 // ESC key should toggle back to add status
-                if (key === 27) {
+                if (keyCode === 27) {
                     if (State.debug) {
                         console.log('[inputkeyup] ESC key');
                     }
@@ -3190,10 +3190,10 @@ var EnvironmentController = function() {
             },
             addkeyup: function(event, _this, binding) {
                 var c = this;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[addkeyup] ENTER or SPACE key');
                     }
@@ -3266,10 +3266,10 @@ var EnvironmentController = function() {
             symbolkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[symbolkeyup] ENTER or SPACE key');
                     }
@@ -3342,10 +3342,10 @@ var EnvironmentController = function() {
             switchkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[switchkeyup] ENTER or SPACE key');
                     }
@@ -3386,10 +3386,10 @@ var EnvironmentController = function() {
             switchkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[switchkeyup] ENTER or SPACE key');
                     }
@@ -3438,10 +3438,10 @@ var EnvironmentController = function() {
             switchkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[switchkeyup] ENTER or SPACE key');
                     }
@@ -3492,10 +3492,10 @@ var EnvironmentController = function() {
             switchkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[switchkeyup] ENTER or SPACE key');
                     }
@@ -3541,10 +3541,10 @@ var EnvironmentController = function() {
             switchkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[switchkeyup] ENTER or SPACE key');
                     }
@@ -3659,25 +3659,25 @@ var EnvironmentController = function() {
                 var c = this;
 
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 var direction, nextChoice;
                 // LEFT or RIGHT key
-                if (key === 37) {
+                if (keyCode === 37) {
                     if (State.debug) {
                         console.log('[ambienceskeyup] LEFT key');
                     }
                     direction = 'before';
                 }
                 // RIGHT key
-                else if (key === 39) {
+                else if (keyCode === 39) {
                     if (State.debug) {
                         console.log('[ambienceskeyup] RIGHT key');
                     }
                     direction = 'after';
                 }
                 // ENTER or SPACE key
-                else if (key === 13 || key === 32) {
+                else if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[ambienceskeyup] ENTER or SPACE key');
                     }
@@ -3731,10 +3731,10 @@ var EnvironmentController = function() {
             downloadkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[downloadkeyup] ENTER or SPACE key');
                     }
@@ -3804,10 +3804,10 @@ var EnvironmentController = function() {
             copybuttonkeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
-                var key = event.keyCode || event.charCode;
+                var keyCode = event.keyCode || event.charCode;
 
                 // ENTER or SPACE key
-                if (key === 13 || key === 32) {
+                if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
                         console.log('[copybuttonkeyup] ENTER or SPACE key');
                     }
@@ -4009,10 +4009,10 @@ var myApp = function () {
 
         // Event listeners - Global
         window.addEventListener('keyup', function(event){
-            var key = event.keyCode || event.charCode;
+            var keyCode = event.keyCode || event.charCode;
 
             // ESC key toggles between environment and home scenes
-            if (key === 27) {
+            if (keyCode === 27) {
                 if (State.debug) {
                     console.log('[keyup] ESC key');
                 }
