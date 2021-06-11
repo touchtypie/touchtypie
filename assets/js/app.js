@@ -1880,13 +1880,13 @@ var Component = function(c) {
                     }else {
                         property = propsPaths[0];
                     }
-                        // Search for existing object binding
-                        for (var key in c.bindings) {
-                            if (key === matches[1].trim()) {
-                                binding = c.bindings[key];
-                                break;
-                            }
+                    // Search for existing object binding
+                    for (var key in c.bindings) {
+                        if (key === matches[1].trim()) {
+                            binding = c.bindings[key];
+                            break;
                         }
+                    }
                     binding = binding ? binding : Binding({
                         object: object,
                         property: property
