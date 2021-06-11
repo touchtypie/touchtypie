@@ -3287,7 +3287,7 @@ var EnvironmentController = function() {
         template: `
             <menuswitch>
                 <label>meditation</label>
-                <switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.meditation }}" tabindex="0">
+                <switch b-on="click,keyup:switchkeyup" b-setter="._training.trainer.memory.environment.meditation:_setter" tabindex="0">
                     <handle></handle>
                 </switch>
             </menuswitch>
@@ -3296,11 +3296,11 @@ var EnvironmentController = function() {
             _training: _training
         },
         methods: {
-            toggleValue: function(c) {
-                var newVal = !c.props._training.trainer.memory.environment.meditation;
-                c.props._training.trainer.memory.environment.meditation = newVal;
+            _setter: function(c, value) {
+                Components.statistics.rootElement.style.display = value === true ? 'block' : 'none';
+                c.rootElement.getElementsByTagName('switch')[0].className = value === true ? 'true' : 'false';
 
-                if (newVal === true) {
+                if (value === true) {
                     Components.header_home.rootElement.className = 'meditation';
                     Components.speech.rootElement.className = 'meditation';
                     Components.response.rootElement.className = 'meditation';
@@ -3327,6 +3327,10 @@ var EnvironmentController = function() {
 
                 // Set trainer speech value
                 c.props._training.trainer.speech.value = virtue.result.value_zonal;
+            },
+            toggleValue: function(c) {
+                var newValue =  !c.props._training.trainer.memory.environment.meditation;
+                c.props._training.trainer.memory.environment.meditation = newValue;
             }
         },
         eventsListeners: {
