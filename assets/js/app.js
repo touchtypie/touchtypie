@@ -3307,9 +3307,7 @@ var EnvironmentController = function() {
                     Components.footer.rootElement.className = 'meditation';
 
                     // Turn off statistics
-                    if (c.props._training.trainer.memory.environment.statistics === true) {
-                        Components.menuswitch_statistics.methods.toggleValue(Components.menuswitch_statistics);
-                    }
+                    c.props._training.trainer.memory.environment.statistics = false;
 
                     // Set Trainer speech to 10 lines
                     c.props._training.trainer.speech.maxLines = 10;
