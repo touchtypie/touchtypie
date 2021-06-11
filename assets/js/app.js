@@ -3512,7 +3512,7 @@ var EnvironmentController = function() {
         template: `
             <menuswitch>
                 <label>statistics</label>
-                <switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.statistics }}" tabindex="0">
+                <switch b-on="click,keyup:switchkeyup" b-setter="._training.trainer.memory.environment.statistics:_setter" tabindex="0">
                     <handle></handle>
                 </switch>
             </menuswitch>
@@ -3521,11 +3521,13 @@ var EnvironmentController = function() {
             _training: _training
         },
         methods: {
+            _setter: function(c, value) {
+                Components.statistics.rootElement.style.display = value === true ? 'block' : 'none';
+                c.rootElement.getElementsByTagName('switch')[0].className = value === true ? 'true' : 'false';
+            },
             toggleValue: function(c) {
-                var newVal = !c.props._training.trainer.memory.environment.statistics;
-                c.props._training.trainer.memory.environment.statistics = newVal;
-
-                document.getElementsByTagName('statistics')[0].style.display = newVal === true ? 'block' : 'none';
+                var newValue =  !c.props._training.trainer.memory.environment.statistics;
+                c.props._training.trainer.memory.environment.statistics = newValue;
             },
         },
         eventsListeners: {
