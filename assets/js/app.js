@@ -3297,7 +3297,6 @@ var EnvironmentController = function() {
         },
         methods: {
             _setter: function(c, value) {
-                Components.statistics.rootElement.style.display = value === true ? 'block' : 'none';
                 c.rootElement.getElementsByTagName('switch')[0].className = value === true ? 'true' : 'false';
 
                 if (value === true) {
