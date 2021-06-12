@@ -635,10 +635,10 @@ var Bubble = function(default_value) {
     }
 
     // Returns a HTML string with highlighted error(s) and cursor positions, based on given value validated against giuven array of miss_indices
-    var getFeedbackHtmlValue = function(value, truthValue) {
+    var getFeedbackHtmlValue = function(value, truthValue, environment) {
         var characters = truthValue.split('');
 
-        var _prependHtml, _classHtml;
+        var _prependHtml, _classHtml, invalidFound = false;
         for (var i = 0; i < characters.length; i++) {
             _prependHtml = '';
             _classHtml = '';
@@ -650,12 +650,23 @@ var Bubble = function(default_value) {
                 _classHtml = 'line-feed ';
                 characters[i] = '';
             }
-            if (i === value.length) {
-                _classHtml += 'cursor';
-            }else if (i <= value.length - 1 && value[i] !== truthValue[i]) {
-                _classHtml += 'invalid';
-            }else if (i <= value.length) {
-                _classHtml += 'valid';
+            if (environment.perfection === true) {
+                if (!invalidFound && i === value.length) {
+                    _classHtml += 'cursor';
+                }else if (i <= value.length - 1 && value[i] !== truthValue[i]) {
+                    _classHtml += 'invalid cursor';
+                    invalidFound = true;
+                }else if (i < value.length) {
+                    _classHtml += 'valid';
+                }
+            }else {
+                if (i === value.length) {
+                    _classHtml += 'cursor';
+                }else if (i <= value.length - 1 && value[i] !== truthValue[i]) {
+                    _classHtml += 'invalid';
+                }else if (i <= value.length) {
+                    _classHtml += 'valid';
+                }
             }
             characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
         }
@@ -668,7 +679,7 @@ var Bubble = function(default_value) {
         var virtue = bubble.virtue;
 
         var started = false;
-        var amend = ( key == 8 || key == 46 ) ? true : false;
+        var amend = environment.perfection === false && ( key == 8 || key == 46 ) ? true : false;
         var value_length_prev = virtue.result.value_length;
         virtue.newleaf();
 
@@ -708,19 +719,26 @@ var Bubble = function(default_value) {
             if (bubble.value[i] !== truth.value[i]) {
                 // Invalid
                 virtue.result.miss_indices.push(i);
-                if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                if (
+                    (environment.perfection === true) ||
+                    (environment.perfection === false && i === bubble.value.length - 1 && bubble.value.length > value_length_prev)
+                   ) {
                     virtue.result.miss_num_new = 1;
                 }
             }else {
                 // Valid
                 virtue.result.hit_indices.push(i);
-                if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                if (
+                    (environment.perfection === true) ||
+                    (environment.perfection === false && i === bubble.value.length - 1 && bubble.value.length > value_length_prev)
+                   ) {
                     virtue.result.hit_num_new = 1;
                 }
             }
         }
-        virtue.result.miss_num_new = amend === false && bubble.value.length > truth.value.length ? 1 : virtue.result.miss_num_new;
-        virtue.result.amend_num_new = amend === true && bubble.value.length < value_length_prev ? 1 : virtue.result.amend_num_new;
+        // Misses beyond the truth
+        virtue.result.miss_num_new = environment.perfection === false && amend === false && bubble.value.length > truth.value.length ? 1 : virtue.result.miss_num_new;
+        virtue.result.amend_num_new = environment.perfection === false && amend === true && bubble.value.length < value_length_prev ? 1 : virtue.result.amend_num_new;
         virtue.result.other_num_new = virtue.result.shot_num_new && virtue.result.hit_num_new === 0 && virtue.result.miss_num_new === 0 && virtue.result.amend_num_new === 0 ? 1 : 0;
 
         // for (var i = bubble.value.length; i < truth.value.length; i++) {
@@ -745,7 +763,8 @@ var Bubble = function(default_value) {
         const endIndex = peekIndices[1];
         virtue.result.value_zonal = getFeedbackHtmlValue(
             bubble.value.length == 0 ? bubble.value : bubble.value.substring(startIndex, endIndex + 1 < bubble.value.length ? endIndex + 1: bubble.value.length ),
-            truth.value.substring(startIndex, endIndex + 1)
+            truth.value.substring(startIndex, endIndex + 1),
+            environment
         );
         virtue.result.value_length = bubble.value.length;
         virtue.result.value_length_percentage = bubble.value.length == 0 ? 0.00 : parseFloat((bubble.value.length / truth.value.length * 100).toFixed(2));
@@ -764,7 +783,7 @@ var Bubble = function(default_value) {
         virtue.result.other_num_total += virtue.result.other_num_new;
         virtue.result.other_num_total_percentage = virtue.result.other_num_total == 0 ? 0.00 : parseFloat((virtue.result.other_num_total / virtue.result.shot_num_total * 100).toFixed(2));
 
-        if ( (environment.perfection && virtue.result.success && bubble.value.length == truth.value.length) ||
+        if ( (environment.perfection && virtue.result.success && bubble.value.length >= truth.value.length) ||
              (!environment.perfection && bubble.value.length >= truth.value.length)
             ) {
             virtue.result.completed = true;
@@ -2138,64 +2157,74 @@ var HomeController = function () {
         template: `
             <response b-on="click:responseclick">
                 <textareawrapper>
-                    <textarea b-on="DOMContentLoaded,click:textareaclick,keyup:textareakeyup" placeholder="Start typing . . ."></textarea>
+                    <textarea b-on="DOMContentLoaded,click:textareaclick,keyup:textareakeyup" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
+                    <textarea b-on="keyup:textareakeyup" tabindex="0"></textarea>
                 </textareawrapper>
             </response>
         `,
         props: {
             _training: _training,
         },
-        eventsListeners: {
-            DOMContentLoaded: function(event, _this, binding) {
-                var c = this;
-
-                new Binding({
-                    object: c.props._training.student.response,
-                    property: "value"
-                }).addBinding(
-                    c.rootElement.getElementsByTagName('textarea')[0],
-                    'value'    // textarea
-                );
-
-                new Binding({
-                    object: c.props._training.student.response,
-                    property: "disabled"
-                }).addBinding(
-                    c.rootElement.getElementsByTagName('textarea')[0],
-                    'disabled'    // textarea
-                );
-
-                c.props._training.student.setFocus(c.rootElement.getElementsByTagName('textarea')[0]);
-            },
-            responseclick: function(event, _this, binding) {
-                var c = this;
-
-                // Focus on Student response
-                c.props._training.student.focus();
-
-                event.stopPropagation();
-            },
-            textareaclick: function(event, _this, binding) {
-                event.stopPropagation();
-            },
-            textareakeyup: function(event, _this, binding) {
-                var c = this;
-                var ele = event.target || event.srcElement;
-                var keyCode = event.keyCode || event.charCode;
-
-                // Skip the ESC key
-                if (keyCode === 27) {
-                    return false;
-                }
-
-                // Set student response. Remove all CRs
-                c.props._training.student.response.value = ele.value.replace(/\r/g, '');
+        methods: {
+            _setter: function(c, value) {
                 // Set student response counter
                 c.props._training.student.response.charactersCounter = c.props._training.student.response.value.length;
 
-                var virtue = c.props._training.student.response.virtue;
+                // Get response textarea elements
+                var amendableTextareaEle = c.rootElement.getElementsByTagName('textarea')[0];
+                var nonAmendableTextareaEle = c.rootElement.getElementsByTagName('textarea')[1];
+
+                // Update response textarea values
+                amendableTextareaEle.value = c.props._training.student.response.value;
+                nonAmendableTextareaEle.value = '';
+            },
+            setResponseAmendability: function(c) {
+                // Get response textarea elements
+                var amendableTextareaEle = c.rootElement.getElementsByTagName('textarea')[0];
+                var nonAmendableTextareaEle = c.rootElement.getElementsByTagName('textarea')[1];
+
+                // Determine which textarea should be active
+                if (c.props._training.trainer.memory.environment.perfection === true) {
+                    // Non-amendable textarea active for perfection mode, where amends are disallowed. Student training is goal-oriented.
+                    amendableTextareaEle.style.display = 'none';
+                    nonAmendableTextareaEle.style.display = 'block';
+                    c.props._training.student.setFocus(nonAmendableTextareaEle);
+
+                    // Hide the student response element
+                    c.rootElement.style.margin = 0;
+                    c.rootElement.style.width = 0;
+                    c.rootElement.style.height = 0;
+                    c.rootElement.style.overflow = 'hidden';
+
+                    // Create a new training session
+                    var book = c.props._training.trainer.getCurrentBook();
+                    if (book) {
+                        c.props._training.improvise(book);
+                    }
+                }else {
+                    // Amendable textarea active for non-perfection mode, where amends are allowed. Student training is correction-oriented.
+                    amendableTextareaEle.style.display = 'block';
+                    nonAmendableTextareaEle.style.display = 'none';
+                    c.props._training.student.setFocus(amendableTextareaEle);
+
+                    // Unhide the student response element
+                    c.rootElement.removeAttribute('style');
+
+                    // Set the student response value
+                    c.props._training.student.response.value = c.props._training.student.response.value;
+                }
+            },
+            handleResponse: function(c, value, keyCode) {
                 // Validate student response
+                var virtue = c.props._training.student.response.virtue;
                 var started = c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment, keyCode);
+
+                if (c.props._training.trainer.memory.environment.perfection === true) {
+                    if (value.length > 0 && virtue.result.success === false) {
+                        // Set student response
+                        c.props._training.student.response.value = c.props._training.student.response.value.slice(0, -1 * value.length);
+                    }
+                }
 
                 // Update student virtue every interval
                 if (started) {
@@ -2247,6 +2276,66 @@ var HomeController = function () {
                     console.log('[keyup] c.props._training.trainer.speech.charactersCounter: ' + c.props._training.trainer.speech.charactersCounter);
                     console.log('[keyup] c.props._training.student.response.value: ' + c.props._training.student.response.value);
                     console.log('[keyup] c.props._training.student.response.charactersCounter: ' + c.props._training.student.response.charactersCounter);
+                }
+            }
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+
+                new Binding({
+                    object: c.props._training.student.response,
+                    property: "disabled"
+                }).addBinding(
+                    c.rootElement.getElementsByTagName('textarea')[0],
+                    'disabled'
+                ).addBinding(
+                    c.rootElement.getElementsByTagName('textarea')[1],
+                    'disabled'
+                );
+
+                c.methods.setResponseAmendability(c);
+            },
+            responseclick: function(event, _this, binding) {
+                var c = this;
+
+                // Focus on Student response
+                c.props._training.student.focus();
+
+                event.stopPropagation();
+            },
+            textareaclick: function(event, _this, binding) {
+                event.stopPropagation();
+            },
+            textareakeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var keyCode = event.keyCode || event.charCode;
+                var key = event.key;
+
+                // Skip the ESC key
+                if (keyCode === 27) {
+                    return false;
+                }
+
+                // Remove all CRs
+                var newValue = ele.value.replace(/\r/g, '');
+                var valueLengthDiff = newValue.length - c.props._training.student.response.value.length;
+                if (State.debug) {
+                    console.log('[keyup] perfection: ' + c.props._training.trainer.memory.environment.perfection + ', keyCode: ' + keyCode + ', key: ' + key);
+                    console.log('[keyup] newValue.length: ' + newValue.length + ', c.props._training.student.response.value.length: ' + c.props._training.student.response.value.length + ', valueLengthDiff: ' + valueLengthDiff);
+                }
+                if (c.props._training.trainer.memory.environment.perfection === true) {
+                    // In perfection mode, the textarea value consist of a single character(the pressed key)
+                    c.props._training.student.response.value += newValue;
+                    c.methods.handleResponse(c, newValue, keyCode);
+                }else {
+                    // In non-perfection mode, we may accept any character changes
+                    if (State.debug) {
+                        console.log('[keyup] validating' );
+                    }
+                    c.props._training.student.response.value = newValue;
+                    c.methods.handleResponse(c, newValue, keyCode);
                 }
             }
         }
@@ -3362,7 +3451,7 @@ var EnvironmentController = function() {
         template: `
             <menuswitch>
                 <label>perfection</label>
-                <switch b-on="click,keyup:switchkeyup" class="{{ ._training.trainer.memory.environment.perfection }}" tabindex="0">
+                <switch b-on="click,keyup:switchkeyup" b-setter="._training.trainer.memory.environment.perfection:_setter" tabindex="0">
                     <handle></handle>
                 </switch>
             </menuswitch>
@@ -3371,9 +3460,15 @@ var EnvironmentController = function() {
             _training: _training
         },
         methods: {
+            _setter: function(c, value) {
+                c.rootElement.getElementsByTagName('switch')[0].className = value === true ? 'true' : 'false';
+
+                // Update the Student response component
+                Components.response.methods.setResponseAmendability(Components.response);
+            },
             toggleValue: function(c) {
-                var newVal = !c.props._training.trainer.memory.environment.perfection;
-                c.props._training.trainer.memory.environment.perfection = newVal;
+                var newValue =  !c.props._training.trainer.memory.environment.perfection;
+                c.props._training.trainer.memory.environment.perfection = newValue;
             }
         },
         eventsListeners: {

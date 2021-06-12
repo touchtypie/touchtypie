@@ -124,7 +124,9 @@ As its name implies, meditation declutters the `touchtypie` user interface to he
 
 ### Q: What is perfection?
 
-As its name implies, perfection enforces an exact match between the Student response (what you typed) and the Trainer's speech to be considered a successful training.
+As its name implies, perfection enforces that the Student response (what is typed) must match the Trainer's speech (what is shown) for progress to be made in a book training session.
+
+When perfection is turned on, the book training session starts from scratch. In perfection, errors continue to be tracked in statistics.
 
 ### Q: What is jumble?
 
