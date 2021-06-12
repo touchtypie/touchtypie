@@ -2376,11 +2376,11 @@ var HomeController = function () {
                 </datetimestopwatch>
                 <shotcounter>
                     <label>Shots: </label>
-                    <value>{{ _training.student.virtue.result.rate_hit_per_min_global }}</value>
+                    <value>{{ _training.student.virtue.result.shot_num_global }}</value>
                 </shotcounter>
                 <ratehitpermincounter>
                     <label>Hits / min: </label>
-                    <value>{{ _training.student.virtue.result.shot_num_global }}</value>
+                    <value>{{ _training.student.virtue.result.rate_hit_per_min_global }}</value>
                 </ratehitpermincounter>
                 <hitcounter>
                     <label>Hits: </label>
