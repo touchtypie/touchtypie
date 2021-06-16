@@ -1025,11 +1025,14 @@ var Memory = function() {
 
         if (sanitise) {
             // Remove unneeded properties
-            if (! /^https:\/\//.test(fullEnvironment.bookLibraryIds)) {
+            if (/^Custom /i.test(fullEnvironment.bookLibraryIds)) {
                 delete fullEnvironment.bookLibraryIds;
             }
-            if (! /^https:\/\//.test(fullEnvironment.bookCollectionIds)) {
-                delete fullEnvironment.bookCollectionIds
+            if (/^Custom /i.test(fullEnvironment.bookCollectionIds)) {
+                delete fullEnvironment.bookCollectionIds;
+            }
+            if (/^Custom /i.test(fullEnvironment.bookIds)) {
+                delete fullEnvironment.bookIds;
             }
         }
 
