@@ -1011,7 +1011,7 @@ var Memory = function() {
         return book;
     };
 
-    var getFullEnvironment = function() {
+    var getFullEnvironment = function(sanitise) {
         var fullEnvironment = {};
         for (var k in environment) {
             if (typeof environment[k] === 'boolean' || typeof environment[k] === 'string') {
@@ -1022,6 +1022,16 @@ var Memory = function() {
         fullEnvironment.bookLibraryIds = this.workingMemoryLibraryId;
         fullEnvironment.bookCollectionIds = this.workingMemoryCollectionId;
         fullEnvironment.bookIds = this.workingMemoryBookId;
+
+        if (sanitise) {
+            // Remove unneeded properties
+            if (! /^https:\/\//.test(fullEnvironment.bookLibraryIds)) {
+                delete fullEnvironment.bookLibraryIds;
+            }
+            if (! /^https:\/\//.test(fullEnvironment.bookCollectionIds)) {
+                delete fullEnvironment.bookCollectionIds
+            }
+        }
 
         return fullEnvironment;
     }
@@ -3857,7 +3867,7 @@ var EnvironmentController = function() {
         },
         methods: {
             copyFavorite: function(c) {
-                var fullEnvironment = _training.trainer.memory.getFullEnvironment();
+                var fullEnvironment = _training.trainer.memory.getFullEnvironment(true);
 
                 // Convert object keys to underscore convention
                 var fullEnvironmentUnderscores = Helpers.convertToUnderscores(fullEnvironment);
