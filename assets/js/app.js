@@ -2337,6 +2337,11 @@ var HomeController = function () {
                     return false;
                 }
 
+                // Skip the SHIFT key
+                if (keyCode === 16) {
+                    return false;
+                }
+
                 // Remove all CRs
                 var newValue = ele.value.replace(/\r/g, '');
                 var valueLengthDiff = newValue.length - c.props._training.student.response.value.length;
