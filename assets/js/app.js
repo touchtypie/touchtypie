@@ -1136,15 +1136,18 @@ var Memory = function() {
             bookLibraryIds = Array.isArray(trainingConfig.bookLibraryIds) ? trainingConfig.bookLibraryIds : [ trainingConfig.bookLibraryIds ];
         }else {
             // Custom config
-            bookLibraryIds = [
-                'Custom library'
-            ];
+            // bookLibraryIds = [
+            //     'Custom library'
+            // ];
         }
 
         if ('bookIds' in trainingConfig) {
             // Custom bookIds
 
             // Create fake library
+            bookLibraryIds = [
+                'Custom library'
+            ];
             fakeEntities.bookLibrary = BookLibrary();
             fakeEntities.bookLibrary.id = 'Custom library';
             fakeEntities.bookLibrary.content = 'Custom collection';
@@ -1157,6 +1160,9 @@ var Memory = function() {
             // Custom bookCollectionIds
 
             // Create fake library
+            bookLibraryIds = [
+                'Custom library'
+            ];
             fakeEntities.bookLibrary = BookLibrary();
             fakeEntities.bookLibrary.id = 'Custom library';
             fakeEntities.bookLibrary.content = Array.isArray(trainingConfig.bookCollectionIds) ? trainingConfig.bookCollectionIds.join("\n") : trainingConfig.bookCollectionIds;
