@@ -594,6 +594,7 @@ menufavorite copybutton {
     display: inline-block;
     vertical-align: middle;
     height: calc(1vw + 4px + 2px);
+    margin-right: 1vw;
     padding: 2px 1vw;
     border: 1px solid #fff;
     border-radius: 999px;

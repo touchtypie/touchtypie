@@ -3865,21 +3865,41 @@ var EnvironmentController = function() {
         template: `
             <menufavorite>
                 <label>favorite</label>
-                <copybutton b-on="click,keyup:copybuttonkeyup" tabindex="0">{{ .copyButtonText }}</copybutton>
+                <copybutton b-on="click:copyButtonLibraryClick,keyup:copyButtonLibraryKeyup" tabindex="0" title="favorite this library!">{{ .copyButtons.library.label }}</copybutton>
+                <copybutton b-on="click:copyButtonCollectionClick,keyup:copyButtonCollectionKeyup" tabindex="0" title="favorite this collection!">{{ .copyButtons.collection.label }}</copybutton>
+                <copybutton b-on="click:copyButtonBookClick,keyup:copyButtonBookKeyup" tabindex="0" title="favorite this book!">{{ .copyButtons.book.label }}</copybutton>
             </menufavorite>
         `,
         props: {
             _training: _training,
-            copyButtonText: 'copy',
-            copyTimeoutId: -1,
-            copyTimeoutDuration: 2000
+            copyButtons: {
+                library: {
+                    environment: null,
+                    label: 'L',
+                    originalLabel: 'L',
+                    copyTimeoutId: -1,
+                    copyTimeoutDuration: 2000
+                },
+                collection: {
+                    environment: null,
+                    label: 'C',
+                    originalLabel: 'C',
+                    copyTimeoutId: -1,
+                    copyTimeoutDuration: 2000
+                },
+                book: {
+                    environment: null,
+                    label: 'B',
+                    originalLabel: 'B',
+                    copyTimeoutId: -1,
+                    copyTimeoutDuration: 2000
+                }
+            }
         },
         methods: {
-            copyFavorite: function(c) {
-                var fullEnvironment = _training.trainer.memory.getFullEnvironment(true);
-
+            copyFavorite: function(c, copyButton) {
                 // Convert object keys to underscore convention
-                var fullEnvironmentUnderscores = Helpers.convertToUnderscores(fullEnvironment);
+                var fullEnvironmentUnderscores = Helpers.convertToUnderscores(copyButton.environment);
 
                 // Generate the search url. E.g. '?foo=bar&hello=world'
                 var searchUrl = Helpers.toSearchUrl(fullEnvironmentUnderscores);
@@ -3891,31 +3911,110 @@ var EnvironmentController = function() {
                 // Copy full URL to clipboard (synchronous copy)
                 Helpers.copyToClipboard(fullUrl);
 
+                if (State.debug) {
+                    console.log('[copyFavorite] Copied url: ' + fullUrl);
+                }
+
                 // Show success
-                c.methods.success(c);
+                c.methods.success(c, copyButton);
 
                 // Reset after a duration
-                clearTimeout(c.props.copyTimeoutId);
-                c.props.copyTimeoutId = setTimeout(function() {
-                    c.methods.reset(c);
-                }, c.props.copyTimeoutDuration);
+                clearTimeout(copyButton.copyTimeoutId);
+                copyButton.copyTimeoutId = setTimeout(function() {
+                    c.methods.reset(c, copyButton);
+                }, copyButton.copyTimeoutDuration);
             },
-            reset: function(c) {
-                c.props.copyButtonText = 'copy';
+            copyFavoriteLibrary: function(c) {
+                var environment = _training.trainer.memory.getFullEnvironment(true);
+
+                // Remove unneeded properties
+                delete environment.bookCollectionIds;
+                delete environment.bookIds;
+
+                if ('bookLibraryIds' in environment) {
+                    // Populate copy button configuration
+                    c.props.copyButtons.library.environment = environment;
+                    c.methods.copyFavorite(c, c.props.copyButtons.library);
+                }else {
+                    c.methods.failToCopyFavourite(c, c.props.copyButtons.library);
+                }
             },
-            success: function(c) {
-                c.props.copyButtonText = 'copied!';
+            copyFavoriteCollection: function(c) {
+                var environment = _training.trainer.memory.getFullEnvironment(true);
+
+                // Remove unneeded properties
+                delete environment.bookLibraryIds;
+                delete environment.bookIds;
+
+                if ('bookCollectionIds' in environment) {
+                    // Populate copy button configuration
+                    c.props.copyButtons.collection.environment = environment;
+                    c.methods.copyFavorite(c, c.props.copyButtons.collection);
+                }else {
+                    c.methods.failToCopyFavourite(c, c.props.copyButtons.collection);
+                }
+            },
+            copyFavoriteBook: function(c) {
+                var environment = _training.trainer.memory.getFullEnvironment(true);
+
+                // Remove unneeded properties
+                delete environment.bookLibraryIds;
+                delete environment.bookCollectionIds;
+
+                if ('bookIds' in environment) {
+                    // Populate copy button configuration
+                    c.props.copyButtons.book.environment = environment;
+                    c.methods.copyFavorite(c, c.props.copyButtons.book);
+                }else {
+                    c.methods.failToCopyFavourite(c, c.props.copyButtons.book);
+                }
+            },
+            failToCopyFavourite: function(c, copyButton) {
+                // Show failure
+                c.methods.fail(c, copyButton);
+
+                // Reset after a duration
+                clearTimeout(copyButton.copyTimeoutId);
+                copyButton.copyTimeoutId = setTimeout(function() {
+                    c.methods.reset(c, copyButton);
+                }, copyButton.copyTimeoutDuration);
+            },
+            fail: function(c, copyButton) {
+                copyButton.label = ':(';
+            },
+            reset: function(c, copyButton) {
+                copyButton.label = copyButton.originalLabel;
+            },
+            success: function(c, copyButton) {
+                copyButton.label = 'copied!';
             }
         },
         eventsListeners: {
-            click: function(event, _this, binding) {
+            copyButtonLibraryClick: function(event, _this, binding) {
                 var c = this;
                 // var ele = event.target || event.srcElement;
-                c.methods.copyFavorite(c);
+
+                c.methods.copyFavoriteLibrary(c);
 
                 event.stopPropagation();
             },
-            copybuttonkeyup: function(event, _this, binding) {
+            copyButtonCollectionClick: function(event, _this, binding) {
+                var c = this;
+                // var ele = event.target || event.srcElement;
+
+                c.methods.copyFavoriteCollection(c);
+
+                event.stopPropagation();
+            },
+            copyButtonBookClick: function(event, _this, binding) {
+                var c = this;
+                // var ele = event.target || event.srcElement;
+
+                c.methods.copyFavoriteBook(c);
+
+                event.stopPropagation();
+            },
+            copyButtonLibraryKeyup: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
                 var keyCode = event.keyCode || event.charCode;
@@ -3923,9 +4022,39 @@ var EnvironmentController = function() {
                 // ENTER or SPACE key
                 if (keyCode === 13 || keyCode === 32) {
                     if (State.debug) {
-                        console.log('[copybuttonkeyup] ENTER or SPACE key');
+                        console.log('[copyButtonLibraryKeyup] ENTER or SPACE key');
                     }
-                    c.methods.copyFavorite(c);
+                    c.methods.copyFavoriteLibrary(c);
+
+                    event.stopPropagation();
+                }
+            },
+            copyButtonCollectionKeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var keyCode = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (keyCode === 13 || keyCode === 32) {
+                    if (State.debug) {
+                        console.log('[copyButtonCollectionKeyup] ENTER or SPACE key');
+                    }
+                    c.methods.copyFavoriteCollection(c);
+
+                    event.stopPropagation();
+                }
+            },
+            copyButtonBookKeyup: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var keyCode = event.keyCode || event.charCode;
+
+                // ENTER or SPACE key
+                if (keyCode === 13 || keyCode === 32) {
+                    if (State.debug) {
+                        console.log('[copyButtonBookKeyup] ENTER or SPACE key');
+                    }
+                    c.methods.copyFavoriteBook(c);
 
                     event.stopPropagation();
                 }
