@@ -3973,6 +3973,11 @@ var ConfigController = function(Config) {
         // Pre-defined config
         mergedConfig['bookLibraryIds'] = Config['bookLibraryIds'];
     }else {
+        if (! ('bookLibraryIds' in keys) && ! ('bookCollectionIds' in keys) && ! ('bookIds' in keys) ) {
+            // Pre-defined config
+            mergedConfig['bookLibraryIds'] = Config['bookLibraryIds'];
+        }
+
         // Custom GET config
         if (Object.keys(urlParamsCamelCased).length > 0) {
             for (var k in urlParamsCamelCased) {
