@@ -363,7 +363,7 @@ var Bubble = function(default_value) {
     var disabled = false;
     var value = default_value;
     var charactersCounter = 0;
-    var maxLines = 5;
+    var maxLines = 0;   // No limit
     var lineWidth = 0;
     var characterWidth = 0;
 
@@ -758,9 +758,17 @@ var Bubble = function(default_value) {
         if (virtue.result.value === '') {
             virtue.result.value = truth.value;
         }
-        const peekIndices = getPeekIndices(bubble, truth, speech.maxLines, speech.lineWidth, speech.characterWidth);
-        const startIndex = peekIndices[0];
-        const endIndex = peekIndices[1];
+        var startIndex, endIndex;
+        if (speech.maxLines > 0 && speech.lineWidth > 0 && speech.characterWidth) {
+            // Truncated speech
+            const peekIndices = getPeekIndices(bubble, truth, speech.maxLines, speech.lineWidth, speech.characterWidth);
+            startIndex = peekIndices[0];
+            endIndex = peekIndices[1];
+        }else {
+            // Non-truncated speech
+            startIndex = 0;
+            endIndex = truth.value.length - 1;
+        }
         virtue.result.value_zonal = getFeedbackHtmlValue(
             bubble.value.length == 0 ? bubble.value : bubble.value.substring(startIndex, endIndex + 1 < bubble.value.length ? endIndex + 1: bubble.value.length ),
             truth.value.substring(startIndex, endIndex + 1),
@@ -2086,9 +2094,9 @@ var HomeController = function () {
         parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
         name: 'speech',
         template: `
-            <speech b-on="click:speechclick">
+            <speech b-on="DOMContentLoaded,click:speechclick">
                 <speechwrapper>
-                    <value b-on="DOMContentLoaded">{{ ._training.trainer.speech.value }}</value>
+                    <value b-setter="._training.trainer.speech.value:_setter"></value>
                 </speechwrapper>
             </speech>
         `,
@@ -2097,7 +2105,27 @@ var HomeController = function () {
             resizeTimeoutId: -1
         },
         methods: {
-            // Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
+            _setter: function(c, value) {
+                // Update element value
+                var speechValueElement = c.rootElement.getElementsByTagName('value')[0];
+                speechValueElement.innerHTML = value;
+
+                // Scroll to Speech cursor
+                c.methods.setSpeechScrollPosition(c);
+            },
+            setSpeechScrollPosition: function(c) {
+                // Scroll to the Speech cursor
+                var speechScrollableEle = c.rootElement.getElementsByTagName('speechwrapper')[0];
+                var cursorEle = c.rootElement.getElementsByClassName('cursor')[0];
+                if (cursorEle) {
+                    speechScrollableEle.scrollTop = cursorEle.offsetTop;
+                    if (State.debug) {
+                        console.log('speechScrollableEle.scrollTop: ' + cursorEle.clientTop);
+                        console.log('cursorEle.clientTop: ' + cursorEle.clientTop + ', cursorEle.offsetTop: ' + cursorEle.offsetTop + ', cursorEle.scrollTop: ' + cursorEle.scrollTop);
+                    }
+                }
+            },
+            // Deprecated: Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
             setSpeechWidths: function(c) {
                 if (State.debug) {
                     console.log('[setSpeechWidths]');
@@ -2135,8 +2163,11 @@ var HomeController = function () {
                     // Initialize training the training with an trainer intro speech
                     c.props._training.start();
 
-                    // Set the speech widths based on the intro speech
-                    c.methods.setSpeechWidths(c);
+                    // Deprecated: Set the speech widths based on the intro speech
+                    // c.methods.setSpeechWidths(c);
+
+                    // Scroll to Speech cursor
+                    c.methods.setSpeechScrollPosition(c);
                 });
 
                 // Window resize event
@@ -2147,7 +2178,11 @@ var HomeController = function () {
                             console.log('[resize]');
                         }
 
-                        c.methods.setSpeechWidths(c);
+                        // Deprecated: Set the speech widths based on the intro speech
+                        // c.methods.setSpeechWidths(c);
+
+                        // Scroll to Speech cursor
+                        c.methods.setSpeechScrollPosition(c);
 
                         // Validate student response
                         var virtue = c.props._training.student.response.virtue;
@@ -3421,16 +3456,16 @@ var EnvironmentController = function() {
                     // Turn off statistics
                     c.props._training.trainer.memory.environment.statistics = false;
 
-                    // Set Trainer speech to 10 lines
-                    c.props._training.trainer.speech.maxLines = 10;
+                    // Deprecated: Set Trainer speech to 10 lines
+                    // c.props._training.trainer.speech.maxLines = 10;
                 }else {
                     Components.header_home.rootElement.className = '';
                     Components.speech.rootElement.className = '';
                     Components.response.rootElement.className = '';
                     Components.footer.rootElement.className = '';
 
-                    // Set Trainer speech back to 5 lines
-                    c.props._training.trainer.speech.maxLines = 5;
+                    // Deprecated: Set Trainer speech back to 5 lines
+                    // c.props._training.trainer.speech.maxLines = 5;
                 }
 
                 // Validate student response
