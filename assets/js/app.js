@@ -3,7 +3,7 @@
 var Helpers = function () {
     return {
         htmlEntities: function htmlEntities(str) {
-            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/ /, '&nbsp;').replace(/\s+$/, '<br/>');
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&#34;').replace(/ /g, '&nbsp;').replace(/\r?\n/g, '<br />');
         },
         convertToUnderscores: function(object) {
             // E.g. { 'FooBarBaz': 'hello' } becomes { 'foo_bar_baz': 'hello' }
