@@ -2658,8 +2658,7 @@ var EnvironmentController = function() {
                 var c = this;
 
                 myApp.sceneController.scene = 'home';
-                c.props._training.student.focus();
-
+                Components.response.methods.focus(Components.response);
             }
         }
     });
