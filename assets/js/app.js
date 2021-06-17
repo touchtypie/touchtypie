@@ -1661,7 +1661,6 @@ var Training = function() {
 
         // Set trainer speech value
         trainer.speech.value = virtue.result.value_zonal;
-        trainer.speech.charactersCounter = trainer.truth.value.length;
     }
 
     var prepare = function(trainingConfig) {
@@ -1693,7 +1692,6 @@ var Training = function() {
 
         // Set trainer speech value
         trainer.speech.value = virtue.result.value_zonal;
-        trainer.speech.charactersCounter = trainer.truth.value.length;
 
         if (State.debug) {
             console.log('[Training][start] trainer.speech.value: ' + trainer.speech.value);
@@ -2106,6 +2104,9 @@ var HomeController = function () {
         },
         methods: {
             _setter: function(c, value) {
+                // Set trainer speech counter
+                c.props._training.trainer.speech.charactersCounter = c.props._training.trainer.speech.value.length;
+
                 // Update element value
                 var speechValueElement = c.rootElement.getElementsByTagName('value')[0];
                 speechValueElement.innerHTML = value;
