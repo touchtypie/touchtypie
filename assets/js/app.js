@@ -3452,10 +3452,10 @@ var EnvironmentController = function() {
                 c.rootElement.getElementsByTagName('switch')[0].className = value === true ? 'true' : 'false';
 
                 if (value === true) {
-                    Components.header_home.rootElement.className = 'meditation';
-                    Components.speech.rootElement.className = 'meditation';
-                    Components.response.rootElement.className = 'meditation';
-                    Components.footer.rootElement.className = 'meditation';
+                    Components.header_home.rootElement.classList.add('meditation');
+                    Components.speech.rootElement.classList.add('meditation');
+                    Components.response.rootElement.classList.add('meditation');
+                    Components.footer.rootElement.classList.add('meditation');
 
                     // Turn off statistics
                     c.props._training.trainer.memory.environment.statistics = false;
@@ -3463,10 +3463,10 @@ var EnvironmentController = function() {
                     // Deprecated: Set Trainer speech to 10 lines
                     // c.props._training.trainer.speech.maxLines = 10;
                 }else {
-                    Components.header_home.rootElement.className = '';
-                    Components.speech.rootElement.className = '';
-                    Components.response.rootElement.className = '';
-                    Components.footer.rootElement.className = '';
+                    Components.header_home.rootElement.classList.remove('meditation');
+                    Components.speech.rootElement.classList.remove('meditation');
+                    Components.response.rootElement.classList.remove('meditation');
+                    Components.footer.rootElement.classList.remove('meditation');
 
                     // Deprecated: Set Trainer speech back to 5 lines
                     // c.props._training.trainer.speech.maxLines = 5;
