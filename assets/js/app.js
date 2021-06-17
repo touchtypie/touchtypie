@@ -3528,6 +3528,12 @@ var EnvironmentController = function() {
 
                 // Update the Student response component
                 Components.response.methods.setResponseAmendability(Components.response);
+
+                if (value === true) {
+                    Components.speech.rootElement.classList.add('perfection');
+                }else {
+                    Components.speech.rootElement.classList.remove('perfection');
+                }
             },
             toggleValue: function(c) {
                 var newValue =  !c.props._training.trainer.memory.environment.perfection;
