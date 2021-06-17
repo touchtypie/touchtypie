@@ -47,9 +47,13 @@ To save your practice environment, see [this answer](#q-how-to-save-the-practice
 
 ### Q: How to save the practice session?
 
-To save the practice session, go to `Environment`, and under `FAVORITE` click on the `COPY` button.
+To save the practice session, go to `Environment`, and under `FAVORITE` click:
 
-A `touchtypie` URL is saved to your clipboard with your custom settings and added URLs (i.e. books). You may now bookmark, save, or share that `touchtypie` URL to practice anytime you want.
+-  `L` button to favorite the current Library with your custom settings
+-  `C` button to favorite the current Collection with your custom settings
+-  `B` button to favorite the current Book with your custom settings
+
+A `touchtypie` URL is saved to your clipboard. You may now bookmark, save, or share that `touchtypie` URL to practice anytime you want.
 
 ### Q: How to practice on my own URL?
 
