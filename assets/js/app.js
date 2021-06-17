@@ -4309,6 +4309,7 @@ var myApp = function () {
                         case 'environment':
                             sceneController.scene = 'home';
                             State.training.student.focus();
+                            Components.speech.methods.setSpeechScrollPosition(Components.speech);
                             break;
                         default:
                             break;
