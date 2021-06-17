@@ -1487,7 +1487,6 @@ var Trainer = function() {
 var Student = function() {
     return {
         response: Bubble(''),
-        focusElement: null,
 
         // My virtue
         virtue: StudentVirtue(),
@@ -1499,9 +1498,6 @@ var Student = function() {
             values: []
         },
 
-        focus: function() {
-            this.focusElement.focus();
-        },
         reflectVirtue: function(virtue, populateGlobal, cumulateGlobal) {
             var _student = this;
 
@@ -1606,9 +1602,6 @@ var Student = function() {
             // Reset the behavioural nature
             this.virtue.newlife();
         },
-        setFocus: function(element) {
-            this.focusElement = element;
-        },
         stashVirtue: function(virtue) {
             var _student = this;
             _student.virtues.values.push(virtue);
@@ -1641,7 +1634,6 @@ var Training = function() {
 
             // Start the training
             start();
-            student.focus();
 
             if (callbackOnSuccess) {
                 callbackOnSuccess();
@@ -2206,7 +2198,7 @@ var HomeController = function () {
                 var c = this;
 
                 // Focus on Student response
-                c.props._training.student.focus();
+                Components.response.methods.focus(Components.response);
 
                 event.stopPropagation();
             }
@@ -2227,6 +2219,7 @@ var HomeController = function () {
         `,
         props: {
             _training: _training,
+            focusElement: null
         },
         methods: {
             _setter: function(c, value) {
@@ -2241,6 +2234,9 @@ var HomeController = function () {
                 amendableTextareaEle.value = c.props._training.student.response.value;
                 nonAmendableTextareaEle.value = '';
             },
+            focus: function(c) {
+                c.props.focusElement.focus();
+            },
             setResponseAmendability: function(c) {
                 // Get response textarea elements
                 var amendableTextareaEle = c.rootElement.getElementsByTagName('textarea')[0];
@@ -2251,7 +2247,7 @@ var HomeController = function () {
                     // Non-amendable textarea active for perfection mode, where amends are disallowed. Student training is goal-oriented.
                     amendableTextareaEle.style.display = 'none';
                     nonAmendableTextareaEle.style.display = 'block';
-                    c.props._training.student.setFocus(nonAmendableTextareaEle);
+                    c.props.focusElement = nonAmendableTextareaEle;
 
                     // Hide the student response element
                     c.rootElement.style.margin = 0;
@@ -2268,7 +2264,7 @@ var HomeController = function () {
                     // Amendable textarea active for non-perfection mode, where amends are allowed. Student training is correction-oriented.
                     amendableTextareaEle.style.display = 'block';
                     nonAmendableTextareaEle.style.display = 'none';
-                    c.props._training.student.setFocus(amendableTextareaEle);
+                    c.props.focusElement = amendableTextareaEle;
 
                     // Unhide the student response element
                     c.rootElement.removeAttribute('style');
@@ -2363,7 +2359,7 @@ var HomeController = function () {
                 var c = this;
 
                 // Focus on Student response
-                c.props._training.student.focus();
+                c.methods.focus(c);
 
                 event.stopPropagation();
             },
@@ -4317,8 +4313,13 @@ var myApp = function () {
                             break;
                         case 'environment':
                             sceneController.scene = 'home';
-                            State.training.student.focus();
+
+                            // Scroll trainer speech to speech cursor
                             Components.speech.methods.setSpeechScrollPosition(Components.speech);
+
+                            // Focus on the student response
+                            Components.response.methods.focus(Components.response);
+
                             break;
                         default:
                             break;
@@ -4337,6 +4338,9 @@ var myApp = function () {
 
                 // Replenish training environment
                 State.training.begin(configController.config, function() {
+                    // Focus on the student response
+                    Components.response.methods.focus(Components.response);
+
                     // Event: training-start
                     eventController.doEvent('training-start');
                 });
