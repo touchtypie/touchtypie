@@ -1653,7 +1653,6 @@ var Training = function() {
         // Set trainer truth value
         // trainer.truth.value = "Something went wrong . . . T.T\n\nPlease refresh and retry . . . ^.^";
         trainer.truth.value = "I am failing to recall my libraries' books . . . T.T\n\nPlease refresh and retry . . . ^.^";
-        trainer.truth.charactersCounter = trainer.truth.value.length;
 
         // Validate student response
         var virtue = student.response.virtue;
@@ -1685,7 +1684,6 @@ var Training = function() {
                 }
             })();
         }
-        trainer.truth.charactersCounter = trainer.truth.value.length;
 
         // Validate student response
         var virtue = student.response.virtue;
@@ -2081,12 +2079,22 @@ var HomeController = function () {
         name: 'truth',
         template: `
             <truth>
-                <value>{{ ._training.trainer.truth.value }}</value>
+                <value b-setter="._training.trainer.truth.value:_setter"></value>
             </truth>
         `,
         props: {
             _training: _training,
         },
+        methods: {
+            _setter: function(c, value) {
+                // Set trainer truth counter
+                c.props._training.trainer.truth.charactersCounter = c.props._training.trainer.truth.value.length;
+
+                // Update element value
+                var truthValueElement = c.rootElement.getElementsByTagName('value')[0];
+                truthValueElement.innerHTML = Helpers.htmlEntities(value);
+            }
+        }
     });
 
     // Component: speech
