@@ -58,9 +58,6 @@ header {
     padding: 2vw;
     /* border-bottom: 1px solid #000; */
 }
-header.meditation {
-    display: none;
-}
 header heading {
     display: block;
     text-align: center;
@@ -81,6 +78,9 @@ header heading {
     font-family: monospace;
     font-size: 2vw;
     text-transform: uppercase;
+}
+header.meditation heading {
+    font-size: 0;
 }
 @media (max-aspect-ratio: 13/10) {
     header {
