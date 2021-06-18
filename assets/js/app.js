@@ -2212,14 +2212,16 @@ var HomeController = function () {
         template: `
             <response b-on="click:responseclick">
                 <textareawrapper>
-                    <textarea b-on="DOMContentLoaded,click:textareaclick,keyup:textareakeyup" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
-                    <textarea b-on="keyup:textareakeyup" tabindex="0"></textarea>
+                    <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
+                    <textarea b-on="keydown:textareakeydown,input:textareainput" tabindex="0"></textarea>
                 </textareawrapper>
             </response>
         `,
         props: {
             _training: _training,
-            focusElement: null
+            focusElement: null,
+            lastKeyCode: -1,
+            lastKey: '',
         },
         methods: {
             _setter: function(c, value) {
@@ -2366,28 +2368,32 @@ var HomeController = function () {
             textareaclick: function(event, _this, binding) {
                 event.stopPropagation();
             },
-            textareakeyup: function(event, _this, binding) {
+            textareakeydown: function(event, _this, binding) {
                 var c = this;
                 var ele = event.target || event.srcElement;
                 var keyCode = event.keyCode || event.charCode;
                 var key = event.key;
 
-                // Skip the ESC key
-                if (keyCode === 27) {
-                    return false;
+                if (State.debug) {
+                    console.log('[textareakeydown] keyCode: ' + keyCode + ', key: ' + key);
                 }
 
-                // Skip the SHIFT key
-                if (keyCode === 16) {
-                    return false;
-                }
+                // Store the keydown state
+                c.props.lastKeyCode = keyCode;
+                c.props.lastKey = key;
+            },
+            textareainput: function(event, _this, binding) {
+                var c = this;
+                var ele = event.target || event.srcElement;
+                var keyCode = c.props.lastKeyCode;
+                var key = c.props.lastKey;
 
                 // Remove all CRs
                 var newValue = ele.value.replace(/\r/g, '');
                 var valueLengthDiff = newValue.length - c.props._training.student.response.value.length;
                 if (State.debug) {
-                    console.log('[keyup] perfection: ' + c.props._training.trainer.memory.environment.perfection + ', keyCode: ' + keyCode + ', key: ' + key);
-                    console.log('[keyup] newValue.length: ' + newValue.length + ', c.props._training.student.response.value.length: ' + c.props._training.student.response.value.length + ', valueLengthDiff: ' + valueLengthDiff);
+                    console.log('[textareainput] perfection: ' + c.props._training.trainer.memory.environment.perfection + ', keyCode: ' + keyCode + ', key: ' + key);
+                    console.log('[textareainput] newValue.length: ' + newValue.length + ', c.props._training.student.response.value.length: ' + c.props._training.student.response.value.length + ', valueLengthDiff: ' + valueLengthDiff);
                 }
                 if (c.props._training.trainer.memory.environment.perfection === true) {
                     // In perfection mode, the textarea value consist of a single character(the pressed key)
@@ -2396,7 +2402,7 @@ var HomeController = function () {
                 }else {
                     // In non-perfection mode, we may accept any character changes
                     if (State.debug) {
-                        console.log('[keyup] validating' );
+                        console.log('[textareainput] validating' );
                     }
                     c.props._training.student.response.value = newValue;
                     c.methods.handleResponse(c, newValue, keyCode);
