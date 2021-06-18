@@ -1032,9 +1032,6 @@ footer {
     margin-top: 2vw;
     margin-bottom: 2vw;
 }
-footer.meditation {
-    display: none;
-}
 footer icons {
     display: block;
     text-align: center;
@@ -1049,6 +1046,9 @@ footer icons > a {
 footer icons > a > svg {
     width: 3vw;
     fill: #fff;
+}
+footer.meditation icons {
+    display: none;
 }
 @media (max-aspect-ratio: 13/10) {
     footer {
