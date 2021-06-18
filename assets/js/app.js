@@ -2557,15 +2557,15 @@ var HomeController = function () {
                 </amendcounter>
                 <amendpercentagecounter>
                     <label>Amends (%): </label>
-                    <value>{{ _training.student.virtue.result.amend_num_global }}</value>
+                    <value>{{ _training.student.virtue.result.amend_num_global_percentage }}</value>
                 </amendpercentagecounter>
                 <othercounter>
                     <label>Other: </label>
-                    <value>{{ _training.student.virtue.result.amend_num_global_percentage }}</value>
+                    <value>{{ _training.student.virtue.result.other_num_global }}</value>
                 </othercounter>
                 <otherpercentagecounter>
                     <label>Other (%): </label>
-                    <value>{{ _training.student.virtue.result.other_num_global }}</value>
+                    <value>{{ _training.student.virtue.result.other_num_global_percentage }}</value>
                 </otherpercentagecounter>
                 <booklibrarycounter>
                     <label>Libraries: </label>
