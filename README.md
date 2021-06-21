@@ -19,6 +19,12 @@ In contrast to reading alone, typing while reading engages the visual, linguisti
 
 It started out simple, but grew just enough to require a custom frontend framework. Most parts of are is still in pure HTML, CSS, JS.
 
+## Practice resources
+
+Here are some resources (libraries, collections, and books) you may like to use for practice:
+
+- Official: https://touchtypie.github.io/touchtypie-libraries/
+
 ## FAQ - Practice
 
 ### Keyboard navigation?
@@ -44,6 +50,8 @@ Ensure each text you want to practice is available as a URL.
 In `touchtypie`, go to `Environment`, and click `+` beside `BOOKS`, paste a URL and hit enter. Do this for each URL you want to practice.
 
 To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
+
+Note: You may like to use the official practice resources for practice, see [here](#practice-resources).
 
 ### Q: How to save the practice session?
 
