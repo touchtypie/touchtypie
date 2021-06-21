@@ -287,6 +287,8 @@ Apples are said to keep one healthy.
 An apple a day keeps the doctor away.
 ```
 
+See this library in the official [`touchtypie-libraries` repository](https://github.com/touchtypie/touchtypie-libraries).
+
 ### Advanced example
 
 For instance, you want to create a library about animals
@@ -348,6 +350,8 @@ Content of book `https://yourname.github.io/your-repository/persian.txt`
 Persian are the most exotic of all cats.
 They carry thmeselves with class.
 ```
+
+See this library in the official [`touchtypie-libraries` repository](https://github.com/touchtypie/touchtypie-libraries).
 
 ### Q: Can it be easier to create a library?
 
