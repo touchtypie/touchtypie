@@ -3382,7 +3382,7 @@ var EnvironmentController = function() {
                 var html;
                 switch(playMode) {
                     case c.props._training.trainer.memory.environment.playmodes.repeatone:
-                        html = '<emoji>🔂</emoji>';
+                        html = '<emoji>🔁</emoji><span>1</span>';
                         break;
                     case c.props._training.trainer.memory.environment.playmodes.repeat:
                         html = '<emoji>🔁</emoji>';

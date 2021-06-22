@@ -228,11 +228,7 @@ menumultiswitch:focus-within label {
 menumultiswitch symbol {
     display: inline-block;
     vertical-align: middle;
-    font-family: monospace;
-    font-weight: normal;
     cursor: pointer;
-    border: 1px solid #fff;
-    padding: 0 1px;
 }
 menumultiswitch symbol:focus-visible {
     outline: none;
@@ -241,21 +237,24 @@ menumultiswitch symbol:focus-visible {
 menumultiswitch symbol emoji {
     display: inline-block;
     vertical-align: middle;
-    height: 1.5vw;
+    height: calc(1vw + 2px + 2px);
     font-family: monospace;
-    font-size: 1.5vw;
+    font-weight: normal;
+    font-size: calc(1vw + 2px + 2px);
     line-height: 1;
 }
-menumultiswitch symbol.shuffle span {
+menumultiswitch symbol span {
     display: inline-block;
     vertical-align: middle;
-    width: 1vw;
-    height: 1vw;
+    width: calc(1vw + 2px + 2px);
+    height: calc(1vw + 2px + 2px);
     border: 1px solid #fff;
     border-radius: 50%;
-    background: #fff;
-    color: #085078;
+    padding: 1px;
+    background: transparent;
+    color: #fff;
     font-family: monospace;
+    font-weight: normal;
     font-size: 1vw;
     line-height: 1;
     text-align: center;
@@ -268,12 +267,14 @@ menumultiswitch symbol.shuffle span {
         font-size: 2vw;
     }
     menumultiswitch symbol emoji {
-        font-size: 3vw;
-        height: 3vw;
+        width: calc(2vw + 4px + 2px);
+        height: calc(2vw + 4px + 2px);
+        font-size: calc(2vw + 4px + 2px);
     }
-    menumultiswitch symbol.shuffle span {
-        width: 2vw;
-        height: 2vw;
+    menumultiswitch symbol span {
+        width: calc(2vw + 4px + 2px);
+        height: calc(2vw + 4px + 2px);
+        padding: 2px;
         font-size: 2vw;
     }
 }
