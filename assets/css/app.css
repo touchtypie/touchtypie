@@ -501,12 +501,13 @@ menuambienceswitch choice.active {
         font-size: 2vw;
     }
     menuambienceswitch choice {
+        margin-right: 2vw;
+        margin-bottom: 2vw;
         width: calc( 2vw + 4px + 2px );
         height: calc( 2vw + 4px + 2px );
         border-radius: 2vw;
         padding: 2px;
         font-size: 2vw;
-        margin-bottom: 1vw;
     }
     menuambienceswitch choice.active {
         box-shadow: 0 0 0.6vw 0.2vw #fff;
