@@ -715,24 +715,28 @@ var Bubble = function(default_value) {
             })();
         }
         virtue.result.shot_num_new = key ? 1 : 0;
-        for (var i = 0; i < bubble.value.length && i < truth.value.length; i++) {
-            if (bubble.value[i] !== truth.value[i]) {
-                // Invalid
-                virtue.result.miss_indices.push(i);
-                if (
-                    (environment.perfection === true) ||
-                    (environment.perfection === false && i === bubble.value.length - 1 && bubble.value.length > value_length_prev)
-                   ) {
-                    virtue.result.miss_num_new = 1;
-                }
+        if (environment.perfection === true) {
+            if (bubble.value[bubble.value.length - 1] === truth.value[bubble.value.length - 1]) {
+                virtue.result.hit_indices.push(bubble.value.length - 1);
+                virtue.result.hit_num_new = 1;
             }else {
-                // Valid
-                virtue.result.hit_indices.push(i);
-                if (
-                    (environment.perfection === true) ||
-                    (environment.perfection === false && i === bubble.value.length - 1 && bubble.value.length > value_length_prev)
-                   ) {
-                    virtue.result.hit_num_new = 1;
+                virtue.result.miss_indices.push(bubble.value.length - 1);
+                virtue.result.miss_num_new = 1;
+            }
+        }else {
+            for (var i = 0; i < bubble.value.length && i < truth.value.length; i++) {
+                if (bubble.value[i] !== truth.value[i]) {
+                    // Invalid
+                    virtue.result.miss_indices.push(i);
+                    if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                        virtue.result.miss_num_new = 1;
+                    }
+                }else {
+                    // Valid
+                    virtue.result.hit_indices.push(i);
+                    if (i === bubble.value.length - 1 && bubble.value.length > value_length_prev) {
+                        virtue.result.hit_num_new = 1;
+                    }
                 }
             }
         }
