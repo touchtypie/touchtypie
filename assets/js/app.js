@@ -3886,9 +3886,17 @@ var EnvironmentController = function() {
                     virtues: c.props._training.student.virtues
                 };
                 var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 4));
+
+                var now = new Date();
+                var nowEpochMs = now.valueOf();
+                var nowEpoch = Math.round(nowEpochMs / 1000);
+                var nowIso = now.toISOString();
+                var nowIsoShort = nowIso.substr(0, 10);
+                var file = nowIsoShort + '-' + nowEpoch + '-virtues.json'; // E.g. '2021-01-01-1609430400-virtues.json
+
                 var downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "virtues.json");
+                downloadAnchorNode.setAttribute("download", file);
                 document.body.appendChild(downloadAnchorNode); // required for firefox
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
