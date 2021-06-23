@@ -634,43 +634,42 @@ var Bubble = function(default_value) {
         return [startIndex, endIndex];
     }
 
-    // Returns a HTML string with highlighted error(s) and cursor positions, based on given value validated against giuven array of miss_indices
-    var getFeedbackHtmlValue = function(value, truthValue, environment) {
-        var characters = truthValue.split('');
+    // Returns a HTML string with cursor and highlighted error(s), based on a given value validated against a given truth value
+    var getFeedbackHtmlValue = function(bubble, truth, environment) {
+        // Always add a 1px placeholder at the beginning
+        var html = '<character class="line-feed-placeholder"></character>';
 
-        var _prependHtml, _classHtml, invalidFound = false;
-        for (var i = 0; i < characters.length; i++) {
+        var isLineFeed, _prependHtml, _classHtml, invalidFound = false;
+        for (var i = 0; i < truth.value.length; i++) {
+            isLineFeed = /\n/.test(truth.value[i]) ? true : false;
+
             _prependHtml = '';
             _classHtml = '';
-            if (i == 0) {
-                _prependHtml = '<character class="line-feed-placeholder"></character>';
-            }
-            if (/\n/.test(characters[i])) {
+            if (isLineFeed) {
                 _prependHtml = '<br />';
                 _classHtml = 'line-feed ';
-                characters[i] = '';
             }
             if (environment.perfection === true) {
-                if (!invalidFound && i === value.length) {
+                if (!invalidFound && i === bubble.value.length) {
                     _classHtml += 'cursor';
-                }else if (i <= value.length - 1 && value[i] !== truthValue[i]) {
+                }else if (i <= bubble.value.length - 1 && bubble.value[i] !== truth.value[i]) {
                     _classHtml += 'invalid cursor';
                     invalidFound = true;
-                }else if (i < value.length) {
+                }else if (i < bubble.value.length) {
                     _classHtml += 'valid';
                 }
             }else {
-                if (i === value.length) {
+                if (i === bubble.value.length) {
                     _classHtml += 'cursor';
-                }else if (i <= value.length - 1 && value[i] !== truthValue[i]) {
+                }else if (i <= bubble.value.length - 1 && bubble.value[i] !== truth.value[i]) {
                     _classHtml += 'invalid';
-                }else if (i <= value.length) {
+                }else if (i <= bubble.value.length) {
                     _classHtml += 'valid';
                 }
             }
-            characters[i] = _prependHtml + '<character class="' + _classHtml + '">' + Helpers.htmlEntities(characters[i]) + '</character>';
+            html += _prependHtml + '<character class="' + _classHtml + '">' + ( isLineFeed === true ? '' :  Helpers.htmlEntities(truth.value[i]) ) + '</character>';
         }
-        return characters.join('');
+        return html;
     }
 
     // Populates this bubble's BehaviorVirtue object, when this bubble.value is measured against truth.value
@@ -774,8 +773,8 @@ var Bubble = function(default_value) {
             endIndex = truth.value.length - 1;
         }
         virtue.result.value_zonal = getFeedbackHtmlValue(
-            bubble.value.length == 0 ? bubble.value : bubble.value.substring(startIndex, endIndex + 1 < bubble.value.length ? endIndex + 1: bubble.value.length ),
-            truth.value.substring(startIndex, endIndex + 1),
+            bubble,
+            truth,
             environment
         );
         virtue.result.value_length = bubble.value.length;
