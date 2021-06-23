@@ -363,7 +363,7 @@ var Bubble = function(default_value) {
     var disabled = false;
     var value = default_value;
     var charactersCounter = 0;
-    var maxLines = 10;   // 10 lines by default
+    var maxLines = 0;   // No limit
     var lineWidth = 0;
     var characterWidth = 0;
 
@@ -763,7 +763,7 @@ var Bubble = function(default_value) {
             virtue.result.value = truth.value;
         }
         var startIndex, endIndex;
-        if (truth.value.length > 10000 && speech.maxLines > 0 && speech.lineWidth > 0 && speech.characterWidth) {
+        if (speech.maxLines > 0 && speech.lineWidth > 0 && speech.characterWidth) {
             // Truncated speech
             const peekIndices = getPeekIndices(bubble, truth, speech.maxLines, speech.lineWidth, speech.characterWidth);
             startIndex = peekIndices[0];
@@ -2130,7 +2130,7 @@ var HomeController = function () {
                     }
                 }
             },
-            // Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
+            // Deprecated: Sets the trainer speech line and character widths. These will be useed to determine the presentation of speech.
             setSpeechWidths: function(c) {
                 if (State.debug) {
                     console.log('[setSpeechWidths]');
@@ -2168,8 +2168,8 @@ var HomeController = function () {
                     // Initialize training the training with an trainer intro speech
                     c.props._training.start();
 
-                    // Set the speech widths based on the intro speech
-                    c.methods.setSpeechWidths(c);
+                    // Deprecated: Set the speech widths based on the intro speech
+                    // c.methods.setSpeechWidths(c);
 
                     // Scroll to Speech cursor
                     c.methods.setSpeechScrollPosition(c);
@@ -2183,8 +2183,8 @@ var HomeController = function () {
                             console.log('[resize]');
                         }
 
-                        // Set the speech widths based on the intro speech
-                        c.methods.setSpeechWidths(c);
+                        // Deprecated: Set the speech widths based on the intro speech
+                        // c.methods.setSpeechWidths(c);
 
                         // Scroll to Speech cursor
                         c.methods.setSpeechScrollPosition(c);
