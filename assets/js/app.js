@@ -3742,7 +3742,7 @@ var EnvironmentController = function() {
             ambience: _training.trainer.memory.environment.ambience,
             ambiences: {
                 // CSS styles
-                sky: 'linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%)',
+                sky: 'linear-gradient(45deg, rgb(0, 186, 272) 10%, rgb(0, 186, 272) 80%, rgb(0, 186, 272) 100%)',
                 sea: 'linear-gradient(45deg, rgb(46, 99, 157) 10%, rgb(0, 46, 106) 80%, rgb(28, 124, 153) 100%)',
                 ocean: 'linear-gradient(45deg, rgb(0, 73, 108) 10%, rgb(0, 22, 51) 80%, rgb(1, 47, 119) 100%)',
                 dawn: 'linear-gradient(45deg, rgb(49, 19, 8) 10%, rgb(0, 0, 0) 80%, rgb(91, 69, 52) 100%)',
