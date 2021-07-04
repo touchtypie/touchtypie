@@ -91,7 +91,7 @@ See [this answer](#q-how-to-practice-on-my-own-texts).
 
 Ensure each collection you want to practice is available as a URL.
 
-In `touchtypie`, go to `Environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each book you want to practice.
+In `touchtypie`, go to `Environment`, and click `+` beside `COLLECTIONS`, paste a collection URL and hit enter. Do this for each collection you want to practice.
 
 To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
 
@@ -99,7 +99,7 @@ To save your practice environment, see [this answer](#q-how-to-save-the-practice
 
 Ensure each collection you want to practice is available as a URL.
 
-In `touchtypie`, go to `Environment`, and click `+` beside `LIBRARIES`, paste a library URL and hit enter. Do this for each book you want to practice.
+In `touchtypie`, go to `Environment`, and click `+` beside `LIBRARIES`, paste a library URL and hit enter. Do this for each library you want to practice.
 
 To save your practice environment, see [this answer](#q-how-to-save-the-practice-session).
 
