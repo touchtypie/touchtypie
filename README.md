@@ -172,15 +172,15 @@ As its name implies, a favorite is a touchtypie URL that is copied to your clipb
 
 ### Q: What is a book?
 
-A book is simply a URL. The content of the book is the content at the URL.
+A book is a URL. Its content is the content at that URL.
 
 ### Q: What is a collection?
 
-A collection is a list of book URLs.
+A collection is a URL. Its content is a list of book URLs.
 
 ### Q: What is a library?
 
-A library is a list of collection URLs.
+A library is a URL. Its content is a list of collection URLs.
 
 ### Q: Who is the Trainer?
 
