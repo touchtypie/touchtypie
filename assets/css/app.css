@@ -640,7 +640,7 @@ truth {
 
 speech {
     display: block;
-    margin: calc(2vw * 2 / 3);
+    margin: 1vw;
 }
 speech speechwrapper {
     position: relative;
@@ -709,7 +709,7 @@ speech.perfection speechwrapper {
 }
 @media (max-aspect-ratio: 13/10) {
     speech {
-        margin: calc(4vw * 2 / 3);
+        margin: 2vw;
     }
     speech speechwrapper {
         width: calc(100vw * 5 / 6);
@@ -734,7 +734,8 @@ speech.perfection speechwrapper {
 
 response {
     display: block;
-    margin-top: 2vw;
+    margin: 2vw;
+    margin-bottom: 0;
 }
 response textareawrapper {
     display: block;
@@ -791,7 +792,8 @@ response.meditation textareawrapper {
 }
 @media (max-aspect-ratio: 13/10) {
     response {
-        margin-top: 4vw;
+        margin: 4vw;
+        margin-bottom: 0;
     }
     response textareawrapper {
         width: calc(100vw * 5 / 6);
