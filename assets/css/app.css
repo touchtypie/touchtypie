@@ -92,11 +92,6 @@ header.meditation heading {
     }
 }
 
-main {
-    display: block;
-    position: relative;
-}
-
 menu {
     position: absolute;
     z-index: 1000;
@@ -131,6 +126,468 @@ menu menubutton icon {
         width: 6vw;
         height: 6vw;
         font-size: 6vw;
+    }
+}
+
+main {
+    display: block;
+    position: relative;
+}
+
+truth {
+    display: none;
+}
+
+speech {
+    display: block;
+    margin: 1vw;
+}
+speech speechwrapper {
+    position: relative;
+    display: block;
+    margin: 0 auto;
+    width: calc(100vw * 2 / 3);
+    /* 5 Trainer Speech lines */
+    height: calc((1.5vw + 2px) * 5 + 1px + 1px);
+    border: 0px solid transparent;
+    border-radius: 1.75vw;
+    padding: 0 calc(2vw * 2 / 3);
+    cursor: text;
+    overflow-y: scroll;
+}
+speech value {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+}
+speech value character {
+    display: inline-block;
+    vertical-align: top;
+    border: 1px solid transparent;
+    height: calc(1.5vw + 2px);
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.5vw;
+    line-height: 1;
+}
+speech value character.line-feed-placeholder {
+    border: 1px solid transparent;
+}
+speech value character.line-feed {
+    border: 1px solid transparent;
+}
+speech value character.cursor {
+    display: inline-block;
+    border: 1px solid #fff;
+    animation: blink 0.77s linear infinite;
+}
+@keyframes blink {
+    /* 0% {
+        border-color: rgba( 255, 255, 255, 0);
+    } */
+    50% {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        border-color: rgba(255, 255, 255, 1);
+    }
+  }
+speech value character.invalid {
+    border: 1px solid #ff0000;
+}
+speech value character.valid {
+    border: 1px solid transparent;
+}
+speech.meditation speechwrapper {
+    /* 10 Trainer Speech lines */
+    height: calc((1.5vw + 2px) * 10 + 1px + 1px);
+}
+speech.perfection speechwrapper {
+    /* 10 Trainer Speech lines */
+    height: calc((1.5vw + 2px) * 10 + 1px + 1px);
+}
+@media (max-aspect-ratio: 13/10) {
+    speech {
+        margin: 2vw;
+    }
+    speech speechwrapper {
+        width: calc(100vw * 5 / 6);
+        /* 5 Trainer Speech lines */
+        height: calc((3vw + 2px) * 5 + 1px + 1px);
+        padding: 0 calc(4vw * 2 / 3);
+    }
+    speech value character {
+        height: calc(3vw + 2px);
+        font-size: 3vw;
+        line-height: 1;
+    }
+    speech.meditation speechwrapper {
+        /* 10 Trainer Speech lines */
+        height: calc((3vw + 2px) * 10 + 1px + 1px);
+    }
+    speech.perfection speechwrapper {
+        /* 10 Trainer Speech lines */
+        height: calc((3vw + 2px) * 10 + 1px + 1px);
+    }
+}
+
+response {
+    display: block;
+    margin: 2vw;
+    margin-bottom: 0;
+}
+response textareawrapper {
+    display: block;
+    margin: 0 auto;
+    width: calc(100vw * 2 / 3);
+    /* 5 Student Response lines */
+    height: calc(1.5vw * 1.15 * 5 + 2vw * 2 / 3 + 2vw * 2 / 3 + 1px + 1px);
+    padding: calc(2vw * 2 / 3);
+    border: 1px solid #fff;
+    border-radius: 1.75vw;
+    cursor: text;
+}
+response textarea {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    background: none;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1.5vw;
+    line-height: 1.15;
+    text-align: left;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    resize: none;
+    /* border: none; */
+    /* letter-spacing: 0.25vw; */
+}
+response textarea::placeholder {
+    color: rgba(255, 255, 255, 1.0);
+}
+response textarea::-webkit-input-placeholder {
+    /* Safari placeholder colors are not dimmed, unlike firefox's. So we dim it here. */
+    color: rgba(255, 255, 255, 0.5);
+}
+response textarea:disabled {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+response textarea:disabled::placeholder {
+    color: rgba(255, 255, 255, 1.0);
+}
+response.meditation {
+    margin: 0;
+}
+response.meditation textareawrapper {
+    width: 0;
+    height: 0;
+    border: 0;
+    padding: 0;
+}
+@media (max-aspect-ratio: 13/10) {
+    response {
+        margin: 4vw;
+        margin-bottom: 0;
+    }
+    response textareawrapper {
+        width: calc(100vw * 5 / 6);
+        /* 5 Student Response lines */
+        height: calc(3vw * 1.15 * 5 + 4vw * 2 / 3 + 4vw * 2 / 3 + 1px + 1px);
+        padding: calc(4vw * 2 / 3);
+    }
+    response textarea {
+        font-size: 3vw;
+    }
+}
+
+statistics {
+    display: block;
+    text-align: center;
+}
+statistics progressbar {
+    display: block;
+}
+statistics progressbar characterscounter {
+    border-radius: 1vw;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+
+statistics unitprogress {
+    display: inline-block;
+    vertical-align: top;
+    width: 20vw;
+}
+statistics unitprogress heading {
+    margin: 2vw;
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+statistics unitprogress characterscounter,
+statistics unitprogress characterspercentagecounter,
+statistics unitprogress hitcounter,
+statistics unitprogress hitpercentagecounter,
+statistics unitprogress misscounter,
+statistics unitprogress misspercentagecounter {
+    display: block;
+    border-radius: 1vw;
+    /* padding: 1.5vw; */
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+statistics unitprogress label,
+statistics unitprogress value,
+statistics unitprogress total,
+statistics unitprogress span {
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+}
+
+statistics unitoverall {
+    display: inline-block;
+    vertical-align: top;
+    width: 20vw;
+}
+statistics unitoverall heading {
+    margin: 2vw;
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+statistics unitoverall datetimestart,
+statistics unitoverall datetimestopwatch,
+statistics unitoverall ratehitpermincounter,
+statistics unitoverall shotcounter,
+statistics unitoverall hitcounter,
+statistics unitoverall hitpercentagecounter,
+statistics unitoverall misscounter,
+statistics unitoverall misspercentagecounter,
+statistics unitoverall amendcounter,
+statistics unitoverall amendpercentagecounter,
+statistics unitoverall othercounter,
+statistics unitoverall otherpercentagecounter {
+    display: block;
+    border-radius: 1vw;
+    /* padding: 1.5vw; */
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+statistics unitoverall label,
+statistics unitoverall value,
+statistics unitoverall total,
+statistics unitoverall span {
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+}
+
+statistics globaloverall {
+    display: inline-block;
+    vertical-align: top;
+    width: 20vw;
+}
+statistics globaloverall heading {
+    margin: 2vw;
+    display: block;
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+statistics globaloverall datetimestopwatch,
+statistics globaloverall shotcounter,
+statistics globaloverall ratehitpermincounter,
+statistics globaloverall hitcounter,
+statistics globaloverall hitpercentagecounter,
+statistics globaloverall misscounter,
+statistics globaloverall misspercentagecounter,
+statistics globaloverall amendcounter,
+statistics globaloverall amendpercentagecounter,
+statistics globaloverall othercounter,
+statistics globaloverall otherpercentagecounter,
+statistics globaloverall booklibrarycounter,
+statistics globaloverall bookcollectioncounter,
+statistics globaloverall bookcounter {
+    display: block;
+    border-radius: 1vw;
+    /* padding: 1.5vw; */
+    color: #fff;
+    font-family: monospace;
+    font-size: 1vw;
+    text-align: center;
+}
+statistics globaloverall label,
+statistics globaloverall value,
+statistics globaloverall total,
+statistics globaloverall span {
+    color: #fff;
+    font-family: monospace;
+    font-weight: normal;
+    font-size: 1vw;
+}
+@media (max-aspect-ratio: 13/10) {
+    statistics unitprogress {
+        display: block;
+        width: calc(100vw * 5 / 6);
+        margin: 0 auto;
+    }
+    statistics unitprogress heading {
+        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
+        font-size: 3vw;
+    }
+    statistics unitprogress characterscounter,
+    statistics unitprogress characterspercentagecounter,
+    statistics unitprogress hitcounter,
+    statistics unitprogress hitpercentagecounter,
+    statistics unitprogress misscounter,
+    statistics unitprogress misspercentagecounter {
+        display: block;
+    }
+    statistics unitprogress label,
+    statistics unitprogress value,
+    statistics unitprogress total,
+    statistics unitprogress span {
+        font-size: 3vw;
+    }
+
+    statistics unitoverall {
+        display: block;
+        width: calc(100vw * 5 / 6);
+        margin: 0 auto;
+    }
+    statistics unitoverall heading {
+        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
+        font-size: 3vw;
+    }
+    statistics unitoverall datetimestart,
+    statistics unitoverall datetimestopwatch,
+    statistics unitoverall ratehitpermincounter,
+    statistics unitoverall shotcounter,
+    statistics unitoverall hitcounter,
+    statistics unitoverall hitpercentagecounter,
+    statistics unitoverall misscounter,
+    statistics unitoverall misspercentagecounter,
+    statistics unitoverall amendcounter,
+    statistics unitoverall amendpercentagecounter,
+    statistics unitoverall othercounter,
+    statistics unitoverall otherpercentagecounter {
+        display: block;
+    }
+    statistics unitoverall label,
+    statistics unitoverall value,
+    statistics unitoverall total,
+    statistics unitoverall span {
+        font-size: 3vw;
+    }
+
+
+    statistics globaloverall {
+        display: block;
+        width: calc(100vw * 5 / 6);
+        margin: 0 auto;
+    }
+    statistics globaloverall heading {
+        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
+        font-size: 3vw;
+    }
+    statistics globaloverall datetimestopwatch,
+    statistics globaloverall shotcounter,
+    statistics globaloverall ratehitpermincounter,
+    statistics globaloverall hitcounter,
+    statistics globaloverall hitpercentagecounter,
+    statistics globaloverall misscounter,
+    statistics globaloverall misspercentagecounter,
+    statistics globaloverall amendcounter,
+    statistics globaloverall amendpercentagecounter,
+    statistics globaloverall othercounter,
+    statistics globaloverall otherpercentagecounter,
+    statistics globaloverall booklibrarycounter,
+    statistics globaloverall bookcollectioncounter,
+    statistics globaloverall bookcounter {
+        display: block;
+    }
+    statistics globaloverall label,
+    statistics globaloverall value,
+    statistics globaloverall total,
+    statistics globaloverall span {
+        font-size: 3vw;
+    }
+}
+
+footer {
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+}
+footer icons {
+    display: block;
+    text-align: center;
+}
+footer icons > a {
+    display: inline-block;
+    border: 1px solid #fff;
+    border-radius: 0.5vw;
+    padding: 0.1vw;
+    font-size: 0;
+}
+footer icons > a > svg {
+    width: 3vw;
+    fill: #fff;
+}
+footer.meditation icons {
+    display: none;
+}
+@media (max-aspect-ratio: 13/10) {
+    footer {
+        margin-top: 6vw;
+        margin-bottom: 4vw;
+    }
+    footer icons > a {
+        border-radius: 1vw;
+        padding: 0.2vw;
+    }
+    footer icons > a > svg {
+        width: 6vw;
+        fill: #fff;
+    }
+}
+
+environment {
+    display: none;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+environment main {
+    display: block;
+    padding: 0 calc(100vw * 1 / 6);
+}
+@media (max-aspect-ratio: 13/10) {
+    environment header heading {
+        font-size: 4vw;
     }
 }
 
@@ -630,463 +1087,5 @@ menufavorite copybutton:hover {
         height: calc(2vw + 8px + 2px);
         padding: 4px 2vw;
         font-size: 2vw;
-    }
-}
-
-
-truth {
-    display: none;
-}
-
-speech {
-    display: block;
-    margin: 1vw;
-}
-speech speechwrapper {
-    position: relative;
-    display: block;
-    margin: 0 auto;
-    width: calc(100vw * 2 / 3);
-    /* 5 Trainer Speech lines */
-    height: calc((1.5vw + 2px) * 5 + 1px + 1px);
-    border: 0px solid transparent;
-    border-radius: 1.75vw;
-    padding: 0 calc(2vw * 2 / 3);
-    cursor: text;
-    overflow-y: scroll;
-}
-speech value {
-    display: block;
-    width: 100%;
-    height: 100%;
-    text-align: left;
-}
-speech value character {
-    display: inline-block;
-    vertical-align: top;
-    border: 1px solid transparent;
-    height: calc(1.5vw + 2px);
-    color: #fff;
-    font-family: monospace;
-    font-size: 1.5vw;
-    line-height: 1;
-}
-speech value character.line-feed-placeholder {
-    border: 1px solid transparent;
-}
-speech value character.line-feed {
-    border: 1px solid transparent;
-}
-speech value character.cursor {
-    display: inline-block;
-    border: 1px solid #fff;
-    animation: blink 0.77s linear infinite;
-}
-@keyframes blink {
-    /* 0% {
-        border-color: rgba( 255, 255, 255, 0);
-    } */
-    50% {
-        border-color: rgba(255, 255, 255, 0.5);
-    }
-    100% {
-        border-color: rgba(255, 255, 255, 1);
-    }
-  }
-speech value character.invalid {
-    border: 1px solid #ff0000;
-}
-speech value character.valid {
-    border: 1px solid transparent;
-}
-speech.meditation speechwrapper {
-    /* 10 Trainer Speech lines */
-    height: calc((1.5vw + 2px) * 10 + 1px + 1px);
-}
-speech.perfection speechwrapper {
-    /* 10 Trainer Speech lines */
-    height: calc((1.5vw + 2px) * 10 + 1px + 1px);
-}
-@media (max-aspect-ratio: 13/10) {
-    speech {
-        margin: 2vw;
-    }
-    speech speechwrapper {
-        width: calc(100vw * 5 / 6);
-        /* 5 Trainer Speech lines */
-        height: calc((3vw + 2px) * 5 + 1px + 1px);
-        padding: 0 calc(4vw * 2 / 3);
-    }
-    speech value character {
-        height: calc(3vw + 2px);
-        font-size: 3vw;
-        line-height: 1;
-    }
-    speech.meditation speechwrapper {
-        /* 10 Trainer Speech lines */
-        height: calc((3vw + 2px) * 10 + 1px + 1px);
-    }
-    speech.perfection speechwrapper {
-        /* 10 Trainer Speech lines */
-        height: calc((3vw + 2px) * 10 + 1px + 1px);
-    }
-}
-
-response {
-    display: block;
-    margin: 2vw;
-    margin-bottom: 0;
-}
-response textareawrapper {
-    display: block;
-    margin: 0 auto;
-    width: calc(100vw * 2 / 3);
-    /* 5 Student Response lines */
-    height: calc(1.5vw * 1.15 * 5 + 2vw * 2 / 3 + 2vw * 2 / 3 + 1px + 1px);
-    padding: calc(2vw * 2 / 3);
-    border: 1px solid #fff;
-    border-radius: 1.75vw;
-    cursor: text;
-}
-response textarea {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    padding: 0;
-    background: none;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1.5vw;
-    line-height: 1.15;
-    text-align: left;
-    outline: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    resize: none;
-    /* border: none; */
-    /* letter-spacing: 0.25vw; */
-}
-response textarea::placeholder {
-    color: rgba(255, 255, 255, 1.0);
-}
-response textarea::-webkit-input-placeholder {
-    /* Safari placeholder colors are not dimmed, unlike firefox's. So we dim it here. */
-    color: rgba(255, 255, 255, 0.5);
-}
-response textarea:disabled {
-    border-color: rgba(255, 255, 255, 0.5);
-}
-response textarea:disabled::placeholder {
-    color: rgba(255, 255, 255, 1.0);
-}
-response.meditation {
-    margin: 0;
-}
-response.meditation textareawrapper {
-    width: 0;
-    height: 0;
-    border: 0;
-    padding: 0;
-}
-@media (max-aspect-ratio: 13/10) {
-    response {
-        margin: 4vw;
-        margin-bottom: 0;
-    }
-    response textareawrapper {
-        width: calc(100vw * 5 / 6);
-        /* 5 Student Response lines */
-        height: calc(3vw * 1.15 * 5 + 4vw * 2 / 3 + 4vw * 2 / 3 + 1px + 1px);
-        padding: calc(4vw * 2 / 3);
-    }
-    response textarea {
-        font-size: 3vw;
-    }
-}
-
-statistics {
-    display: block;
-    text-align: center;
-}
-statistics progressbar {
-    display: block;
-}
-statistics progressbar characterscounter {
-    border-radius: 1vw;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-
-statistics unitprogress {
-    display: inline-block;
-    vertical-align: top;
-    width: 20vw;
-}
-statistics unitprogress heading {
-    margin: 2vw;
-    display: block;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-statistics unitprogress characterscounter,
-statistics unitprogress characterspercentagecounter,
-statistics unitprogress hitcounter,
-statistics unitprogress hitpercentagecounter,
-statistics unitprogress misscounter,
-statistics unitprogress misspercentagecounter {
-    display: block;
-    border-radius: 1vw;
-    /* padding: 1.5vw; */
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-statistics unitprogress label,
-statistics unitprogress value,
-statistics unitprogress total,
-statistics unitprogress span {
-    color: #fff;
-    font-family: monospace;
-    font-weight: normal;
-    font-size: 1vw;
-}
-
-statistics unitoverall {
-    display: inline-block;
-    vertical-align: top;
-    width: 20vw;
-}
-statistics unitoverall heading {
-    margin: 2vw;
-    display: block;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-statistics unitoverall datetimestart,
-statistics unitoverall datetimestopwatch,
-statistics unitoverall ratehitpermincounter,
-statistics unitoverall shotcounter,
-statistics unitoverall hitcounter,
-statistics unitoverall hitpercentagecounter,
-statistics unitoverall misscounter,
-statistics unitoverall misspercentagecounter,
-statistics unitoverall amendcounter,
-statistics unitoverall amendpercentagecounter,
-statistics unitoverall othercounter,
-statistics unitoverall otherpercentagecounter {
-    display: block;
-    border-radius: 1vw;
-    /* padding: 1.5vw; */
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-statistics unitoverall label,
-statistics unitoverall value,
-statistics unitoverall total,
-statistics unitoverall span {
-    color: #fff;
-    font-family: monospace;
-    font-weight: normal;
-    font-size: 1vw;
-}
-
-statistics globaloverall {
-    display: inline-block;
-    vertical-align: top;
-    width: 20vw;
-}
-statistics globaloverall heading {
-    margin: 2vw;
-    display: block;
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-statistics globaloverall datetimestopwatch,
-statistics globaloverall shotcounter,
-statistics globaloverall ratehitpermincounter,
-statistics globaloverall hitcounter,
-statistics globaloverall hitpercentagecounter,
-statistics globaloverall misscounter,
-statistics globaloverall misspercentagecounter,
-statistics globaloverall amendcounter,
-statistics globaloverall amendpercentagecounter,
-statistics globaloverall othercounter,
-statistics globaloverall otherpercentagecounter,
-statistics globaloverall booklibrarycounter,
-statistics globaloverall bookcollectioncounter,
-statistics globaloverall bookcounter {
-    display: block;
-    border-radius: 1vw;
-    /* padding: 1.5vw; */
-    color: #fff;
-    font-family: monospace;
-    font-size: 1vw;
-    text-align: center;
-}
-statistics globaloverall label,
-statistics globaloverall value,
-statistics globaloverall total,
-statistics globaloverall span {
-    color: #fff;
-    font-family: monospace;
-    font-weight: normal;
-    font-size: 1vw;
-}
-@media (max-aspect-ratio: 13/10) {
-    statistics unitprogress {
-        display: block;
-        width: calc(100vw * 5 / 6);
-        margin: 0 auto;
-    }
-    statistics unitprogress heading {
-        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
-        font-size: 3vw;
-    }
-    statistics unitprogress characterscounter,
-    statistics unitprogress characterspercentagecounter,
-    statistics unitprogress hitcounter,
-    statistics unitprogress hitpercentagecounter,
-    statistics unitprogress misscounter,
-    statistics unitprogress misspercentagecounter {
-        display: block;
-    }
-    statistics unitprogress label,
-    statistics unitprogress value,
-    statistics unitprogress total,
-    statistics unitprogress span {
-        font-size: 3vw;
-    }
-
-    statistics unitoverall {
-        display: block;
-        width: calc(100vw * 5 / 6);
-        margin: 0 auto;
-    }
-    statistics unitoverall heading {
-        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
-        font-size: 3vw;
-    }
-    statistics unitoverall datetimestart,
-    statistics unitoverall datetimestopwatch,
-    statistics unitoverall ratehitpermincounter,
-    statistics unitoverall shotcounter,
-    statistics unitoverall hitcounter,
-    statistics unitoverall hitpercentagecounter,
-    statistics unitoverall misscounter,
-    statistics unitoverall misspercentagecounter,
-    statistics unitoverall amendcounter,
-    statistics unitoverall amendpercentagecounter,
-    statistics unitoverall othercounter,
-    statistics unitoverall otherpercentagecounter {
-        display: block;
-    }
-    statistics unitoverall label,
-    statistics unitoverall value,
-    statistics unitoverall total,
-    statistics unitoverall span {
-        font-size: 3vw;
-    }
-
-
-    statistics globaloverall {
-        display: block;
-        width: calc(100vw * 5 / 6);
-        margin: 0 auto;
-    }
-    statistics globaloverall heading {
-        margin: 6vw 6vw calc(6vw * 2 / 3) 6vw;
-        font-size: 3vw;
-    }
-    statistics globaloverall datetimestopwatch,
-    statistics globaloverall shotcounter,
-    statistics globaloverall ratehitpermincounter,
-    statistics globaloverall hitcounter,
-    statistics globaloverall hitpercentagecounter,
-    statistics globaloverall misscounter,
-    statistics globaloverall misspercentagecounter,
-    statistics globaloverall amendcounter,
-    statistics globaloverall amendpercentagecounter,
-    statistics globaloverall othercounter,
-    statistics globaloverall otherpercentagecounter,
-    statistics globaloverall booklibrarycounter,
-    statistics globaloverall bookcollectioncounter,
-    statistics globaloverall bookcounter {
-        display: block;
-    }
-    statistics globaloverall label,
-    statistics globaloverall value,
-    statistics globaloverall total,
-    statistics globaloverall span {
-        font-size: 3vw;
-    }
-}
-
-footer {
-    margin-top: 2vw;
-    margin-bottom: 2vw;
-}
-footer icons {
-    display: block;
-    text-align: center;
-}
-footer icons > a {
-    display: inline-block;
-    border: 1px solid #fff;
-    border-radius: 0.5vw;
-    padding: 0.1vw;
-    font-size: 0;
-}
-footer icons > a > svg {
-    width: 3vw;
-    fill: #fff;
-}
-footer.meditation icons {
-    display: none;
-}
-@media (max-aspect-ratio: 13/10) {
-    footer {
-        margin-top: 6vw;
-        margin-bottom: 4vw;
-    }
-    footer icons > a {
-        border-radius: 1vw;
-        padding: 0.2vw;
-    }
-    footer icons > a > svg {
-        width: 6vw;
-        fill: #fff;
-    }
-}
-
-environment {
-    display: none;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-environment main {
-    display: block;
-    padding: 0 calc(100vw * 1 / 6);
-}
-@media (max-aspect-ratio: 13/10) {
-    environment header heading {
-        font-size: 4vw;
     }
 }
