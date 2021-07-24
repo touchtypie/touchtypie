@@ -2142,12 +2142,12 @@ var HomeController = function () {
             },
             setSpeechScrollPosition: function(c) {
                 // Scroll to the Speech cursor
-                var speechScrollableEle = c.rootElement.getElementsByTagName('speechwrapper')[0];
+                var scrollboxEle = c.rootElement.getElementsByTagName('scrollbox')[0];
                 var cursorEle = c.rootElement.getElementsByClassName('cursor')[0];
                 if (cursorEle) {
-                    speechScrollableEle.scrollTop = cursorEle.offsetTop;
+                    scrollboxEle.scrollTop = cursorEle.offsetTop;
                     if (State.debug) {
-                        console.log('speechScrollableEle.scrollTop: ' + cursorEle.clientTop);
+                        console.log('scrollboxEle.scrollTop: ' + scrollboxEle.scrollTop);
                         console.log('cursorEle.clientTop: ' + cursorEle.clientTop + ', cursorEle.offsetTop: ' + cursorEle.offsetTop + ', cursorEle.scrollTop: ' + cursorEle.scrollTop);
                     }
                 }
