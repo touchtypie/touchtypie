@@ -28,6 +28,22 @@ var Helpers = function () {
             document.body.removeChild(textarea);
             return result;
         },
+        getBrowserScrollbarWidth: function() {
+            // Gets the native browser's scrollbar width
+
+            // Create a mock scrollbox
+            var scrollDiv = document.createElement("div");
+            scrollDiv.setAttribute('style', 'width: 100px; height: 100px; overflow: scroll; position: absolute; z-index: -1000;');
+            document.body.appendChild(scrollDiv);
+
+            // Get the scrollbar width
+            var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+
+            // Remove the scrollbox
+            document.body.removeChild(scrollDiv);
+
+            return scrollbarWidth;
+        },
         getUrlParams: function() {
             // E.g. 'key=value' returns { key: 'value' }
             // E.g. 'key=value1&key=value' returns { key: [ 'value1', 'value2' ] }
@@ -2097,13 +2113,20 @@ var HomeController = function () {
         template: `
             <speech b-on="DOMContentLoaded,click:speechclick">
                 <speechwrapper>
-                    <value b-setter="._training.trainer.speech.value:_setter"></value>
+                    <box>
+                        <scrollbox b-on="wheel:speechscroll,scroll:speechscroll">
+                            <value b-setter="._training.trainer.speech.value:_setter"></value>
+                        </scrollbox>
+                        <scrollbar></scrollbar>
+                    </box>
                 </speechwrapper>
             </speech>
         `,
         props: {
             _training: _training,
-            resizeTimeoutId: -1
+            resizeTimeoutId: -1,
+            prettyScrollbarEnabled: false,
+            prettyScrollbarTimeoutId: -1
         },
         methods: {
             _setter: function(c, value) {
@@ -2156,11 +2179,71 @@ var HomeController = function () {
                         console.log('[setSpeechWidths] speechWidth: ' + speechWidth, ', speechCharacterWidth: ' + speechCharacterWidth  + ', chars / line: ' + speechWidth / speechCharacterWidth + ', max chars: ' + speechWidth / speechCharacterWidth * 5 );
                     }
                 }
+            },
+            hideNativeScrollbar: function(c) {
+                var scrollboxEle = c.rootElement.getElementsByTagName('scrollbox')[0];
+                scrollboxEle.style.width = 'calc(100% + ' + Helpers.getBrowserScrollbarWidth() + 'px )';
+            },
+            renderPrettyScrollbar: function(c) {
+                if (c.props.prettyScrollbarEnabled) {
+                    var scrollbarEle = c.rootElement.getElementsByTagName('scrollbar')[0];
+                    var scrollboxEle = c.rootElement.getElementsByTagName('scrollbox')[0];
+                    // var contentEle = c.rootElement.getElementsByTagName('value')[0];
+
+                    // Get heights
+                    const scrollboxHeight = scrollboxEle.offsetHeight;
+                    // const scrollboxHeight = scrollboxEle.getBoundingClientRect().height;
+                    const contentHeight = scrollboxEle.scrollHeight;
+                    // var contentHeight = contentEle.getBoundingClientRect().height;
+
+                    // Set scrollbar height. It's should have a min-height of '25px'
+                    const scrollbarDesiredHeight = contentHeight > scrollboxHeight ? (scrollboxHeight / contentHeight) * scrollboxHeight : 0;
+                    const scrollbarMinHeight = 25;
+                    const scrollbarHeight = scrollbarDesiredHeight < scrollbarMinHeight ? scrollbarMinHeight : scrollbarDesiredHeight;
+                    scrollbarEle.style.height = scrollbarHeight + 'px';
+
+                    // Get scrolltops
+                    const contentScrollTop = scrollboxEle.scrollTop;
+
+                    // Set scrollbar top position
+                    const scrollbarScrollTop = (contentScrollTop / (contentHeight - scrollboxHeight)) * (scrollboxHeight - scrollbarHeight);
+                    scrollbarEle.style.top = scrollbarScrollTop + 'px';
+
+                    // Show scrollbar and fade it out after x milliseconds
+                    const animationDuration = contentScrollTop > 0 ? 750 : 100;
+                    scrollbarEle.style.animation = 'none';
+                    scrollbarEle.offsetHeight; // trigger browser reflow
+                    scrollbarEle.style.animation = 'scrollbarfadeout ' + parseFloat((animationDuration / 1000).toFixed(2)) + 's forwards';
+                    clearTimeout(c.props.prettyScrollbarTimeoutId);
+                    c.props.prettyScrollbarTimeoutId = setTimeout(function() {
+                        if (State.debug) {
+                            console.log('[renderPrettyScrollbar] remove animation');
+                        }
+                        scrollbarEle.style.animation = '';
+                    }, animationDuration);
+
+                    if (State.debug) {
+                        console.log('[renderPrettyScrollbar]');
+                        console.log('[renderPrettyScrollbar] scrollboxHeight: ' + scrollboxHeight);
+                        console.log('[renderPrettyScrollbar] contentHeight: ' + contentHeight);
+                        console.log('[renderPrettyScrollbar] scrollbarDesiredHeight: ' + scrollbarDesiredHeight);
+                        console.log('[renderPrettyScrollbar] scrollbarMinHeight: ' + scrollbarMinHeight);
+                        console.log('[renderPrettyScrollbar] scrollbarHeight: ' + scrollbarHeight);
+                        console.log('[renderPrettyScrollbar] contentScrollTop: ' + contentScrollTop);
+                        console.log('[renderPrettyScrollbar] scrollbarScrollTop: ' + scrollbarScrollTop);
+                    }
+                }
             }
         },
         eventsListeners: {
             DOMContentLoaded: function(event, _this, binding) {
                 var c = this;
+
+                // Hide the scrollbar for non-Mac desktop browsers with non-zero-width native scrollbar
+                c.props.prettyScrollbarEnabled = navigator.platform.toUpperCase().indexOf('MAC') === -1 && Helpers.getBrowserScrollbarWidth() > 0;
+                if (c.props.prettyScrollbarEnabled) {
+                    c.methods.hideNativeScrollbar(c);
+                }
 
                 // Data binding - Component: speech
                 myApp.eventController.registerEvent('training-init', function() {
@@ -2188,6 +2271,9 @@ var HomeController = function () {
                         // Scroll to Speech cursor
                         c.methods.setSpeechScrollPosition(c);
 
+                        // Render pretty scrollbar
+                        c.methods.renderPrettyScrollbar(c);
+
                         // Validate student response
                         var virtue = c.props._training.student.response.virtue;
                         c.props._training.student.response.measureVirtue(c.props._training.trainer.truth, c.props._training.trainer.speech, c.props._training.trainer.memory.environment);
@@ -2204,7 +2290,13 @@ var HomeController = function () {
                 Components.response.methods.focus(Components.response);
 
                 event.stopPropagation();
-            }
+            },
+            speechscroll: function(event, _this, binding) {
+                var c = this;
+
+                // Render pretty scrollbar
+                c.methods.renderPrettyScrollbar(c);
+            },
         }
     });
 
@@ -2259,7 +2351,6 @@ var HomeController = function () {
                     c.rootElement.style.width = 0;
                     c.rootElement.style.height = 0;
                     c.rootElement.style.overflow = 'hidden';
-
                     // Create a new training session
                     var book = c.props._training.trainer.getCurrentBook();
                     if (book) {
