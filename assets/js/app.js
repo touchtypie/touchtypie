@@ -151,6 +151,44 @@ var Helpers = function () {
             // Replace leading '&' with '?'
             return url.replace(/^&/, '?');
         },
+        isDesktopBrowser: function() {
+            // This will return true on Android.
+            // This will return false for iOS. iOS does not support fullscreen.
+            return navigator.platform.toUpperCase().indexOf('LINUX') >= 0 || navigator.platform.toUpperCase().indexOf('MAC') >= 0 || navigator.platform.toUpperCase().indexOf('WIN') >= 0;
+        },
+        isFullScreen: function() {
+            return document.fullscreenElement || // This should work on most modern browsers
+                document.webkitIsFullScreen || document.mozFullscreen ||  // This should work on older browsers
+                document.msFullscreenElement || document.fullscreenElement ||
+                document.fullscreen || document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                window.innerHeight == screen.height; // This might work for the rest
+        },
+        enterFullScreen: function(targetEle) {
+            var ele = targetEle || document.documentElement;
+            if (ele.requestFullScreen) {
+                ele.requestFullscreen();
+            }else if (ele.webkitRequestFullScreen) {
+                ele.webkitRequestFullScreen();
+            }else if (ele.mozRequestFullScreen) {
+                ele.mozRequestFullScreen();
+            }else if(ele.msRequestFullscreen) {
+                ele.msRequestFullscreen();
+            }
+        },
+        exitFullScreen: function(targetEle) {
+            var ele = targetEle || document.documentElement;
+            if (ele.requestFullscreen) {
+                console.log('exit');
+                document.exitFullscreen();
+            }else if (ele.webkitRequestFullscreen) {
+                document.webkitCancelFullScreen();
+            }else if (ele.mozRequestFullScreen) {
+                document.mozCancelFullScreen();
+            }else if(ele.msRequestFullscreen){
+                document.msExitFullscreen();
+            }
+        }
     };
 }()
 
@@ -2060,9 +2098,7 @@ var HomeController = function () {
         parentElement: document.getElementsByTagName('home')[0],
         name: 'menu_home',
         template: `
-            <menu>
-                <menubutton b-on="click"><icon>{{ .label }}</icon></menubutton>
-            </menu>
+            <menu></menu>
         `,
         props: {
             label: '⚙️',
@@ -2070,6 +2106,61 @@ var HomeController = function () {
         eventsListeners: {
             click: function(event) {
                 myApp.sceneController.scene = 'environment';
+            }
+        }
+    });
+    Component({
+        parentElement: Components.menu_home.rootElement,
+        name: 'menu_home_environmentbutton',
+        template: `
+            <menubutton b-on="click"><icon>{{ .label }}</icon></menubutton>
+        `,
+        props: {
+            label: '⚙️',
+        },
+        eventsListeners: {
+            click: function(event) {
+                myApp.sceneController.scene = 'environment';
+            }
+        }
+    });
+    Component({
+        parentElement: Components.menu_home.rootElement,
+        name: 'menu_home_fullscreenbutton',
+        template: `
+            <menubutton b-on="DOMContentLoaded,click"><icon>{{ .label }}</icon></menubutton>
+        `,
+        props: {
+            label: '💻',
+            inFullScreen: false
+        },
+        eventsListeners: {
+            DOMContentLoaded: function(event, _this, binding) {
+                var c = this;
+
+                // Hide this button for non-desktop browsers. Android is the only exception, since fullscreen works nicely.
+                var isDesktopBrowser = Helpers.isDesktopBrowser();
+                if (!isDesktopBrowser) {
+                    c.rootElement.style.display = 'none';
+                }
+            },
+            click: function(event) {
+                var c = this;
+
+                if (Helpers.isFullScreen()) {
+                    if (State.debug) {
+                        console.log('[menu_home_fullscreenbutton] exiting full screen');
+                    }
+                    Helpers.exitFullScreen();
+                }else {
+                    if (State.debug) {
+                        console.log('[menu_home_fullscreenbutton] entering full screen');
+                    }
+                    Helpers.enterFullScreen();
+                }
+
+                // Focus on the student response
+                Components.response.methods.focus(Components.response);
             }
         }
     });

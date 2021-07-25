@@ -7,6 +7,7 @@
 
 html {
     display: block;
+    height: 100%; /* Make body take up full html document height */
 }
 
 body {
@@ -21,6 +22,7 @@ body {
     background: linear-gradient(45deg, rgb(0, 186, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
     background: linear-gradient(45deg, rgb(112, 201, 255) 10%, rgb(0, 158, 217) 80%, rgb(248, 255, 223) 100%);
     background-attachment:fixed;
+    height: 100%; /* Make body take up full html document height. Especially needed for desktop Safari in programmatic fullscreen mode */
 }
 
 div {
@@ -96,7 +98,7 @@ menu {
     position: absolute;
     z-index: 1000;
     display: block;
-    top: 2.5vw;
+    top: 0vw;
     left: 2.5vw;
     padding: 0;
     -webkit-touch-callout: none; /* iOS Safari */
@@ -108,11 +110,12 @@ menu {
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 menu menubutton {
-    display: inline-block;
+    display: block;
     cursor: pointer;
 }
 menu menubutton icon {
     display: block;
+    margin: 2.5vw 0;
     width: 3vw;
     height: 3vw;
     color: #fff;
@@ -123,6 +126,7 @@ menu menubutton icon {
 }
 @media (max-aspect-ratio: 13/10) {
     menu menubutton icon {
+        margin: 5vw 0;
         width: 6vw;
         height: 6vw;
         font-size: 6vw;
