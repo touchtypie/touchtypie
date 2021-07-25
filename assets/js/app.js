@@ -22,6 +22,7 @@ var Helpers = function () {
             document.body.appendChild(textarea);
 
             // Synchronous copy
+            textarea.focus();
             textarea.select();
             var result = document.execCommand('copy');
 
