@@ -694,15 +694,17 @@ var Bubble = function(default_value) {
         // Always add a 1px placeholder at the beginning
         var html = '<character class="line-feed-placeholder"></character>';
 
-        var isLineFeed, _prependHtml, _classHtml, invalidFound = false;
+        var isLineFeed, _prependHtml, _classHtml, invalidFound = false, _appendHtml;
         for (var i = 0; i < truth.value.length; i++) {
             isLineFeed = /\n/.test(truth.value[i]) ? true : false;
 
             _prependHtml = '';
             _classHtml = '';
+            _appendHtml = '';
             if (isLineFeed) {
-                _prependHtml = '<br />';
-                _classHtml = 'line-feed ';
+                // _prependHtml = '<br />';
+                // _classHtml = 'line-feed ';
+                _appendHtml = '<br />';
             }
             if (environment.perfection === true) {
                 if (!invalidFound && i === bubble.value.length) {
@@ -722,7 +724,7 @@ var Bubble = function(default_value) {
                     _classHtml += 'valid';
                 }
             }
-            html += _prependHtml + '<character class="' + _classHtml + '">' + ( isLineFeed === true ? '' :  Helpers.htmlEntities(truth.value[i]) ) + '</character>';
+            html += _prependHtml + '<character class="' + _classHtml + '">' + ( isLineFeed === true ? '↵' :  Helpers.htmlEntities(truth.value[i]) ) + '</character>' + _appendHtml;
         }
         return html;
     }
