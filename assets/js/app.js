@@ -2238,7 +2238,7 @@ var HomeController = function () {
                 // Scroll to the Speech cursor
                 var scrollboxEle = c.rootElement.getElementsByTagName('scrollbox')[0];
                 var cursorEle = c.rootElement.getElementsByClassName('cursor')[0];
-                if (scrollboxEle.offsetHeight > 0 && cursorEle.offsetHeight > 0) {
+                if (cursorEle && scrollboxEle.offsetHeight > 0 && cursorEle.offsetHeight > 0) {
                     // Show the current line surrounded by ideally an equal number lines of preceding and following the cursor's line
                     const numberOfLines = Math.round(scrollboxEle.offsetHeight / cursorEle.offsetHeight); // E.g. 163 / 32 = 5.09375 = 5
                     var numberOfFollowingLines = Math.floor(numberOfLines / 2); // Excludes the cursor's line. E.g. 5 / 2 = 2
