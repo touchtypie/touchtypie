@@ -2238,11 +2238,16 @@ var HomeController = function () {
                 // Scroll to the Speech cursor
                 var scrollboxEle = c.rootElement.getElementsByTagName('scrollbox')[0];
                 var cursorEle = c.rootElement.getElementsByClassName('cursor')[0];
-                if (cursorEle) {
-                    scrollboxEle.scrollTop = cursorEle.offsetTop;
+                if (scrollboxEle.offsetHeight > 0 && cursorEle.offsetHeight > 0) {
+                    // Show the current line surrounded by ideally an equal number lines of preceding and following the cursor's line
+                    const numberOfLines = Math.round(scrollboxEle.offsetHeight / cursorEle.offsetHeight); // E.g. 163 / 32 = 5.09375 = 5
+                    var numberOfFollowingLines = Math.floor(numberOfLines / 2); // Excludes the cursor's line. E.g. 5 / 2 = 2
+                    var numberOfPreceedingLines = numberOfLines - numberOfFollowingLines - 1; // Excludes the cursor's line. E.g. 5 - 2 - 1 = 2
+
+                    scrollboxEle.scrollTop = cursorEle.offsetTop - (cursorEle.offsetHeight * numberOfPreceedingLines);
                     if (State.debug) {
-                        console.log('scrollboxEle.scrollTop: ' + scrollboxEle.scrollTop);
-                        console.log('cursorEle.clientTop: ' + cursorEle.clientTop + ', cursorEle.offsetTop: ' + cursorEle.offsetTop + ', cursorEle.scrollTop: ' + cursorEle.scrollTop);
+                        console.log('[setSpeechScrollPosition] scrollboxEle.scrollTop: ' + scrollboxEle.scrollTop);
+                        console.log('[setSpeechScrollPosition] cursorEle.clientTop: ' + cursorEle.clientTop + ', cursorEle.offsetTop: ' + cursorEle.offsetTop + ', cursorEle.scrollTop: ' + cursorEle.scrollTop + ', numberOfLines: ' + numberOfLines + ', numberOfFollowingLines: ' + numberOfFollowingLines + ', numberOfPreceedingLines: ' + numberOfPreceedingLines);
                     }
                 }
             },
