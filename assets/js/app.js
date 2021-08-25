@@ -2406,8 +2406,11 @@ var HomeController = function () {
         template: `
             <response b-on="click:responseclick">
                 <textareawrapper>
-                    <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
-                    <textarea b-on="keydown:textareakeydown,input:textareainput" tabindex="0"></textarea>
+                    <box>
+                        <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput,wheel:responsescroll,scroll:responsescroll" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
+                        <textarea b-on="keydown:textareakeydown,input:textareainput" tabindex="0"></textarea>
+                        <scrollbar></scrollbar>
+                    </box>
                 </textareawrapper>
             </response>
         `,
@@ -2416,6 +2419,8 @@ var HomeController = function () {
             focusElement: null,
             lastKeyCode: -1,
             lastKey: '',
+            prettyScrollbarEnabled: false,
+            prettyScrollbarTimeoutId: -1
         },
         methods: {
             _setter: function(c, value) {
@@ -2531,12 +2536,73 @@ var HomeController = function () {
                     console.log('[keyup] c.props._training.student.response.value: ' + c.props._training.student.response.value);
                     console.log('[keyup] c.props._training.student.response.charactersCounter: ' + c.props._training.student.response.charactersCounter);
                 }
+            },
+            hideNativeScrollbar: function(c) {
+                var scrollboxEle = c.rootElement.getElementsByTagName('textarea')[0];
+                scrollboxEle.style.width = 'calc(100% + ' + Helpers.getBrowserScrollbarWidth() + 'px )';
+            },
+            renderPrettyScrollbar: function(c) {
+                if (c.props.prettyScrollbarEnabled) {
+                    var scrollbarEle = c.rootElement.getElementsByTagName('scrollbar')[0];
+                    var scrollboxEle = c.rootElement.getElementsByTagName('textarea')[0];
+                    // var contentEle = c.rootElement.getElementsByTagName('value')[0];
+
+                    // Get heights
+                    const scrollboxHeight = scrollboxEle.offsetHeight;
+                    // const scrollboxHeight = scrollboxEle.getBoundingClientRect().height;
+                    const contentHeight = scrollboxEle.scrollHeight;
+                    // var contentHeight = contentEle.getBoundingClientRect().height;
+
+                    // Set scrollbar height. It's should have a min-height of '25px'
+                    const scrollbarDesiredHeight = contentHeight > scrollboxHeight ? (scrollboxHeight / contentHeight) * scrollboxHeight : 0;
+                    const scrollbarMinHeight = 25;
+                    const scrollbarHeight = scrollbarDesiredHeight < scrollbarMinHeight ? scrollbarMinHeight : scrollbarDesiredHeight;
+                    scrollbarEle.style.height = scrollbarHeight + 'px';
+
+                    // Get scrolltops
+                    const contentScrollTop = scrollboxEle.scrollTop;
+
+                    // Set scrollbar top position
+                    const scrollbarScrollTop = (contentScrollTop / (contentHeight - scrollboxHeight)) * (scrollboxHeight - scrollbarHeight);
+                    scrollbarEle.style.top = scrollbarScrollTop + 'px';
+
+                    // Show scrollbar and fade it out after x milliseconds
+                    const animationDuration = contentScrollTop > 0 ? 750 : 100;
+                    scrollbarEle.style.animation = 'none';
+                    scrollbarEle.offsetHeight; // trigger browser reflow
+                    scrollbarEle.style.animation = 'scrollbarfadeout ' + parseFloat((animationDuration / 1000).toFixed(2)) + 's forwards';
+                    clearTimeout(c.props.prettyScrollbarTimeoutId);
+                    c.props.prettyScrollbarTimeoutId = setTimeout(function() {
+                        if (State.debug) {
+                            console.log('[renderPrettyScrollbar] remove animation');
+                        }
+                        scrollbarEle.style.animation = '';
+                    }, animationDuration);
+
+                    if (State.debug) {
+                        console.log('[renderPrettyScrollbar]');
+                        console.log('[renderPrettyScrollbar] scrollboxHeight: ' + scrollboxHeight);
+                        console.log('[renderPrettyScrollbar] contentHeight: ' + contentHeight);
+                        console.log('[renderPrettyScrollbar] scrollbarDesiredHeight: ' + scrollbarDesiredHeight);
+                        console.log('[renderPrettyScrollbar] scrollbarMinHeight: ' + scrollbarMinHeight);
+                        console.log('[renderPrettyScrollbar] scrollbarHeight: ' + scrollbarHeight);
+                        console.log('[renderPrettyScrollbar] contentScrollTop: ' + contentScrollTop);
+                        console.log('[renderPrettyScrollbar] scrollbarScrollTop: ' + scrollbarScrollTop);
+                    }
+                }
             }
         },
         eventsListeners: {
             DOMContentLoaded: function(event, _this, binding) {
                 var c = this;
 
+                // Hide the scrollbar for non-Mac desktop browsers with non-zero-width native scrollbar
+                c.props.prettyScrollbarEnabled = navigator.platform.toUpperCase().indexOf('MAC') === -1 && Helpers.getBrowserScrollbarWidth() > 0;
+                if (c.props.prettyScrollbarEnabled) {
+                    c.methods.hideNativeScrollbar(c);
+                }
+
+                // Data binding
                 new Binding({
                     object: c.props._training.student.response,
                     property: "disabled"
@@ -2547,6 +2613,20 @@ var HomeController = function () {
                     c.rootElement.getElementsByTagName('textarea')[1],
                     'disabled'
                 );
+
+                // Window resize event
+                window.addEventListener('resize', function() {
+                    clearTimeout(c.props.resizeTimeoutId);
+                    c.props.resizeTimeoutId = setTimeout(function() {
+                        if (State.debug) {
+                            console.log('[resize]');
+                        }
+
+                        // Render pretty scrollbar
+                        c.methods.renderPrettyScrollbar(c);
+                    }, 100);
+                });
+
 
                 c.methods.setResponseAmendability(c);
             },
@@ -2600,7 +2680,13 @@ var HomeController = function () {
                     c.props._training.student.response.value = newValue;
                     c.methods.handleResponse(c, newValue, keyCode);
                 }
-            }
+            },
+            responsescroll: function(event, _this, binding) {
+                var c = this;
+
+                // Render pretty scrollbar
+                c.methods.renderPrettyScrollbar(c);
+            },
         }
     });
 
