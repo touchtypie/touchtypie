@@ -218,7 +218,7 @@ speech value character.line-feed {
 speech value character.cursor {
     display: inline-block;
     border: 1px solid #fff;
-    animation: blink 0.77s linear infinite;
+    /* animation: blink 0.77s linear infinite; */
 }
 @keyframes blink {
     /* 0% {
