@@ -17,7 +17,21 @@ In contrast to reading alone, typing while reading engages the visual, linguisti
 
 ## Development
 
-It started out simple, but grew just enough to require a custom frontend framework. Most parts of are is still in pure HTML, CSS, JS.
+Available as [vscode tasks](.vscode/tasks.json).
+
+```sh
+docker-compose up
+# Site now available on http://localhost:8080
+```
+
+Alternatively, if you need to disable caching when working behind a reverse proxy:
+
+```sh
+docker-compose -f docker-compose.traefik.yml up
+# Site now available on http://localhost:8080
+```
+
+The project started out simple, but grew just enough to require a custom frontend framework. Most parts of are is still in pure HTML, CSS, JS.
 
 ## Practice resources
 
