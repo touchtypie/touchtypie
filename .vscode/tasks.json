@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "docker-compose up",
+            "type": "shell",
+            "command": "docker-compose up",
+        },
+        {
+            "label": "docker-compose -f docker-compose.traefik.yml up",
+            "type": "shell",
+            "command": "docker-compose -f docker-compose.traefik.yml up",
+        }
+    ]
+}
