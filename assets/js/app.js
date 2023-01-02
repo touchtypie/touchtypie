@@ -416,6 +416,7 @@ var Bubble = function(default_value) {
     var collectionId = '';
     var id = '';
     var disabled = false;
+    var placeholder = '';
     var value = default_value;
     var charactersCounter = 0;
     var maxLines = 0;   // No limit
@@ -918,6 +919,7 @@ var Bubble = function(default_value) {
         collectionId: '',
         id: '',
         disabled: disabled,
+        placeholder: placeholder,
         value: value,
         charactersCounter: charactersCounter,
         maxLines: maxLines,
@@ -1675,6 +1677,7 @@ var Training = function() {
 
     var begin = function(trainingConfig, callbackOnSuccess, callbackOnError) {
         student.response.disabled = true;
+        student.response.placeholder = '';
 
         callbackOnError = callbackOnError ? callbackOnError : function() {
             // Ignore the intro response virtue
@@ -1691,6 +1694,7 @@ var Training = function() {
             // Ignore the intro response virtue
             student.response.newlife();
             student.response.disabled = false;
+            student.response.placeholder = 'Start typing . . .';
 
             // Start the training
             start();
@@ -2407,7 +2411,7 @@ var HomeController = function () {
             <response b-on="click:responseclick">
                 <textareawrapper>
                     <box>
-                        <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput,wheel:responsescroll,scroll:responsescroll" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
+                        <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput,wheel:responsescroll,scroll:responsescroll" placeholder="{{ _training.student.response.placeholder }}" b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
                         <textarea b-on="keydown:textareakeydown,input:textareainput" tabindex="0"></textarea>
                         <scrollbar></scrollbar>
                     </box>
