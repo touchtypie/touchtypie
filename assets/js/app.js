@@ -415,7 +415,9 @@ var Bubble = function(default_value) {
     var libraryId = '';
     var collectionId = '';
     var id = '';
+    var loading = true;
     var disabled = false;
+    var placeholder = '';
     var value = default_value;
     var charactersCounter = 0;
     var maxLines = 0;   // No limit
@@ -917,7 +919,9 @@ var Bubble = function(default_value) {
         libraryId: '',
         collectionId: '',
         id: '',
+        loading: loading,
         disabled: disabled,
+        placeholder: placeholder,
         value: value,
         charactersCounter: charactersCounter,
         maxLines: maxLines,
@@ -1677,6 +1681,10 @@ var Training = function() {
         student.response.disabled = true;
 
         callbackOnError = callbackOnError ? callbackOnError : function() {
+            // Not loading anymore
+            trainer.speech.loading = false;
+            student.response.loading = false;
+
             // Ignore the intro response virtue
             student.response.newlife();
 
@@ -1688,9 +1696,14 @@ var Training = function() {
             }
         };
         trainer.recallKnowledge(trainingConfig, function() {
+            // Not loading anymore
+            trainer.speech.loading = false;
+            student.response.loading = false;
+
             // Ignore the intro response virtue
             student.response.newlife();
             student.response.disabled = false;
+            student.response.placeholder = 'Start typing . . .';
 
             // Start the training
             start();
@@ -2205,7 +2218,7 @@ var HomeController = function () {
         parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
         name: 'speech',
         template: `
-            <speech b-on="DOMContentLoaded,click:speechclick">
+            <speech b-on="DOMContentLoaded,click:speechclick" class="loading">
                 <speechwrapper>
                     <box>
                         <scrollbox b-on="wheel:speechscroll,scroll:speechscroll">
@@ -2224,6 +2237,11 @@ var HomeController = function () {
         },
         methods: {
             _setter: function(c, value) {
+                if (!c.props._training.trainer.speech.loading) {
+                    // Remove loading animation
+                    c.rootElement.classList.remove('loading');
+                }
+
                 // Set trainer speech counter
                 c.props._training.trainer.speech.charactersCounter = c.props._training.trainer.speech.value.length;
 
@@ -2404,10 +2422,10 @@ var HomeController = function () {
         parentElement: document.getElementsByTagName('home')[0].getElementsByTagName('main')[0],
         name: 'response',
         template: `
-            <response b-on="click:responseclick">
+            <response b-on="click:responseclick" class="loading">
                 <textareawrapper>
                     <box>
-                        <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput,wheel:responsescroll,scroll:responsescroll" placeholder="Start typing . . ." b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
+                        <textarea b-on="DOMContentLoaded,click:textareaclick,keydown:textareakeydown,input:textareainput,wheel:responsescroll,scroll:responsescroll" placeholder="{{ _training.student.response.placeholder }}" b-setter="._training.student.response.value:_setter" tabindex="0"></textarea>
                         <textarea b-on="keydown:textareakeydown,input:textareainput" tabindex="0"></textarea>
                         <scrollbar></scrollbar>
                     </box>
@@ -2424,6 +2442,11 @@ var HomeController = function () {
         },
         methods: {
             _setter: function(c, value) {
+                if (!c.props._training.student.response.loading) {
+                    // Remove loading animation
+                    c.rootElement.classList.remove('loading');
+                }
+
                 // Set student response counter
                 c.props._training.student.response.charactersCounter = c.props._training.student.response.value.length;
 

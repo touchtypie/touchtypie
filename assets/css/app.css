@@ -146,6 +146,20 @@ speech {
     display: block;
     margin: 1vw;
 }
+speech.loading  {
+    animation: speechloading 0.77s linear infinite;
+}
+@keyframes speechloading {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 speech speechwrapper {
     display: block;
     margin: 0 auto;
@@ -274,6 +288,9 @@ response {
     display: block;
     margin: 2vw;
     margin-bottom: 0;
+}
+response.loading {
+    opacity: 0;
 }
 response textareawrapper {
     display: block;
